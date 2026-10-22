@@ -5,3 +5,4 @@ data/state.json
 .playwright-mcp/
 .DS_Store
 data/events/state.json
+data/events/cognee/
