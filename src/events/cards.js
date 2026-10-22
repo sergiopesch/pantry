@@ -76,7 +76,12 @@ box-sizing:border-box;font-style:normal;font-variant-numeric:tabular-nums;line-h
 // Pantry's mark: the Grok dome in yellow with two eyes. Small, flat, no text.
 const DOME = `<svg width="18" height="14" viewBox="0 0 114 82" aria-hidden="true"><path d="M0 82C0 36.7 25.5 0 57 0s57 36.7 57 82z" fill="${ACCENT}"/><rect x="34" y="36" width="12" height="22" rx="6" fill="#111"/><rect x="68" y="36" width="12" height="22" rx="6" fill="#111"/></svg>`;
 const LANE_COLOURS = { everyone: 'var(--sand-dataviz-0,#1084FE)', vegan: 'var(--sand-dataviz-2,#00C972)', 'gluten-free': 'var(--sand-dataviz-3,#9159FE)', 'allergy-safe': ACCENT };
-const NEED_COLOURS = ['var(--sand-dataviz-0,#1084FE)', 'var(--sand-dataviz-1,#00BCA6)', 'var(--sand-dataviz-2,#00C972)', 'var(--sand-dataviz-3,#9159FE)', 'var(--sand-dataviz-4,#FF309B)', 'var(--sand-dataviz-5,#936439)', 'var(--sand-dataviz-6,#777777)', 'var(--sand-dataviz-7,#FF263C)'];
+// One fixed colour per need, so a need looks the same on every card. The critical ones share Pantry's yellow.
+const NEED_COLOURS = {
+  vegan: 'var(--sand-dataviz-2,#00C972)', vegetarian: 'var(--sand-dataviz-3,#9159FE)', pescatarian: 'var(--sand-dataviz-1,#00BCA6)',
+  halal: 'var(--sand-dataviz-0,#1084FE)', 'gluten-free': 'var(--sand-dataviz-4,#FF309B)', 'dairy-free': 'var(--sand-dataviz-5,#936439)', 'no-pork': 'var(--sand-dataviz-6,#777777)',
+};
+const needColour = n => (n.critical ? ACCENT : NEED_COLOURS[n.id] ?? 'var(--sand-dataviz-6,#777777)');
 
 const wrap = (label, body, foot = '') => `${STYLE}<section class="pc" role="group" aria-label="${esc(label)}"><p class="hd">${DOME}<span>Pantry · ${esc(label)}</span></p>${body}${foot ? `<p class="ft">${foot}</p>` : ''}</section>`;
 const bar = (pctWidth, mute = false) => `<div class="bar"><i class="${mute ? 'mute' : ''}" style="width:${pctWidth.toFixed(1)}%"></i></div>`;
@@ -91,7 +96,7 @@ function headcountCard(s) {
 <p class="lede"><b>${h.signedUp}</b> signed up. Past events point to <b>${pct(h.showRate)}</b> turning up.</p>
 <div class="sec">${row('Signed up', h.signedUp, 100, true)}${row('Expected', h.expected, share(h.expected, h.signedUp), true)}${row('Plan for', h.planFor, share(h.planFor, h.signedUp))}</div>
 <div class="stats"><div class="stat"><b>${pct(h.showRate)}</b><span>show rate</span></div><div class="stat"><b>${h.expected}</b><span>expected</span></div><div class="stat"><b>${h.criticalAt100}</b><span>allergy or coeliac, planned at 100%</span></div></div>
-${basis.length ? `<div class="sec"><p class="lbl">Turnout at the last ${basis.length} events</p><div class="cols" role="img" aria-label="${esc(basis.map(b => `${b.date} ${pct(b.rate)}`).join(', '))}">${cols}</div><div class="axis"><span>${esc(month(basis[0].date))}</span><span>${esc(month(basis.at(-1).date))}</span></div></div>` : ''}`;
+${basis.length ? `<div class="sec"><p class="lbl">Turnout at the last ${basis.length} events · events like this one in yellow</p><div class="cols" role="img" aria-label="${esc(basis.map(b => `${b.date} ${pct(b.rate)}`).join(', '))}">${cols}</div><div class="axis"><span>${esc(month(basis[0].date))}</span><span>${esc(month(basis.at(-1).date))}</span></div></div>` : ''}`;
   return {
     title: `Plan for ${h.planFor}, not ${h.signedUp}`,
     html: wrap('Headcount', body, h.overridden ? 'Your own number, not the forecast.' : ''),
@@ -102,8 +107,8 @@ ${basis.length ? `<div class="sec"><p class="lbl">Turnout at the last ${basis.le
 function dietsCard(s) {
   const d = s.diets;
   const total = d.needs.reduce((n, x) => n + x.count, 0) || 1;
-  const segs = d.needs.map((n, i) => `<i style="width:${share(n.count, total).toFixed(2)}%;background:${n.critical ? ACCENT : NEED_COLOURS[i % NEED_COLOURS.length]}"></i>`).join('');
-  const keys = d.needs.map((n, i) => `<div class="key"><span class="sw" style="background:${n.critical ? ACCENT : NEED_COLOURS[i % NEED_COLOURS.length]}"></span>${esc(n.label)}${n.critical ? ' <span class="tag a">100%</span>' : ''}<b>${n.count}</b></div>`).join('');
+  const segs = d.needs.map(n => `<i style="width:${share(n.count, total).toFixed(2)}%;background:${needColour(n)}"></i>`).join('');
+  const keys = d.needs.map(n => `<div class="key"><span class="sw" style="background:${needColour(n)}"></span>${esc(n.label)}${n.critical ? ' <span class="tag a">100%</span>' : ''}<b>${n.count}</b></div>`).join('');
   const body = `<p class="hero">${d.declared}<span class="u">of ${d.signedUp} declared a need</span></p>
 <p class="lede">Every one gets a safe plate. Allergies and coeliac are planned for everyone who signed up.</p>
 <div class="sec"><div class="stack" role="img" aria-label="${esc(d.needs.map(n => `${n.label} ${n.count}`).join(', '))}">${segs}</div><div class="keys">${keys}</div></div>`;

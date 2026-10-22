@@ -414,10 +414,11 @@ export function debrief(world, state, input) {
   const after = headcount(world, state);
   const book = ledger(world, state).find(l => l.id === record.provider);
   const learnings = [
-    `${attended} of ${signedUp} came (${pct(attended / signedUp)}). The show rate moves from ${pct(before.showRate)} to ${pct(after.showRate)}.`,
+    `${attended} of ${signedUp} came (${pct(attended / signedUp)}). ${pct(before.showRate) === pct(after.showRate) ? `The show rate holds at ${pct(after.showRate)}.` : `The show rate moves from ${pct(before.showRate)} to ${pct(after.showRate)}.`}`,
     record.leftoverPct >= 0.2 ? `${pct(record.leftoverPct)} came back. Order fewer next time.` : `${pct(record.leftoverPct)} came back. About right.`,
     book ? `${book.name} now rates ${book.rating.toFixed(1)} over ${book.events} ${book.events === 1 ? 'event' : 'events'}${book.onTime < 1 ? `, on time ${pct(book.onTime)}` : ', always on time'}.` : null,
     ...record.ranOut.map(r => `${r} ran out, so it gets a buffer next time.`),
   ].filter(Boolean);
+  state.lastLearnings = learnings;
   return { record, learnings, showRate: after.showRate, history: allHistory(world, state).length };
 }

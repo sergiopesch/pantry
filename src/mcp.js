@@ -7,6 +7,7 @@ import {
   addProvider, attachPaymentLink, choose, confirmPayment, debrief, draftBrief, eventOptions, eventSnapshot, importGuestFile,
   loadEventState, loadEventWorld, providerLedger, recordQuote, requestPayment, saveEventState, setEvent, setHeadcount,
 } from './events/index.js';
+import { card, CARD_KINDS } from './events/cards.js';
 
 const obj = (properties = {}, required = []) => ({ type: 'object', properties, required, additionalProperties: false });
 
@@ -131,6 +132,22 @@ const TOOLS = [
     inputSchema: obj({ approvalId: { type: 'string' }, reference: { type: 'string' }, amount: { type: 'number' }, status: { type: 'string' } }, ['approvalId', 'amount', 'status']),
     mutates: true,
     run: (a, w, state) => confirmPayment(w, state, a),
+  },
+  {
+    name: 'pantry_card',
+    description: "A visual card for the answer, as an HTML fragment for Grok Bot's Visualize tool (pass html and title; use alt as the text fallback). kinds: headcount, diets, options, plan, inbox, payment, debrief, memory (memory needs finding and date). One card per answer at most, only when numbers or a comparison beat text.",
+    inputSchema: obj({ kind: { type: 'string', enum: CARD_KINDS }, finding: { type: 'string' }, date: { type: 'string' }, dataset: { type: 'string' } }, ['kind']),
+    run: (a, w, s) => {
+      if (a.kind === 'memory') return card('memory', null, { finding: a.finding, date: a.date, dataset: a.dataset ?? 'pantry-events' });
+      const snap = eventSnapshot(w, s);
+      if (a.kind === 'options') return card('options', snap, { options: eventOptions(w, s).options });
+      if (a.kind === 'debrief') {
+        const last = s.debriefs.at(-1);
+        if (!last) throw new Error('No debrief recorded yet.');
+        return card('debrief', snap, { record: last, learnings: s.lastLearnings ?? [] });
+      }
+      return card(a.kind, snap);
+    },
   },
   {
     name: 'pantry_status',
