@@ -37,7 +37,8 @@ const gbp = n => `£${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maxi
 test('every kind renders a small, script-free fragment with a title and alt text', () => {
   assert.deepEqual(CARD_KINDS, ['headcount', 'diets', 'options', 'provider', 'plan', 'order', 'inbox', 'payment', 'debrief', 'memory']);
   for (const c of all) {
-    assert.ok(c.title && c.alt && c.html.includes('class="pc"'), c.kind);
+    assert.ok(c.title && c.alt && /<section id="pantry-card" class="pc[ "]/.test(c.html), c.kind);
+    assert.equal((c.html.match(/id="pantry-card"/g) ?? []).length, 1, `${c.kind}: one #pantry-card root`);
     assert.ok(!/<script/i.test(c.html), `${c.kind} has a script`);
     assert.ok(!/italic|font-style:\s*(?!normal)/i.test(c.html), `${c.kind} uses italics`);
     assert.ok(c.html.length < 20_000, `${c.kind} is ${c.html.length} bytes`);
@@ -109,4 +110,14 @@ test('the payment card tracks Agentcard from request to paid, and never shows a 
 
 test('the header dome wears a white chef toque', () => {
   assert.match(all[0].html, /<svg width="16" height="18"[^>]*>.*fill="#fff".*fill="#FF9800"/s);
+});
+
+test('cards render standalone for a screenshot: no page margins, a 600 px root, motion that settles', () => {
+  const html = all[0].html;
+  assert.match(html, /html,body,main\{margin:0!important;padding:0!important;background:transparent!important/);
+  assert.match(html, /max-width:600px/);
+  assert.match(html, /prefers-reduced-motion:reduce\)\{\.pc,\.pc \*,\.pc \*::before\{animation:none!important\}/);
+  // Only the current payment step may loop.
+  assert.equal((html.match(/infinite/g) ?? []).length, 1);
+  assert.match(html, /\.step\.now::before\{[^}]*infinite/);
 });

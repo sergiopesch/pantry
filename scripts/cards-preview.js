@@ -64,20 +64,27 @@ const cards = [
   { ...card('payment', snap, { approval: paid }), kind: 'payment-paid' },
 ];
 
+// Grok's Visualize document, as built in its renderer (chunk-visualization-document): the fragment goes
+// in <main> inside a body with 20 px padding and default paragraph margins.
+const GROK_BASE = 'html{color-scheme:light;overflow:hidden}html[data-theme="dark"]{color-scheme:dark}html,body{margin:0;background:transparent}*{box-sizing:border-box}body{overflow:visible;padding:20px;color:var(--sand-text-primary);font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;line-height:20px}main{display:block;width:100%}p{margin:4px 0 8px}p:first-child{margin-top:0}p:last-child{margin-bottom:0}';
 const THEMES = {
-  dark: '--sand-text-primary:#f5f5f5;--sand-text-secondary:#f5f5f5a8;--sand-text-tertiary:#f5f5f570;--sand-bg-elevated:#1a1a1a;--sand-bg-secondary:#ffffff0f;--sand-bg-chrome:#0d0d0d;--sand-border-tertiary-translucent:#ffffff14;--sand-text-success-primary:#3ddc97;--sand-text-danger-primary:#ff5a6a;--sand-text-warn-primary:#ffb340;--sand-dataviz-0:#4c9dff;--sand-dataviz-1:#2ad1c0;--sand-dataviz-2:#3ddc97;--sand-dataviz-3:#a682ff;--sand-dataviz-4:#ff5cae;--sand-dataviz-5:#c08a5a;--sand-dataviz-6:#9a9a9a;--sand-dataviz-7:#ff5a6a',
-  light: '--sand-text-primary:#141414;--sand-text-secondary:#14141499;--sand-text-tertiary:#14141466;--sand-bg-elevated:#ffffff;--sand-bg-secondary:#0000000a;--sand-bg-chrome:#f2f2f2;--sand-border-tertiary-translucent:#00000014;--sand-text-success-primary:#00a05a;--sand-text-danger-primary:#d61f33;--sand-text-warn-primary:#c76a00;--sand-dataviz-0:#1084fe;--sand-dataviz-1:#00a896;--sand-dataviz-2:#00a05a;--sand-dataviz-3:#7a45f0;--sand-dataviz-4:#e0207f;--sand-dataviz-5:#936439;--sand-dataviz-6:#777777;--sand-dataviz-7:#d61f33',
+  dark: '--sand-text-primary:#f5f5f5;--sand-bg-chrome:#0d0d0d',
+  light: '--sand-text-primary:#141414;--sand-bg-chrome:#ffffff',
 };
+const doc = (c, theme) => `<!DOCTYPE html><html lang="en" data-theme="${theme}"><head><meta charset="utf-8"><style>:root{${THEMES[theme]}}</style><style>${GROK_BASE}</style></head><body><main>${c.html}</main></body></html>`;
+const attr = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-const col = theme => `<div class="col" style="${THEMES[theme]};background:var(--sand-bg-chrome)"><h2>${theme}</h2>${cards.map(c => `<figure id="${theme}-${c.kind}"><figcaption>${esc(c.kind)} · ${esc(c.title)} · ${(c.html.length / 1024).toFixed(1)} KB</figcaption>${c.html}</figure>`).join('')}</div>`;
+const col = (theme, page) => `<div class="col" style="background:${page}"><h2 style="color:${page === '#ffffff' ? '#666' : '#888'}">Grok ${theme} theme · page ${page}</h2>${cards.map(c => `<figure id="${theme}-${c.kind}"><figcaption style="color:${page === '#ffffff' ? '#666' : '#888'}">${esc(c.kind)} · ${esc(c.title)} · ${(c.html.length / 1024).toFixed(1)} KB</figcaption><iframe sandbox="allow-same-origin" srcdoc="${attr(doc(c, theme))}"></iframe></figure>`).join('')}</div>`;
 const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Pantry cards preview</title><style>
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#000}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#808080}
 .wrap{display:grid;grid-template-columns:1fr 1fr}
-.col{padding:28px}
-h2{margin:0 0 18px;font:600 13px -apple-system,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--sand-text-tertiary)}
-figure{margin:0 0 28px}
-figcaption{font:12px ui-monospace,monospace;color:var(--sand-text-tertiary);margin:0 0 8px}
-</style></head><body><p style="color:#888;font:12px -apple-system,sans-serif;margin:16px 28px 0">Preview: every card from the engine's current output. The event is a preview event a week from now; the inbox emails, Sample Kitchen and the Agentcard sandbox states are samples.</p><div class="wrap">${col('dark')}${col('light')}</div></body></html>`;
+.col{padding:24px}
+h2{margin:0 0 16px;font:600 12px -apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+figure{margin:0 0 24px}
+figcaption{font:12px ui-monospace,monospace;margin:0 0 8px}
+iframe{display:block;width:100%;border:0;height:200px;background:transparent}
+</style></head><body><p style="color:#fff;font:12px -apple-system,sans-serif;margin:16px 24px 0">Preview: every card from the engine's current output, each inside an iframe built like Grok's Visualize document. The event is a preview event a week from now; the inbox emails, Sample Kitchen and the Agentcard sandbox states are samples.</p><div class="wrap">${col('light', '#ffffff')}${col('dark', '#0d0d0d')}</div>
+<script>for (const f of document.querySelectorAll('iframe')) { const fit = () => { const d = f.contentDocument; if (d && d.body) f.style.height = d.documentElement.scrollHeight + 'px'; }; f.addEventListener('load', () => { fit(); setTimeout(fit, 1300); }); }</script></body></html>`;
 const out = fileURLToPath(new URL('../story/cards-preview.html', import.meta.url));
 writeFileSync(out, html);
 console.log(`${cards.length} cards → ${out}`);
