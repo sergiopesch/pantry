@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pantry · Brand</title>
+  <style>
+    :root { --ink: #22160E; --ink-2: #6E625A; --line: #ECE7E2; --bg: #F6F6F6; --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #fff; color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+    main { max-width: 1120px; margin: 0 auto; padding: 56px 40px 96px; }
+    h1 { font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 28px; font-weight: 600; }
+    h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 56px 0 18px; font-weight: 600; }
+    p.note { color: var(--ink-2); font-size: 15px; line-height: 1.5; max-width: 62ch; margin: 0 0 8px; }
+    .hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 28px; }
+    .tile { border-radius: 28px; background: var(--bg); display: grid; place-items: center; min-height: 340px; position: relative; overflow: hidden; }
+    .tile.dark { background: #22160E; color: #fff; }
+    .tile.warm { background: linear-gradient(145deg, #FFC062 0%, #F28E35 60%, #E5652B 100%); }
+    .tile .cap { position: absolute; left: 22px; bottom: 18px; font-size: 13px; color: var(--ink-2); }
+    .tile.dark .cap, .tile.warm .cap { color: rgba(255,255,255,.75); }
+    .pantry-lockup { display: inline-flex; align-items: center; font-size: 64px; line-height: 1; }
+    .pantry-lockup .pantry-mark { height: 1.95em; width: 1.95em; margin: 0 -0.12em 0 -0.32em; transform: translateY(0.02em); }
+    .pantry-lockup .pantry-wordmark { height: 1em; width: auto; }
+    .moods { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .moods .tile { min-height: 190px; }
+    .moods .pantry-mark { width: 120px; }
+    .icons { display: flex; align-items: end; gap: 28px; padding: 28px; background: var(--bg); border-radius: 28px; }
+    .icons figure { margin: 0; display: grid; justify-items: center; gap: 10px; font-size: 12px; color: var(--ink-2); }
+    .icons .pantry-icon { filter: drop-shadow(0 8px 18px rgba(80,40,10,.22)); }
+    .palette { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+    .swatch { border-radius: 20px; height: 120px; padding: 14px; display: flex; flex-direction: column; justify-content: flex-end; font-size: 12.5px; font-weight: 600; }
+    .type { display: grid; gap: 10px; padding: 28px; background: var(--bg); border-radius: 28px; }
+    .t-large { font-size: 34px; font-weight: 700; letter-spacing: -.02em; }
+    .t-title { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+    .t-body { font-size: 17px; line-height: 1.4; }
+    .t-foot { font-size: 13px; color: var(--ink-2); }
+    .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .rule { border: 1px solid var(--line); border-radius: 20px; padding: 18px 20px; font-size: 15px; line-height: 1.45; }
+    .rule b { display: block; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <main id="sheet"></main>
+  <script type="module">
+    import { appIcon, lockup, mark } from './brand.js';
+    const $ = document.getElementById('sheet');
+    $.innerHTML = `
+      <h1>Pantry · identity</h1>
+      <div class="hero">
+        <div class="tile">${lockup()}<span class="cap">Lockup on white</span></div>
+        <div class="tile warm">${appIcon({ size: 220 })}<span class="cap">App icon</span></div>
+      </div>
+      <p class="note" style="margin-top:22px">A small round bowl that notices. Two eyes just under the rim, no mouth. Its spine is noticing what you didn't. The wordmark is drawn on the same round geometry: monoline, round terminals, no font dependency.</p>
+
+      <h2>Moods</h2>
+      <div class="moods">
+        ${['idle', 'notice', 'think', 'happy', 'blink'].map(m => `<div class="tile">${mark({ mood: m })}<span class="cap">${m}</span></div>`).join('')}
+      </div>
+
+      <h2>On colour</h2>
+      <div class="hero">
+        <div class="tile dark">${lockup({ color: '#fff' })}<span class="cap">Reversed</span></div>
+        <div class="tile warm">${lockup({ tone: 'white', color: '#fff' })}<span class="cap">On saffron</span></div>
+      </div>
+
+      <h2>Icon sizes</h2>
+      <div class="icons">${[180, 120, 87, 60, 40, 29].map(s => `<figure>${appIcon({ size: s })}<figcaption>${s}px</figcaption></figure>`).join('')}</div>
+
+      <h2>Palette</h2>
+      <div class="palette">
+        <div class="swatch" style="background:#F5A03A;color:#22160E">Saffron<br>#F5A03A</div>
+        <div class="swatch" style="background:#E8782A;color:#fff">Paprika<br>#E8782A</div>
+        <div class="swatch" style="background:#22160E;color:#fff">Ink<br>#22160E</div>
+        <div class="swatch" style="background:#1F9E8F;color:#fff">Trust teal<br>#1F9E8F</div>
+        <div class="swatch" style="background:#E9B53A;color:#22160E">Delivery gold<br>#E9B53A</div>
+        <div class="swatch" style="background:#F6F6F6;color:#22160E;border:1px solid #ECE7E2">Surface<br>#F6F6F6</div>
+      </div>
+
+      <h2>Type</h2>
+      <div class="type">
+        <div class="t-large">Eggs run out Thursday night.</div>
+        <div class="t-title">Two dozen are in Thursday's delivery.</div>
+        <div class="t-body">A dozen every Monday, and a top-up dozen every week, eight weeks running.</div>
+        <div class="t-foot">SF Pro on Apple devices, system UI elsewhere. Headlines bold, never italic.</div>
+      </div>
+
+      <h2>House rules</h2>
+      <div class="rules">
+        <div class="rule"><b>Round, always</b>No triangles anywhere: no carets, no arrowheads, no pointy pins. Triangles signal danger, and Pantry never corners you.</div>
+        <div class="rule"><b>Quiet surfaces, rich cards</b>White and light-grey surfaces, never cream. Texture lives only on the cards: the egg carton's sheen, the delivery pin's glow.</div>
+        <div class="rule"><b>Opinions with a spine</b>"These are better: same twelve, 40p less." Not "here are three options". One take, one reason.</div>
+      </div>`;
+  </script>
+</body>
+</html>

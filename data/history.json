@@ -1,0 +1,1029 @@
+{
+  "household": "home",
+  "orders": [
+    {
+      "id": "ord-2026-08-24",
+      "type": "main",
+      "deliveredAt": "2026-08-24T08:00:00+01:00",
+      "slot": "07:00-09:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-4pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-5",
+          "qty": 1
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "blueberries-150",
+          "qty": 2
+        },
+        {
+          "sku": "apples-gala-6",
+          "qty": 1
+        },
+        {
+          "sku": "avocados-2",
+          "qty": 1
+        },
+        {
+          "sku": "broccoli",
+          "qty": 1
+        },
+        {
+          "sku": "spinach-240",
+          "qty": 1
+        },
+        {
+          "sku": "sweet-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "baby-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chicken-thighs-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "beef-mince-500",
+          "qty": 1
+        },
+        {
+          "sku": "salmon-2",
+          "qty": 1
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "bread-wholemeal-800",
+          "qty": 1
+        },
+        {
+          "sku": "cheddar-mild-400",
+          "qty": 1
+        },
+        {
+          "sku": "pasta-fusilli-500",
+          "qty": 1
+        },
+        {
+          "sku": "rice-basmati-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "olive-oil-1l",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-08-27",
+      "type": "top-up",
+      "deliveredAt": "2026-08-27T19:00:00+01:00",
+      "slot": "18:00-20:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-2pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-loose",
+          "qty": 3
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-08-31",
+      "type": "main",
+      "deliveredAt": "2026-08-31T08:00:00+01:00",
+      "slot": "07:00-09:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-4pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-5",
+          "qty": 1
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "blueberries-150",
+          "qty": 2
+        },
+        {
+          "sku": "apples-gala-6",
+          "qty": 1
+        },
+        {
+          "sku": "avocados-2",
+          "qty": 1
+        },
+        {
+          "sku": "broccoli",
+          "qty": 2
+        },
+        {
+          "sku": "spinach-240",
+          "qty": 1
+        },
+        {
+          "sku": "sweet-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "baby-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chicken-thighs-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "beef-mince-500",
+          "qty": 1
+        },
+        {
+          "sku": "salmon-2",
+          "qty": 1
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "bread-wholemeal-800",
+          "qty": 1
+        },
+        {
+          "sku": "coffee-beans-227",
+          "qty": 1
+        },
+        {
+          "sku": "carrots-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chillies-red",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-09-04",
+      "type": "top-up",
+      "deliveredAt": "2026-09-04T09:00:00+01:00",
+      "slot": "08:00-10:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-2pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-loose",
+          "qty": 3
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-09-07",
+      "type": "main",
+      "deliveredAt": "2026-09-07T08:00:00+01:00",
+      "slot": "07:00-09:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-4pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-5",
+          "qty": 1
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "blueberries-150",
+          "qty": 2
+        },
+        {
+          "sku": "apples-gala-6",
+          "qty": 1
+        },
+        {
+          "sku": "avocados-2",
+          "qty": 1
+        },
+        {
+          "sku": "broccoli",
+          "qty": 1
+        },
+        {
+          "sku": "spinach-240",
+          "qty": 1
+        },
+        {
+          "sku": "sweet-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "baby-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chicken-thighs-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "beef-mince-500",
+          "qty": 1
+        },
+        {
+          "sku": "salmon-2",
+          "qty": 1
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "bread-wholemeal-800",
+          "qty": 1
+        },
+        {
+          "sku": "cheddar-mild-400",
+          "qty": 1
+        },
+        {
+          "sku": "pasta-fusilli-500",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-09-10",
+      "type": "top-up",
+      "deliveredAt": "2026-09-10T19:00:00+01:00",
+      "slot": "18:00-20:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-2pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-loose",
+          "qty": 3
+        },
+        {
+          "sku": "fish-fingers-10",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-09-14",
+      "type": "main",
+      "deliveredAt": "2026-09-14T08:00:00+01:00",
+      "slot": "07:00-09:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-4pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-5",
+          "qty": 1
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "blueberries-150",
+          "qty": 1
+        },
+        {
+          "sku": "apples-gala-6",
+          "qty": 1
+        },
+        {
+          "sku": "avocados-2",
+          "qty": 1
+        },
+        {
+          "sku": "broccoli",
+          "qty": 1
+        },
+        {
+          "sku": "spinach-240",
+          "qty": 1
+        },
+        {
+          "sku": "sweet-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "baby-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chicken-thighs-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "beef-mince-500",
+          "qty": 1
+        },
+        {
+          "sku": "salmon-2",
+          "qty": 1
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "bread-wholemeal-800",
+          "qty": 1
+        },
+        {
+          "sku": "coffee-beans-227",
+          "qty": 1
+        },
+        {
+          "sku": "carrots-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chillies-red",
+          "qty": 1
+        },
+        {
+          "sku": "rice-basmati-1kg",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-09-18",
+      "type": "top-up",
+      "deliveredAt": "2026-09-18T09:00:00+01:00",
+      "slot": "08:00-10:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-2pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-loose",
+          "qty": 3
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-09-21",
+      "type": "main",
+      "deliveredAt": "2026-09-21T08:00:00+01:00",
+      "slot": "07:00-09:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-4pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-5",
+          "qty": 1
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "blueberries-150",
+          "qty": 2
+        },
+        {
+          "sku": "apples-gala-6",
+          "qty": 1
+        },
+        {
+          "sku": "avocados-2",
+          "qty": 1
+        },
+        {
+          "sku": "broccoli",
+          "qty": 2
+        },
+        {
+          "sku": "spinach-240",
+          "qty": 1
+        },
+        {
+          "sku": "sweet-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "baby-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chicken-thighs-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "beef-mince-500",
+          "qty": 1
+        },
+        {
+          "sku": "salmon-2",
+          "qty": 1
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "bread-wholemeal-800",
+          "qty": 1
+        },
+        {
+          "sku": "cheddar-mild-400",
+          "qty": 1
+        },
+        {
+          "sku": "pasta-fusilli-500",
+          "qty": 1
+        },
+        {
+          "sku": "olive-oil-1l",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-09-24",
+      "type": "top-up",
+      "deliveredAt": "2026-09-24T19:00:00+01:00",
+      "slot": "18:00-20:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-2pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-loose",
+          "qty": 3
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-09-28",
+      "type": "main",
+      "deliveredAt": "2026-09-28T08:00:00+01:00",
+      "slot": "07:00-09:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-4pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-5",
+          "qty": 1
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "blueberries-150",
+          "qty": 2
+        },
+        {
+          "sku": "apples-gala-6",
+          "qty": 1
+        },
+        {
+          "sku": "avocados-2",
+          "qty": 1
+        },
+        {
+          "sku": "broccoli",
+          "qty": 1
+        },
+        {
+          "sku": "spinach-240",
+          "qty": 1
+        },
+        {
+          "sku": "sweet-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "baby-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chicken-thighs-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "beef-mince-500",
+          "qty": 1
+        },
+        {
+          "sku": "salmon-2",
+          "qty": 1
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "bread-wholemeal-800",
+          "qty": 1
+        },
+        {
+          "sku": "coffee-beans-227",
+          "qty": 1
+        },
+        {
+          "sku": "carrots-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chillies-red",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-10-03",
+      "type": "top-up",
+      "deliveredAt": "2026-10-03T10:00:00+01:00",
+      "slot": "09:00-11:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-2pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-loose",
+          "qty": 3
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "pizza-pepperoni",
+          "qty": 1
+        },
+        {
+          "sku": "crisps-multipack-12",
+          "qty": 1
+        },
+        {
+          "sku": "nuggets-450",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-10-05",
+      "type": "main",
+      "deliveredAt": "2026-10-05T08:00:00+01:00",
+      "slot": "07:00-09:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-4pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-5",
+          "qty": 1
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "blueberries-150",
+          "qty": 2
+        },
+        {
+          "sku": "apples-gala-6",
+          "qty": 1
+        },
+        {
+          "sku": "avocados-2",
+          "qty": 1
+        },
+        {
+          "sku": "broccoli",
+          "qty": 1
+        },
+        {
+          "sku": "spinach-240",
+          "qty": 1
+        },
+        {
+          "sku": "sweet-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "baby-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chicken-thighs-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "beef-mince-500",
+          "qty": 1
+        },
+        {
+          "sku": "salmon-2",
+          "qty": 1
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "bread-wholemeal-800",
+          "qty": 1
+        },
+        {
+          "sku": "cheddar-mild-400",
+          "qty": 1
+        },
+        {
+          "sku": "pasta-fusilli-500",
+          "qty": 1
+        },
+        {
+          "sku": "rice-basmati-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "pizza-pepperoni",
+          "qty": 1
+        },
+        {
+          "sku": "brioche-rolls-6",
+          "qty": 1
+        },
+        {
+          "sku": "digestives-choc",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-10-09",
+      "type": "top-up",
+      "deliveredAt": "2026-10-09T09:00:00+01:00",
+      "slot": "08:00-10:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-2pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-loose",
+          "qty": 3
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "nuggets-450",
+          "qty": 1
+        },
+        {
+          "sku": "lasagne-400",
+          "qty": 1
+        },
+        {
+          "sku": "crisps-multipack-12",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-10-12",
+      "type": "main",
+      "deliveredAt": "2026-10-12T08:00:00+01:00",
+      "slot": "07:00-09:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-4pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-5",
+          "qty": 1
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "blueberries-150",
+          "qty": 2
+        },
+        {
+          "sku": "apples-gala-6",
+          "qty": 1
+        },
+        {
+          "sku": "avocados-2",
+          "qty": 1
+        },
+        {
+          "sku": "broccoli",
+          "qty": 2
+        },
+        {
+          "sku": "spinach-240",
+          "qty": 1
+        },
+        {
+          "sku": "sweet-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "baby-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chicken-thighs-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "beef-mince-500",
+          "qty": 1
+        },
+        {
+          "sku": "salmon-2",
+          "qty": 1
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "bread-wholemeal-800",
+          "qty": 1
+        },
+        {
+          "sku": "coffee-beans-227",
+          "qty": 1
+        },
+        {
+          "sku": "carrots-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chillies-red",
+          "qty": 1
+        },
+        {
+          "sku": "pizza-pepperoni",
+          "qty": 2
+        },
+        {
+          "sku": "crisps-multipack-12",
+          "qty": 1
+        },
+        {
+          "sku": "digestives-choc",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-10-15",
+      "type": "top-up",
+      "deliveredAt": "2026-10-15T19:00:00+01:00",
+      "slot": "18:00-20:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-2pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-loose",
+          "qty": 3
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "pizza-pepperoni",
+          "qty": 1
+        },
+        {
+          "sku": "lasagne-400",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "ord-2026-10-19",
+      "type": "main",
+      "deliveredAt": "2026-10-19T08:00:00+01:00",
+      "slot": "07:00-09:00",
+      "lines": [
+        {
+          "sku": "eggs-large-12",
+          "qty": 1
+        },
+        {
+          "sku": "milk-whole-4pt",
+          "qty": 1
+        },
+        {
+          "sku": "bananas-5",
+          "qty": 1
+        },
+        {
+          "sku": "strawberries-400",
+          "qty": 1
+        },
+        {
+          "sku": "blueberries-150",
+          "qty": 2
+        },
+        {
+          "sku": "apples-gala-6",
+          "qty": 1
+        },
+        {
+          "sku": "avocados-2",
+          "qty": 1
+        },
+        {
+          "sku": "broccoli",
+          "qty": 1
+        },
+        {
+          "sku": "spinach-240",
+          "qty": 1
+        },
+        {
+          "sku": "sweet-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "baby-potatoes-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "chicken-thighs-1kg",
+          "qty": 1
+        },
+        {
+          "sku": "beef-mince-500",
+          "qty": 1
+        },
+        {
+          "sku": "salmon-2",
+          "qty": 1
+        },
+        {
+          "sku": "yoghurt-whole-500",
+          "qty": 1
+        },
+        {
+          "sku": "bread-wholemeal-800",
+          "qty": 1
+        },
+        {
+          "sku": "cheddar-mild-400",
+          "qty": 1
+        },
+        {
+          "sku": "pasta-fusilli-500",
+          "qty": 1
+        },
+        {
+          "sku": "olive-oil-1l",
+          "qty": 1
+        },
+        {
+          "sku": "pizza-pepperoni",
+          "qty": 1
+        },
+        {
+          "sku": "crisps-multipack-12",
+          "qty": 1
+        },
+        {
+          "sku": "brioche-rolls-6",
+          "qty": 1
+        },
+        {
+          "sku": "nuggets-450",
+          "qty": 1
+        }
+      ]
+    }
+  ]
+}

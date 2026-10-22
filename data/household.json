@@ -1,0 +1,44 @@
+{
+  "id": "home",
+  "name": "Sergio's household",
+  "store": "Sainsbury's",
+  "demoClock": "2026-10-20T06:02:00+01:00",
+  "members": [
+    {
+      "id": "sergio",
+      "name": "Sergio",
+      "role": "adult",
+      "summary": "No flour, minimal dairy, no processed food. Meat, carbs, veg and fruit.",
+      "avoid": ["flour", "ultra-processed"],
+      "limit": ["dairy"]
+    },
+    {
+      "id": "wife",
+      "name": "Wife",
+      "role": "adult",
+      "summary": "Same rules as Sergio.",
+      "avoid": ["flour", "ultra-processed"],
+      "limit": ["dairy"]
+    },
+    {
+      "id": "daughter",
+      "name": "Daughter",
+      "role": "child",
+      "age": "almost 3",
+      "summary": "Needs milk, dairy and toddler staples.",
+      "avoid": ["caffeine", "spicy"],
+      "needs": ["milk", "dairy", "toddler"]
+    }
+  ],
+  "conflictPolicy": "When rules clash, the child's nutritional needs win on staples; the adults' preferences win on discretionary items.",
+  "delivery": {
+    "preferredWindows": ["16:00-18:00", "18:00-20:00"],
+    "landBeforeRunOutHours": 1.5,
+    "subscription": false
+  },
+  "lanes": {
+    "everyone": "Everyone",
+    "adults": "Grown-ups",
+    "child": "Little one"
+  }
+}

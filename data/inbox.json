@@ -1,0 +1,39 @@
+{
+  "address": "pantry@household.example",
+  "note": "Fixture mail for Pantry's own inbox. Sender addresses are placeholders, not real Sainsbury's addresses.",
+  "emails": [
+    {
+      "id": "m-offers-1", "from": "Sainsbury's <offers@sainsburys.example>", "receivedAt": "2026-10-14T09:00:00+01:00",
+      "subject": "Your offers this week",
+      "body": "Hand-picked offers just for you. Save on snacks, treats and more."
+    },
+    {
+      "id": "m-refund-1", "from": "Sainsbury's <orders@sainsburys.example>", "receivedAt": "2026-10-13T10:02:00+01:00",
+      "subject": "Your refund is on its way",
+      "body": "We've refunded £0.95 for an item missing from your order on 12 October: 1 x Sainsbury's Fairtrade Bananas x5.",
+      "refund": { "amount": 0.95, "order": "ord-2026-10-12", "items": [{ "name": "Sainsbury's Fairtrade Bananas x5", "qty": 1 }] }
+    },
+    {
+      "id": "m-on-way", "from": "Sainsbury's <orders@sainsburys.example>", "receivedAt": "2026-10-19T07:05:00+01:00",
+      "subject": "Your delivery is on its way",
+      "body": "Your driver is on the way and will arrive between 7am and 9am."
+    },
+    {
+      "id": "m-missing", "from": "Sainsbury's <orders@sainsburys.example>", "receivedAt": "2026-10-19T08:14:00+01:00",
+      "subject": "Your order has been delivered",
+      "body": "Your order was delivered at 08:02. Unfortunately 1 item was missing: 1 x Sainsbury's Fairtrade Bananas x5 (£0.95).",
+      "missing": { "order": "ord-2026-10-19", "items": [{ "name": "Sainsbury's Fairtrade Bananas x5", "qty": 1, "price": 0.95 }] }
+    },
+    {
+      "id": "m-sub", "from": "Sainsbury's <orders@sainsburys.example>", "receivedAt": "2026-10-19T08:14:00+01:00",
+      "subject": "Changes to your order",
+      "body": "We made 1 substitution: Sainsbury's Whole Milk Natural Yogurt 500g was replaced with Sainsbury's Strawberry Yogurt Pots 6x100g.",
+      "substitutions": [{ "order": "ord-2026-10-19", "ordered": "Sainsbury's Whole Milk Natural Yogurt 500g", "received": "Sainsbury's Strawberry Yogurt Pots 6x100g", "price": 1.60 }]
+    },
+    {
+      "id": "m-nectar", "from": "Nectar <hello@nectar.example>", "receivedAt": "2026-10-20T05:30:00+01:00",
+      "subject": "Double points on fruit and veg this week",
+      "body": "Collect double Nectar points on fresh fruit and veg until Sunday."
+    }
+  ]
+}

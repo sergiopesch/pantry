@@ -1,0 +1,21 @@
+{
+  "name": "pantry",
+  "version": "0.1.0",
+  "description": "Pantry \u2014 a Grok Bot that does a family's weekly grocery shop end-to-end. You are what you shop.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "pantry": "src/cli.js"
+  },
+  "scripts": {
+    "demo": "node src/server.js",
+    "seed": "node scripts/seed-history.js",
+    "reset": "node src/cli.js reset",
+    "mcp": "node src/mcp.js",
+    "test": "node --test \"test/*.test.js\"",
+    "snippet": "node src/sainsburys/snippet.js"
+  }
+}

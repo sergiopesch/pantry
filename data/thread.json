@@ -1,0 +1,13 @@
+{
+  "note": "One conversation across four surfaces. {{placeholders}} are filled from the live snapshot so the thread never contradicts the cart.",
+  "surfaces": { "grok-mobile": "Grok mobile", "android": "Android assistant", "x-dm": "X DMs", "grok-desktop": "Grok desktop" },
+  "messages": [
+    { "at": "2026-10-20T06:02:00+01:00", "surface": "grok-mobile", "from": "pantry", "text": "{{nudge}}" },
+    { "at": "2026-10-20T08:41:00+01:00", "surface": "android", "from": "sergio", "text": "Did the eggs go in?" },
+    { "at": "2026-10-20T08:41:00+01:00", "surface": "android", "from": "pantry", "text": "{{eggsAnswer}}" },
+    { "at": "2026-10-20T12:47:00+01:00", "surface": "x-dm", "from": "sergio", "text": "She's asking for blueberries again" },
+    { "at": "2026-10-20T12:47:00+01:00", "surface": "x-dm", "from": "pantry", "text": "{{blueberriesAnswer}}" },
+    { "at": "2026-10-20T19:12:00+01:00", "surface": "grok-desktop", "from": "sergio", "text": "OK, show me the cart" },
+    { "at": "2026-10-20T19:12:00+01:00", "surface": "grok-desktop", "from": "pantry", "text": "{{cartAnswer}}" }
+  ]
+}

@@ -1,0 +1,6 @@
+node_modules/
+data/state.json
+.env
+.env.*
+.playwright-mcp/
+.DS_Store

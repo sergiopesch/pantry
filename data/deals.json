@@ -1,0 +1,13 @@
+{
+  "fetchedAt": "2026-10-20T06:00:00+01:00",
+  "note": "Scenario offers for the demo week. In production these come from Nectar prices, promotions and coupons on the live site, fetched per household.",
+  "deals": [
+    { "id": "nectar-salmon", "type": "nectar", "label": "Nectar Price", "sku": "salmon-2", "price": 3.75, "validFrom": "2026-10-19", "validTo": "2026-10-27" },
+    { "id": "coupon-yoghurt", "type": "coupon", "label": "50p off coupon", "sku": "yoghurt-whole-500", "price": 1.35, "validFrom": "2026-10-19", "validTo": "2026-11-01" },
+    { "id": "nectar-pizza", "type": "nectar", "label": "Nectar Price", "sku": "pizza-pepperoni", "price": 1.75, "validFrom": "2026-10-19", "validTo": "2026-10-27" },
+    { "id": "nectar-crisps", "type": "nectar", "label": "Nectar Price", "sku": "crisps-multipack-12", "price": 2.25, "validFrom": "2026-10-19", "validTo": "2026-10-27" },
+    { "id": "promo-digestives", "type": "promotion", "label": "2 for £3", "sku": "digestives-choc", "price": 1.50, "validFrom": "2026-10-19", "validTo": "2026-11-01" },
+    { "id": "nectar-olive-oil", "type": "nectar", "label": "Nectar Price", "sku": "olive-oil-1l", "price": 6.00, "validFrom": "2026-10-19", "validTo": "2026-10-27" },
+    { "id": "nectar-eggs-6", "type": "nectar", "label": "Nectar Price", "sku": "eggs-large-6", "price": 1.40, "validFrom": "2026-10-26", "validTo": "2026-11-08" }
+  ]
+}

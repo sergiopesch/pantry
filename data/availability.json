@@ -1,0 +1,4 @@
+{
+  "note": "Scenario: the usual Large dozen is out of stock for Thursday's slot. This is what triggers the replacement card.",
+  "unavailable": [{ "sku": "eggs-large-12", "date": "2026-10-22" }]
+}
