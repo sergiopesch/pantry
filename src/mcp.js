@@ -4,7 +4,7 @@
 import { createInterface } from 'node:readline';
 import { readFileSync } from 'node:fs';
 import {
-  addProvider, attachPaymentLink, choose, confirmPayment, debrief, draftBrief, eventOptions, eventSnapshot, importGuestFile,
+  addProvider, attachPaymentLink, choose, setDish, confirmPayment, debrief, draftBrief, eventOptions, eventSnapshot, importGuestFile,
   loadEventState, loadEventWorld, providerLedger, recordQuote, requestPayment, saveEventState, setEvent, setHeadcount,
 } from './events/index.js';
 import { card, CARD_KINDS } from './events/cards.js';
@@ -97,6 +97,13 @@ const TOOLS = [
     inputSchema: obj({ option: { type: 'string' } }, ['option']),
     mutates: true,
     run: (a, w, state) => choose(w, state, a.option),
+  },
+  {
+    name: 'pantry_plan_item',
+    description: "Select items: remove a dish from (or add it back to) a provider's menu for this plan, by provider id or name and dish id or part of its name. The plan re-spreads the plates and still guarantees a safe plate for every declared need. Draft only.",
+    inputSchema: obj({ provider: { type: 'string' }, dish: { type: 'string' }, action: { type: 'string', enum: ['remove', 'add'] } }, ['provider', 'dish', 'action']),
+    mutates: true,
+    run: (a, w, state) => setDish(w, state, a),
   },
   {
     name: 'pantry_quote_record',

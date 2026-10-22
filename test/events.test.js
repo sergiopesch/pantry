@@ -7,7 +7,7 @@ import { readDiet, importGuests } from '../src/events/luma.js';
 import { guestFromLuma, liveClient, syncLuma, venueFromLuma } from '../src/events/luma-api.js';
 import {
   addProvider, approvePayment, attachPaymentLink, choose, confirmPayment, debrief, draftBrief, eventOptions, eventSnapshot,
-  freshEventState, importGuestFile, loadEventWorld, recordQuote, requestPayment, setEvent, setHeadcount,
+  freshEventState, importGuestFile, loadEventWorld, recordQuote, requestPayment, setDish, setEvent, setHeadcount,
 } from '../src/events/index.js';
 
 const GUESTS = readFileSync(fileURLToPath(new URL('../data/events/guests.csv', import.meta.url)), 'utf8');
@@ -183,4 +183,15 @@ test('the live Luma client sends the key and pages through results', async () =>
   assert.ok(calls.every(c => c.key === 'k'));
   assert.deepEqual(calls.filter(c => c.path === '/v1/events/guests/list').map(c => c.cursor), [null, 'c2']);
   assert.equal(r.guests.guests.length, 1);
+});
+
+test('select items: removing a dish re-spreads the plates and keeps everyone safe', async () => {
+  const { world, state } = await ready();
+  const before = eventSnapshot(world, state).plan.chosen;
+  setDish(world, state, { provider: 'test-kitchen', dish: 'chicken', action: 'remove' });
+  const after = eventSnapshot(world, state).plan.chosen;
+  assert.ok(!after.lines.some(l => l.name === 'Chicken bowl'));
+  assert.equal(after.portions, before.portions);
+  assert.ok(after.coverage.safeForEveryone);
+  assert.throws(() => setDish(world, state, { provider: 'test-kitchen', dish: 'lobster', action: 'remove' }), /no dish matching/);
 });

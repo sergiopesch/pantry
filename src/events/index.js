@@ -136,6 +136,22 @@ export function choose(world, state, id) {
   return { choice: id };
 }
 
+// Select items: take a dish off (or put it back on) a provider's menu for this plan. Local draft only.
+export function setDish(world, state, { provider, dish, action }) {
+  const p = world.providers.find(x => x.id === provider || x.name.toLowerCase() === String(provider).toLowerCase());
+  if (!p) throw new Error(`No provider "${provider}".`);
+  const q = String(dish).toLowerCase();
+  const d = p.dishes.find(x => x.id === dish) ?? p.dishes.find(x => x.name.toLowerCase().includes(q));
+  if (!d) throw new Error(`${p.name} has no dish matching "${dish}". It has: ${p.dishes.map(x => x.name).join('; ')}.`);
+  const key = `${p.id}:${d.id}`;
+  const off = new Set(state.dishOff ?? []);
+  if (action === 'remove') off.add(key);
+  else if (action === 'add') off.delete(key);
+  else throw new Error('action is remove or add.');
+  state.dishOff = [...off];
+  return { provider: p.name, dish: d.name, action, off: state.dishOff.length };
+}
+
 export function recordQuote(world, state, { provider, amount, note }) {
   if (!world.providers.some(p => p.id === provider)) throw new Error(`No provider "${provider}".`);
   const a = Number(amount);

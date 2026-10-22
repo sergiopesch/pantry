@@ -160,7 +160,7 @@ export function option(world, state, provider, hc, ctx) {
   let restricted = 0;
   const groups = groupGuests(guests);
   for (const g of groups.filter(x => x.needs.length)) {
-    const dish = provider.dishes.filter(d => safe(provider, d, g.needs)).sort((a, b) => a.price - b.price)[0];
+    const dish = menu(provider, ctx).filter(d => safe(provider, d, g.needs)).sort((a, b) => a.price - b.price)[0];
     const lane = laneFor(g.needs);
     const critical = g.needs.some(n => NEEDS[n]?.critical);
     let qty = critical ? g.count : Math.ceil(g.count * hc.showRate);
@@ -185,7 +185,8 @@ export function option(world, state, provider, hc, ctx) {
     add(dish, lane, qty);
   }
   // Everyone else: split across the provider's general dishes.
-  const general = provider.dishes.filter(d => !has(d, 'sealed', 'coeliac-safe'));
+  const open = menu(provider, ctx).filter(d => !has(d, 'sealed', 'coeliac-safe'));
+  const general = open.length ? open : menu(provider, ctx);
   const rest = Math.max(0, hc.planFor - restricted);
   general.forEach((d, i) => add(d, 'everyone', Math.floor(rest / general.length) + (i < rest % general.length ? 1 : 0)));
 
@@ -262,12 +263,15 @@ export function option(world, state, provider, hc, ctx) {
   };
 }
 
+// The organiser can take dishes off a provider's menu; the plan re-spreads the plates.
+const menu = (provider, ctx) => provider.dishes.filter(d => !ctx.off?.has(`${provider.id}:${d.id}`));
+
 // The cheapest sealed dish another provider has that is safe for these needs.
 function addonFor(main, needs, ctx) {
   let best = null;
   for (const p of ctx.providers ?? []) {
     if (p.id === main.id) continue;
-    for (const d of p.dishes) {
+    for (const d of menu(p, ctx)) {
       if (!safe(p, d, needs) || !has(d, 'sealed')) continue;
       if (!best || d.price < best.dish.price) best = { provider: p, dish: d };
     }
@@ -286,7 +290,7 @@ function score(o, cheapest) {
 
 export function options(world, state, { now, latestDelivery } = {}) {
   const hc = headcount(world, state);
-  const ctx = { now: now ?? state.clock ?? new Date().toISOString(), latestDelivery, providers: world.providers, ranOut: ranOutLanes(allHistory(world, state)), ledger: ledger(world, state) };
+  const ctx = { now: now ?? state.clock ?? new Date().toISOString(), latestDelivery, providers: world.providers, off: new Set(state.dishOff ?? []), ranOut: ranOutLanes(allHistory(world, state)), ledger: ledger(world, state) };
   const all = world.providers.map(p => option(world, state, p, hc, ctx));
   const cheapest = Math.min(...all.filter(o => o.eligible).map(o => o.cost.total));
   for (const o of all) o.score = o.eligible ? score(o, cheapest) : null;
