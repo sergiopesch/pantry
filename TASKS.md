@@ -12,6 +12,15 @@ _Last updated: Thu 22 Oct 2026, 19:30 BST. Hackathon 18:00–23:00 · code freez
 - Repo: github.com/sergiopesch/pantry (private).
 - 58 tests pass.
 
+## Live bot status (20:15)
+The **Pantry bot in Grok Bot is configured and rehearsed**:
+- **Persona and look:** the persona from `bot/persona.md`, and a yellow dome avatar.
+- **Old jobs:** the Sainsbury's routine and the email tracker are paused, not deleted.
+- **Tools:** 11 skills are installed. The engine is cloned at `~/pantry` on its computer with its MCP connected, and the Cognee hosted MCP is connected.
+- **Rehearsal:** beats 1–4 of `story/SCRIPT.md` run in the live bot with the right numbers.
+- **Payment:** there's no phone approval. The request stays pending, and the skill and script now say so.
+- **Not set:** the voice (pick it in Grok Bot settings).
+
 ## Pick up here
 1. `npm test`, then `node src/cli.js event plan`. Also try `event options`, `event inbox`, `event brief`, `event pay`.
 2. **Venue address and postcode** for Expedite London HQ go into `data/events/event.json`. Coverage stays unchecked until they're set.
