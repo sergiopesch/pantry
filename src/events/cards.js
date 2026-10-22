@@ -359,7 +359,32 @@ function orderCard(s, extra = {}) {
   };
 }
 
-const KINDS = { headcount: headcountCard, diets: dietsCard, options: optionsCard, provider: providerCard, plan: planCard, order: orderCard, inbox: inboxCard, payment: paymentCard, debrief: debriefCard, memory: memoryCard };
+// One meal of the pick: what it is, what it costs, who it feeds and why it's safe for them.
+const LANE_LABEL = { everyone: 'Everyone', vegan: 'Vegan', 'gluten-free': 'Gluten-free', 'allergy-safe': 'Allergy-safe' };
+const COVERS = { vegan: 'vegans', vegetarian: 'vegetarians', halal: 'halal', 'gluten-free': 'gluten-free', 'coeliac-safe': 'coeliacs', 'nut-free': 'nut allergies', 'dairy-free': 'dairy-free' };
+function dishCard(s, extra = {}) {
+  const o = extra.option ?? s?.plan?.chosen;
+  if (!o || !extra.dish) return { title: 'Pick a meal', html: wrap('Meal', '<p class="lede">Name a meal from the plan to see it on its own.</p>'), alt: 'Name a meal from the plan.' };
+  const q = String(extra.dish).toLowerCase();
+  const lines = o.lines.filter(l => l.name.toLowerCase() === q || l.dish === extra.dish || l.name.toLowerCase().includes(q));
+  if (!lines.length) throw new Error(`No dish matching "${extra.dish}" in ${o.name}. It has: ${[...new Set(o.lines.map(l => l.name))].join('; ')}.`);
+  const first = lines[0];
+  const plates = lines.reduce((t, l) => t + l.qty, 0);
+  const covers = (first.tags ?? []).filter(t => COVERS[t]).map(t => COVERS[t]);
+  const from = first.providerName ?? o.name;
+  const body = `<div class="top"><p class="name">${esc(first.name)}</p><p class="verdict ok">${plates} plates</p></div>
+<p class="src">${esc(from)} · ${gbp(first.price)} a plate · ${gbp(plates * first.price)} in all</p>
+<div class="sec st" style="margin-top:16px"><p class="lbl">Diet</p><p style="margin:6px 0 0">${chips(first.tags ?? [])}</p></div>
+<div class="sec st"><p class="lbl">Who gets it</p>${lines.map(l => row(LANE_LABEL[l.lane] ?? l.lane, String(l.qty), share(l.qty, plates), l.lane !== 'allergy-safe')).join('')}</div>
+${covers.length ? `<p class="lede st">Safe for ${esc(covers.join(', '))}.</p>` : ''}`;
+  return {
+    title: `${first.name}: ${plates} plates`,
+    html: wrap('Meal', body, (first.tags ?? []).includes('sealed') ? 'Sealed and labelled, served on its own table.' : 'Labelled with its diet on the table.', 'prov'),
+    alt: `${first.name} from ${from}: ${plates} plates at ${gbp(first.price)} each${covers.length ? `, safe for ${covers.join(', ')}` : ''}.`,
+  };
+}
+
+const KINDS = { dish: dishCard, headcount: headcountCard, diets: dietsCard, options: optionsCard, provider: providerCard, plan: planCard, order: orderCard, inbox: inboxCard, payment: paymentCard, debrief: debriefCard, memory: memoryCard };
 export const CARD_KINDS = Object.keys(KINDS);
 
 // card('plan', eventSnapshot(world, state)). options needs extra.options (eventOptions); provider needs

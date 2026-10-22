@@ -35,7 +35,7 @@ const all = CARD_KINDS.map(k => card(k, snap, extras[k]));
 const gbp = n => `£${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 test('every kind renders a small, script-free fragment with a title and alt text', () => {
-  assert.deepEqual(CARD_KINDS, ['headcount', 'diets', 'options', 'provider', 'plan', 'order', 'inbox', 'payment', 'debrief', 'memory']);
+  assert.deepEqual(CARD_KINDS, ['dish', 'headcount', 'diets', 'options', 'provider', 'plan', 'order', 'inbox', 'payment', 'debrief', 'memory']);
   for (const c of all) {
     assert.ok(c.title && c.alt && /<section id="pantry-card" class="pc[ "]/.test(c.html), c.kind);
     assert.equal((c.html.match(/id="pantry-card"/g) ?? []).length, 1, `${c.kind}: one #pantry-card root`);
@@ -120,4 +120,16 @@ test('cards render standalone for a screenshot: no page margins, a 600 px root, 
   // Only the current payment step may loop.
   assert.equal((html.match(/infinite/g) ?? []).length, 1);
   assert.match(html, /\.step\.now::before\{[^}]*infinite/);
+});
+
+test('dish card: one meal of the plan, its plates by lane and who it is safe for', async () => {
+  const { card } = await import('../src/events/cards.js');
+  const option = { name: 'Kitchen', lines: [
+    { key: 'vegan:a', lane: 'vegan', dish: 'a', name: 'Cauliflower bowl', tags: ['vegan', 'coeliac-safe', 'nut-free', 'sealed'], price: 9.5, qty: 13 },
+    { key: 'allergy-safe:a', lane: 'allergy-safe', dish: 'a', name: 'Cauliflower bowl', tags: ['vegan', 'coeliac-safe', 'nut-free', 'sealed'], price: 9.5, qty: 6 },
+  ] };
+  const c = card('dish', {}, { option, dish: 'cauliflower' });
+  assert.match(c.html, /19 plates/);
+  assert.match(c.alt, /safe for vegans, coeliacs, nut allergies/);
+  assert.ok(!/<script/i.test(c.html));
 });
