@@ -28,7 +28,7 @@ export const EVENT_HELP = `pantry event <command> — catering for the people wh
   inbox                     Pantry's own inbox, triaged
   providers                 The provider ledger: ratings, punctuality, what ran out
   debrief <attended> [leftover%] [rating] [minsLate]   After the event: learn for next time
-  reset`;
+  reset [rehearsal]         Wipe everything, or (rehearsal) only orders, approvals, briefs and choices`;
 
 export async function runEvent(rest, out) {
   const state = loadEventState();
@@ -137,6 +137,12 @@ export async function runEvent(rest, out) {
       return out(r.learnings.join('\n'), r);
     }
     case 'reset': {
+      if (args[0] === 'rehearsal') {
+        // Keep the event, guests and the real providers found tonight; clear what a rehearsal leaves behind.
+        Object.assign(state, { approvals: [], orders: [], briefs: [], quotes: {}, dishOff: [], choice: null, planForOverride: null, debriefs: [], lastLearnings: [] });
+        save();
+        return out('Rehearsal cleared: approvals, orders, briefs, quotes, item choices and debriefs. Event, guests and providers kept.', { ok: true });
+      }
       saveEventState(freshEventState());
       return out('Event state reset.', { ok: true });
     }
