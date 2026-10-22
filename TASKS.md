@@ -12,14 +12,33 @@ _Last updated: Thu 22 Oct 2026, 19:30 BST. Hackathon 18:00–23:00 · code freez
 - Repo: github.com/sergiopesch/pantry (private).
 - 58 tests pass.
 
-## Live bot status (20:15)
-The **Pantry bot in Grok Bot is configured and rehearsed**:
-- **Persona and look:** the persona from `bot/persona.md`, and a yellow dome avatar.
-- **Old jobs:** the Sainsbury's routine and the email tracker are paused, not deleted.
-- **Tools:** 11 skills are installed. The engine is cloned at `~/pantry` on its computer with its MCP connected, and the Cognee hosted MCP is connected.
-- **Rehearsal:** beats 1–4 of `story/SCRIPT.md` run in the live bot with the right numbers.
-- **Payment:** there's no phone approval. The request stays pending, and the skill and script now say so.
-- **Not set:** the voice (pick it in Grok Bot settings).
+## Live bot status (20:40)
+The Pantry bot in Grok Bot is configured and runs on real time and real places:
+
+**Profile and tools**
+- Persona, yellow dome avatar, 12 skills.
+- MCP servers: the engine at `~/pantry`, Cognee (memory) and Notion (events).
+
+**Notion: "Pantry · Events"**
+- 10 past events, marked demo.
+- "Upcoming: Grok Builders Hack Night" on Thu 29 Oct, the next Thursday from today, also marked demo.
+- The venue is the real Expedite London HQ, 7 Lyric Square, London W6 0NB, sourced from the event listing.
+
+**Real providers**
+- Pantry searched for and added real caterers that deliver to W6, each with its source URL: Frank's Catering, Route Catering, Pique.
+- None can guarantee a coeliac-safe plate, so the pick is Sainsbury's sealed Free From range.
+- Sainsbury's prices are being checked live in the bot's headed browser.
+
+**Visual cards**
+- `pantry_card` → Grok's Visualize tool, 8 kinds. Preview: `story/cards-preview.html`.
+
+**Payments**
+- Stripe Payment Link flow: the organiser pays, and Pantry confirms only when Stripe says paid.
+- Waiting on Sergio's Stripe sign-in.
+
+**Still open**
+- Moving the Sainsbury's login into the "Shared with Grok Bot" vault: asked Sergio.
+- Voice: Sergio picks it.
 
 ## Pick up here
 1. `npm test`, then `node src/cli.js event plan`. Also try `event options`, `event inbox`, `event brief`, `event pay`.
