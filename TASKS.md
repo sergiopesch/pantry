@@ -12,33 +12,24 @@ _Last updated: Thu 22 Oct 2026, 19:30 BST. Hackathon 18:00–23:00 · code freez
 - Repo: github.com/sergiopesch/pantry (private).
 - 58 tests pass.
 
-## Live bot status (20:40)
-The Pantry bot in Grok Bot is configured and runs on real time and real places:
+## Live bot status (21:40, code freeze 21:50)
 
-**Profile and tools**
-- Persona, yellow dome avatar, 12 skills.
-- MCP servers: the engine at `~/pantry`, Cognee (memory) and Notion (events).
+**Live bot**
+- MCP servers: `pantry-live` (the engine; Grok caches tool schemas, so after a tool change re-add it under a new name), plus Cognee and Notion.
+- Agentcard runs on the **sandbox** client only. The personal live connector is disconnected.
+- Avatar: chef's-hat v2 photo; colour yellow.
 
-**Notion: "Pantry · Events"**
-- 10 past events, marked demo.
-- "Upcoming: Grok Builders Hack Night" on Thu 29 Oct, the next Thursday from today, also marked demo.
-- The venue is the real Expedite London HQ, 7 Lyric Square, London W6 0NB, sourced from the event listing.
+**Demo data**
+- Real: the date and time, the venue (7 Lyric Square W6 0NB), the providers (Frank's, Route, Pique, Vanda's) and Sainsbury's live prices.
+- Demo: the past events, and the upcoming event's guest list, both in Notion.
 
-**Real providers**
-- Pantry searched for and added real caterers that deliver to W6, each with its source URL: Frank's Catering, Route Catering, Pique.
-- None can guarantee a coeliac-safe plate, so the pick is Sainsbury's sealed Free From range.
-- Sainsbury's prices are being checked live in the bot's headed browser.
+**Cards**
+- Grok gives this bot no Visualize tool, so cards are PNG screenshots of `pantry_card` HTML. The spec is `scripts/card-png.md`: clip `#pantry-card`, 2×, wait 1.5 s.
 
-**Visual cards**
-- `pantry_card` → Grok's Visualize tool, 8 kinds. Preview: `story/cards-preview.html`.
-
-**Payments**
-- Stripe Payment Link flow: the organiser pays, and Pantry confirms only when Stripe says paid.
-- Waiting on Sergio's Stripe sign-in.
-
-**Still open**
-- Moving the Sainsbury's login into the "Shared with Grok Bot" vault: asked Sergio.
-- Voice: Sergio picks it.
+**Before the demo**
+- Pantry: git pull and restart `pantry-live`, so the cards v3 changes take effect.
+- Rehearse the order and sandbox payment beat, then run `node ~/pantry/src/cli.js event reset rehearsal`. That clears approvals, orders, briefs and choices, and keeps the event, guests and providers.
+- Stream Deck: select the "Pantry Demo" profile. Keys: Scene · Pantry · Grok Bot · Wrap · Reset.
 
 ## Pick up here
 1. `npm test`, then `node src/cli.js event plan`. Also try `event options`, `event inbox`, `event brief`, `event pay`.
