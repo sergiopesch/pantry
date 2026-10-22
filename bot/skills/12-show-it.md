@@ -28,8 +28,9 @@
 **Sequence**
 1. Answer in one or two spoken sentences first, numbers first, as always.
 2. Call `pantry_card` with the matching kind.
-3. Pass its `html` to the **Visualize** tool, with its `title` as the title. Show nothing else alongside it.
-4. If Visualize fails or isn't available, the text answer is enough. Add the card's `alt` only if it says something the text didn't.
+3. Render it to an image: save `html` to a file and open it in headless Chrome. Use a viewport 600×800, deviceScaleFactor 2, and wait 1500 ms so the animation has landed. Screenshot only the element `#pantry-card` with omitBackground, so the rounded corners stay transparent. Never leave white margins. Attach the PNG to your message. Put nothing else alongside it.
+4. If rendering fails, the text answer is enough. Add the card's `alt` only if it says something the text didn't.
+5. Diagrams that are really flows or timelines can be Mermaid in markdown instead.
 
 **Validate:** every number on the card is in the tool output. The card's numbers and your sentence agree. Never edit the html by hand.
 
