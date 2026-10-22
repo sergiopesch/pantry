@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { card, CARD_KINDS } from '../src/events/cards.js';
-import { debrief, eventOptions, eventSnapshot, freshEventState, importGuestFile, loadEventWorld, requestPayment, setEvent } from '../src/events/index.js';
+import { addProvider, confirmPayment, debrief, eventOptions, eventSnapshot, freshEventState, importGuestFile, loadEventWorld, requestPayment, setEvent } from '../src/events/index.js';
 
 const GUESTS = readFileSync(new URL('../data/events/guests.csv', import.meta.url), 'utf8');
 const start = new Date(Date.now() + 7 * 86_400_000).toISOString();
@@ -12,13 +12,21 @@ const fresh = () => {
   setEvent(s, { name: 'Test <Hack> & "Co"', start, budget: { total: 1000 }, venue: { name: 'Hall' } });
   importGuestFile(s, GUESTS);
   s.inbox = [{ id: 'i1', kind: 'sponsor', from: 'x@example.com', receivedAt: start, subject: 'PO <needed>', body: 'Need a PO.' }];
+  addProvider(s, {
+    name: 'Test <Kitchen>', tier: 'caterer', source: 'https://www.example.com/menu', allergens: 'sealed-labelled',
+    fulfilment: { type: 'delivery', fee: 20, leadHours: 24 }, minOrder: 150, reviews: { rating: 4.6, count: 312 },
+    dishes: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map((n, i) => ({ name: `Bowl ${n}`, price: 8 + i / 10, tags: i === 0 ? ['vegan', 'gluten-free', 'coeliac-safe', 'nut-free', 'sealed'] : ['vegan', 'gluten-free', 'nut-free'] })),
+  });
   return s;
 };
 const state = fresh();
 const world = await loadEventWorld(state);
 const snap = eventSnapshot(world, state);
+const opts = eventOptions(world, state).options;
 const extras = {
-  options: { options: eventOptions(world, state).options },
+  options: { options: opts },
+  provider: { option: opts.find(o => o.live) ?? opts[0], provider: world.providers.find(p => p.live) },
+  order: { plan: snap.plan },
   payment: { approval: requestPayment(world, fresh()) },
   debrief: debrief(world, fresh(), { attended: 80, leftoverPct: 10, rating: 4.5 }),
   memory: { finding: 'Billed £70 over <quote>.', date: '2026-04-23' },
@@ -27,7 +35,7 @@ const all = CARD_KINDS.map(k => card(k, snap, extras[k]));
 const gbp = n => `£${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 test('every kind renders a small, script-free fragment with a title and alt text', () => {
-  assert.deepEqual(CARD_KINDS, ['headcount', 'diets', 'options', 'plan', 'inbox', 'payment', 'debrief', 'memory']);
+  assert.deepEqual(CARD_KINDS, ['headcount', 'diets', 'options', 'provider', 'plan', 'order', 'inbox', 'payment', 'debrief', 'memory']);
   for (const c of all) {
     assert.ok(c.title && c.alt && c.html.includes('class="pc"'), c.kind);
     assert.ok(!/<script/i.test(c.html), `${c.kind} has a script`);
@@ -57,4 +65,48 @@ test('text from guests, mail and memory is escaped', () => {
 
 test('unknown kinds fail loudly', () => {
   assert.throws(() => card('pie', snap), /No card "pie"/);
+});
+
+test('a provider card shows the source domain, the verdict, at most six dishes and the total', () => {
+  const o = extras.provider.option;
+  const c = card('provider', snap, extras.provider);
+  assert.ok(c.html.includes('example.com') && !c.html.includes('https://'), 'domain as text, no link');
+  assert.match(c.html, o.eligible ? /Safe for everyone/ : /Out</);
+  assert.equal((c.html.match(/class="dish"/g) ?? []).length, 6);
+  assert.match(c.html, /\+2 more/);
+  assert.ok(c.html.includes(gbp(o.cost.total)));
+  assert.match(c.html, /4\.6<\/b>312 reviews/);
+  assert.ok(c.html.includes('Test &lt;Kitchen&gt;'));
+  const out = opts.find(x => !x.eligible);
+  if (out) assert.ok(card('provider', snap, { option: out }).html.includes(out.excluded[0].replace(/&/g, '&amp;').replace(/'/g, '&#39;')));
+  assert.throws(() => card('provider', snap, {}), /needs extra.option/);
+});
+
+test('the order card lists every line by lane and adds up to the plan', () => {
+  const c = card('order', snap, extras.order);
+  const p = snap.plan.chosen;
+  assert.equal((c.html.match(/class="item"/g) ?? []).length, p.lines.length);
+  assert.ok(c.html.includes(gbp(p.cost.total)));
+  assert.ok(c.html.includes(gbp(snap.plan.budget.total - p.cost.total)));
+});
+
+test('the payment card tracks Agentcard from request to paid, and never shows a card number', () => {
+  const st = fresh();
+  const a = requestPayment(world, st);
+  const step = html => (html.match(/class="step (done|now|)"/g) ?? []).map(x => x.match(/"step (\w*)"/)[1]);
+  assert.deepEqual(step(card('payment', snap, { approval: a }).html), ['done', 'now', '']);
+  a.payment = { processor: 'agentcard', status: 'awaiting-settlement', sandbox: true, card: '4111111111111111' };
+  const approved = card('payment', snap, { approval: a }).html;
+  assert.deepEqual(step(approved), ['done', 'done', 'now']);
+  assert.match(approved, /Agentcard · single-use card · sandbox/);
+  assert.ok(!approved.includes('4111111111111111') && approved.includes('•••• 1111'));
+  const paid = confirmPayment(world, st, { approvalId: a.id, reference: 'ac_sbx_1', amount: a.amount, status: 'paid' }).approval;
+  const html = card('payment', snap, { approval: paid }).html;
+  assert.deepEqual(step(html), ['done', 'done', 'done']);
+  assert.match(html, /Paid/);
+  assert.match(html, /ac_sbx_1/);
+});
+
+test('the header dome wears a white chef toque', () => {
+  assert.match(all[0].html, /<svg width="16" height="18"[^>]*>.*fill="#fff".*fill="#FF9800"/s);
 });

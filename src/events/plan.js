@@ -264,7 +264,8 @@ export function option(world, state, provider, hc, ctx) {
 }
 
 // The organiser can take dishes off a provider's menu; the plan re-spreads the plates.
-const menu = (provider, ctx) => provider.dishes.filter(d => !ctx.off?.has(`${provider.id}:${d.id}`));
+// Sides (crisps, fruit, drinks) never count as somebody's plate.
+const menu = (provider, ctx) => provider.dishes.filter(d => !d.tags.includes('side') && !ctx.off?.has(`${provider.id}:${d.id}`));
 
 // The cheapest sealed dish another provider has that is safe for these needs.
 function addonFor(main, needs, ctx) {

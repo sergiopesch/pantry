@@ -171,7 +171,7 @@ export function setEvent(state, e) {
   return state.event;
 }
 
-const TAGS = new Set(['meat', 'pork', 'fish', 'vegetarian', 'vegan', 'halal', 'gluten-free', 'coeliac-safe', 'dairy-free', 'nut-free', 'sealed', 'spicy']);
+const TAGS = new Set(['meat', 'pork', 'fish', 'vegetarian', 'vegan', 'halal', 'gluten-free', 'coeliac-safe', 'dairy-free', 'nut-free', 'sealed', 'spicy', 'side']);
 const TIERS = new Set(['supermarket', 'caterer', 'restaurant']);
 const ALLERGENS = new Set(['sealed-labelled', 'labelled', 'kitchen-may-contain', 'unknown']);
 
