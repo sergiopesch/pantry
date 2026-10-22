@@ -53,7 +53,7 @@ Sections: **1** opening, **2** live hand-off, **3** close. **R** resets the time
 - [ ] Grok Bot is open on **Pantry**, in a fresh chat. The window is maximised and the text is large enough to read from the back (Cmd + a couple of times).
 - [ ] The Pantry MCP and Cognee are connected. Ask once, off stage: "How many signed up?" The answer should say 140.
 - [ ] If you rehearsed a payment, reset the engine: `node src/cli.js event reset`.
-- [ ] Your phone is unlocked, with Grok Bot open and notifications on, ready for the approval. Put it under the document camera or hold it up.
+- [ ] No phone needed. The payment request stays pending on stage: no phone approval is wired, and the caterer is fictional.
 - [ ] A Terminal window is open at the repo, hidden behind Grok Bot. It's for the fallbacks below; every fallback command is read-only except `pay`.
 - [ ] The deck is in another Chrome window, already on slide 5, so Cmd+Tab gets you back.
 
@@ -95,12 +95,9 @@ Type the prompts exactly as written. Pantry's wording will vary; the **numbers**
 ### Beat 4 · Brief and payment (1:15–1:35)
 **Type:** `Send the brief and pay Little Feast.`
 
-**Pantry should say:** "Brief's drafted. It goes out on your yes. Ready to pay Little Feast £995.50 for 93. Approve on your phone."
+**Pantry should say:** "The brief's ready. It goes out on your yes. Payment request raised for £995.50. It needs your approval; I can't approve it myself." (In rehearsal it also advised holding the approval until Little Feast confirms the 6:00 drop and sends a real price. Let it say that; it's a great line.)
 
-**Do:** show the phone and approve. **Say:** "Single-use card. Nothing moves without a human yes."
-**Pantry should then say:** "Paid £995.50. Lands by 6." It only says "paid" once the status reads charged.
-
-**Fallback (no approval arrives):** "The approval goes to my phone. Pantry can't approve anything itself." Run `node src/cli.js event pay` in Terminal, then `node src/cli.js event status`, and say: "There it is, waiting for my yes." Don't run `approve` on stage unless you say out loud that it's the stub.
+**Say:** "Pantry can raise the request, but it can't pay. A human says yes, every time. The money moves on a single-use card, never the real one."
 
 ### Beat 5 · After (1:35–1:40), only if time allows
 **Say:** "Fast-forward to Friday morning."
