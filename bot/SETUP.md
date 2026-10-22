@@ -1,47 +1,66 @@
-# Wiring Pantry into a Grok Bot
+# Setting up Pantry as a Grok Bot
 
-These steps need your logins, so they're yours to run. Each ends with the check from the spec's build order.
+Pantry plans the food for community events. These steps need your logins, so they're yours to run, in the Grok Bot app. Each one ends with a check.
 
-## 1. Create the bot (build step 1)
-- One primary job, in operational terms: *"Does this household's weekly Sainsbury's shop end to end: predicts, builds the cart, gets approval, books delivery, triages the inbox."*
-- Paste `bot/system-prompt.md` into the bot's instructions. Keep the TOOLS appendix only once step 3 is done.
-- Turn demo mode on for tonight (tell the bot: "demo mode on").
-- **Check:** say "hello". It should answer in Pantry's voice: short, warm, no "I'd be happy to".
+A "Pantry" bot already exists in your Grok Bot app with the old household persona. Update it rather than creating a second one.
 
-## 2. Household profile (step 2)
-- Edit `data/household.json`: put real names in place of `Wife` and `Daughter`.
-- **Check:** "What are everyone's rules?" It should recite three members, three rules and the conflict policy.
+## 1. Profile
+- Open Pantry → edit the Bot.
+- **Description:** paste all of `bot/persona.md`. It's under 4,000 characters, so it also fits a template.
+- **Character:** shape **Dome** (a serving cloche), colour **Yellow** (#FF9800, the closest to Pantry's saffron). Turn on Bot colour for 1:1 messages and cards.
+- **Sidebar line:** "Plans the food for community events. Order for who shows up."
+- **Check:** say "hello". The answer is short and warm, with no "I'd be happy to".
 
-## 3. Put the engine on the bot's computer
-- Copy this folder to the bot's cloud computer, e.g. `~/pantry`. You need Node 20 or later. There are no dependencies and no install step.
-- If the bot supports MCP tool servers, register a stdio server: command `node`, args `~/pantry/src/mcp.js`. It exposes 11 tools. None of them can approve, charge or file anything.
-- If it doesn't, the CLI works the same way: `node ~/pantry/src/cli.js <command> --json`.
-- Upload `bot/skills/*.md` as skills and `bot/routines/weekly-shop.md` as the routine. Then teach by demonstration: walk it through one Sainsbury's search, let it save the skill, correct it, and rerun.
-- **Check (step 3):** "When do we run out of eggs?" It should answer Thursday night, without being told.
+## 2. Voice
+- Audition **Sal**, **Eve** and **Atlas** in voice chat, using the line in `bot/profile.json` → `voice.auditionLine`. These were picked by name only, not by ear. Keep the one that reads the numbers most calmly. Speed 1x, language English.
+- **Check:** in voice chat, "How many are we planning for?" Numbers come out as words, unhurried, with allergies said in full.
 
-## 4. 1Password (open item)
-- Create a login item named `Sainsbury's` in the vault the bot can reach. The bot points at the item, and the secret never leaves the vault.
-- Note: at launch, per-bot credential isolation on the shared computer was roadmap, not shipped. Every bot on the account can see the same files and logins. Keep only Pantry on this account tonight, or keep the approval boundaries tight.
-- **Check:** the bot logs in to Sainsbury's with autofill and never echoes the password.
+## 3. Luma
+- There's no built-in Luma connector in Grok Bot. Pantry connects through Luma's public API, from its own MCP server (step 9).
+- The API needs **Luma Plus**. Create a key at luma.com → Calendar → Settings → API keys. A key belongs to one calendar and has full access to it, so treat it like a password.
+- In Pantry's Bot settings → **Secrets** → Add new secret: name `LUMA_API_KEY`, value the key. Pantry only ever reads from Luma (events, guests, check-ins). It never writes.
+- Live updates: Luma webhooks (`guest.registered`, `guest.updated`) can't send the auth header Grok Bot's webhook routines need. So the countdown polls Luma every hour instead.
+- No key yet: Pantry runs on its dummy Luma calendar (`data/events/luma/`, in the API's exact response shapes) and says so.
+- **Check:** "How many are coming?" Pantry answers from `pantry_luma_sync` and names the source (`luma-api`).
 
-## 5. Sainsbury's browsing (step 4)
-- Use the bot's real, headed browser. On 22 Oct, plain HTTP and headless Chromium were both blocked (Akamai 403) on the very first request. Only a real browser got through.
-- Run the browse skill. Or capture products yourself in about two minutes: run `npm run snippet | pbcopy`, paste the result into DevTools on a few Sainsbury's search pages, then `pbpaste > captured.json && node src/cli.js catalog import captured.json --dry-run`.
-- **Check:** one product name plus a CDN image URL from a live search. The app's product cards switch from illustrations to photos.
+## 4. Pantry's own email
+- Turn on the Bot's dedicated email address. You can't change it once it's on, so choose carefully.
+- Point quotes, caterer confirmations and invoices at it.
+- **Check:** email it a test quote. Pantry files it and surfaces it only if it changes the pick.
 
-## 6. Agentcard Vault (step 8, open item)
-- Register as a developer, add your card on the phone (passkey), and connect Agentcard's MCP to the bot.
-- **Test the UK rails before you rely on it:** Mastercard works from anywhere; attaching Visa needs a US-issued card.
-- `src/vault.js` has an `agentcardDriver` that throws `NOT_WIRED` until it's wired to Agentcard's real tools. That's deliberate: no guessed API. Until then the app uses the stub driver, with the same approval flow and no money moving.
-- **Check:** the approval prompt fires ("Pantry wants to spend £… at Sainsbury's") and the stubbed charge appears in `data/state.json` → `log`.
+## 5. 1Password (later)
+- The vault **Shared with Grok Bot** already exists, and it's empty. Grok Bot sees only what you move into it.
+- When you're ready: move the supplier logins Pantry needs (Sainsbury's, Waitrose, M&S, any caterer portal) into that vault, add each site's URL so autofill matches, then Refresh vault in Grok Bot.
+- **Check:** Pantry signs in to Sainsbury's with autofill and never echoes the password.
 
-## 7. Pantry's inbox (step 9, open item)
-- Give Pantry its own address and forward Sainsbury's mail to it with a filter. Until then, `data/inbox.json` holds realistic fixture mail.
-- **Check:** `node src/cli.js inbox` handles the delivery notice quietly.
+## 6. Payment: Link
+- Add a card in Link (Settings → payments). Grok Bot never sees the number or the security code.
+- **Check:** "Pay for the plan." The approval fires on your phone ("Pantry wants to spend £… with …"), and Pantry says "paid" only once the status reads charged.
 
-## 8. The app, for the room and for your phone (step 10)
-- `npm run demo`, then open http://127.0.0.1:4217. On a laptop or projector the phone stands on the counter; press F for full screen.
-- Keys **0–9** run the ten beats inside the real app; pressing a beat's key again steps through it. **A** runs the whole arc hands-free (2:45). **Shift+R** resets.
-- Stream Deck: one Hotkey action per button, sending 0 through 9.
-- On your phone: `HOST=0.0.0.0 npm run demo` prints a pairing link (`?key=…`) for the same Wi-Fi. Without the key, the API refuses every call, so nobody else on the venue network can see the cart or press approve.
-- The bot links into the app from chat. For example, it can send "Review Thursday's cart" pointing at `/?tab=cart`.
+## 7. Skills
+- Add each file in `bot/skills/` as a skill, in order. The skill name is the file's title, and the description is its "When to use" line.
+- **Check:** "What do you do when someone shares a Luma export?" It describes import, headcount, diets.
+
+## 8. Routine
+- In chat: "Run the event countdown for <event>, using bot/routines/event-countdown.md." Pantry sets up the T-7, T-3, T-2, day-of and T+1 steps.
+- **Check:** the routine appears under Routines with the right dates.
+
+## 9. The engine on the Bot's computer
+- Copy this folder to the Bot's computer as `~/pantry`. You need Node 20 or later. There are no dependencies.
+- Ask Pantry in chat to add the MCP server: command `node`, args `~/pantry/src/mcp.js`, with `LUMA_API_KEY` passed from its secrets. If MCP isn't available, the CLI does the same: `node ~/pantry/src/cli.js event <cmd> --json`.
+- None of the tools can approve, pay, send or file.
+- **Check:** "How many are we planning for tonight?" It answers with sign-ups, the show rate and plan-for, without being told the maths.
+
+## 10. Supermarket browsing
+- Use the Bot's real, headed browser. On 22 Oct, Sainsbury's blocked plain HTTP and headless Chromium (Akamai 403) on the first request; a real browser loaded fine.
+- Any Access Denied or captcha: Pantry stops and tells you.
+- **Check:** one live price and product URL from a Sainsbury's search, quoted with today's date.
+
+## 11. Publish as a template
+- Once the checks pass: Pantry → Create Template. Name Pantry, shape dome, colour yellow, body = `bot/persona.md`, visibility Public.
+- Any organiser can import it and get their own Pantry, with their own ledger and their own vault.
+- **Check:** open the template link in a private window. The name, character and description are right.
+
+## Demo mode
+- Tell Pantry "demo mode on". It narrates each action in one short sentence so the room can follow.
+- Everything happens in Grok Bot itself: chat, voice, cards, approvals on the phone. There's no separate app.

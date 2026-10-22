@@ -5,7 +5,7 @@ import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 
-const child = spawn(process.execPath, [fileURLToPath(new URL('../src/mcp.js', import.meta.url))], { env: { ...process.env, PANTRY_STATE: tmpState() } });
+const child = spawn(process.execPath, [fileURLToPath(new URL('../src/mcp.js', import.meta.url))], { env: { ...process.env, PANTRY_STATE: tmpState(), PANTRY_EVENT_STATE: tmpState() } });
 const pending = new Map();
 createInterface({ input: child.stdout }).on('line', line => {
   const msg = JSON.parse(line);
@@ -26,14 +26,16 @@ test('initializes and lists tools, none of which can move money', async () => {
   child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' })}\n`);
   const { result } = await rpc('tools/list');
   const names = result.tools.map(t => t.name);
-  assert.ok(names.includes('pantry_predict'));
+  assert.ok(names.includes('pantry_plan'));
   assert.ok(names.includes('pantry_checkout_request'));
-  assert.ok(!names.some(n => /approve|charge|file/.test(n)), names.join(', '));
+  assert.ok(!names.some(n => /approve|charge|send|file/.test(n)), names.join(', '));
 });
 
-test('predicts and asks for approval, but cannot approve', async () => {
-  const p = await call('pantry_predict');
-  assert.match(p.nudge, /^Eggs run out Thursday night/);
+test('plans for who shows up and asks for approval, but cannot approve', async () => {
+  const h = await call('pantry_headcount');
+  assert.match(h.text, /^140 signed up\. .* Plan for 93, not 140\.$/);
+  const d = await call('pantry_diets');
+  assert.ok(d.needs.every(n => !('guests' in n)), 'diets are counts only');
   const approval = await call('pantry_checkout_request');
   assert.equal(approval.status, 'pending');
   const status = await call('pantry_status');

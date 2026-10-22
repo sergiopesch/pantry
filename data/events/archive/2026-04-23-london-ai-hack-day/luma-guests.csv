@@ -1,0 +1,161 @@
+api_id,name,first_name,last_name,email,phone_number,created_at,approval_status,checked_in_at,amount,currency,ticket_name,survey_response_rating,survey_response_feedback,Any dietary requirements or allergies?
+gst-juf3gVdK85,Bilal Varga,Bilal,Varga,bilal.varga.0@guest.example,,2026-04-20T17:00:00.000Z,approved,,0.00,GBP,General admission,,,
+gst-42XibRV7Md,Liam Dawson,Liam,Dawson,liam.dawson.1@guest.example,,2026-04-12T17:00:00.000Z,approved,2026-04-23T18:04:00.000Z,0.00,GBP,General admission,,,no
+gst-UqxV3wY6zS,Cora Young,Cora,Young,cora.young.2@guest.example,,2026-04-12T17:00:00.000Z,approved,,0.00,GBP,General admission,,,No requirements
+gst-G5Kh59iPEF,Yusuf Moreau,Yusuf,Moreau,yusuf.moreau.3@guest.example,,2026-04-17T17:00:00.000Z,approved,2026-04-23T17:32:00.000Z,0.00,GBP,General admission,,,
+gst-RR8u8qm3fQ,Dev Varga,Dev,Varga,dev.varga.4@guest.example,,2026-04-14T17:00:00.000Z,approved,,0.00,GBP,General admission,,,GF please
+gst-qiYnNh8u5Y,Quinn Brooks,Quinn,Brooks,quinn.brooks.5@guest.example,,2026-04-08T17:00:00.000Z,approved,2026-04-23T17:19:00.000Z,0.00,GBP,General admission,,,no
+gst-AQ3Nbvwcg4,Liam Chen,Liam,Chen,liam.chen.6@guest.example,,2026-04-08T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Vegan
+gst-Jn6NTK5p5Y,Grace Usman,Grace,Usman,grace.usman.7@guest.example,,2026-04-09T17:00:00.000Z,approved,2026-04-23T17:40:00.000Z,0.00,GBP,General admission,,,
+gst-PZusdWn62M,Quinn Singh,Quinn,Singh,quinn.singh.8@guest.example,,2026-04-13T17:00:00.000Z,approved,,0.00,GBP,General admission,,,no
+gst-tnuciS895x,Jonah Adeyemi,Jonah,Adeyemi,jonah.adeyemi.9@guest.example,,2026-04-01T17:00:00.000Z,approved,,0.00,GBP,General admission,,,vegan
+gst-XME3uYNeLW,Yusuf Ibrahim,Yusuf,Ibrahim,yusuf.ibrahim.10@guest.example,,2026-04-05T17:00:00.000Z,approved,2026-04-23T17:35:00.000Z,0.00,GBP,General admission,,,not too spicy
+gst-f5oZFNRVvM,Olu Tanaka,Olu,Tanaka,olu.tanaka.11@guest.example,,2026-04-10T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Halal only please
+gst-VQssSRH3D7,Kemi Ibrahim,Kemi,Ibrahim,kemi.ibrahim.12@guest.example,,2026-04-15T17:00:00.000Z,approved,2026-04-23T18:14:00.000Z,0.00,GBP,General admission,5,,No requirements
+gst-7kCn3spv9C,Elif Rossi,Elif,Rossi,elif.rossi.13@guest.example,,2026-04-20T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Dairy free
+gst-K7FejtgB4y,Priya Usman,Priya,Usman,priya.usman.14@guest.example,,2026-04-12T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Gluten free
+gst-BTBbRbQADi,Bilal Lopez,Bilal,Lopez,bilal.lopez.15@guest.example,,2026-04-12T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Nut allergy (severe)
+gst-jG2jTTPBLn,Zoe Walsh,Zoe,Walsh,zoe.walsh.16@guest.example,,2026-04-08T17:00:00.000Z,approved,,0.00,GBP,General admission,,,None
+gst-T4XrgB6M6R,Wren Dawson,Wren,Dawson,wren.dawson.17@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T17:36:00.000Z,0.00,GBP,General admission,,,N/A
+gst-4mAx5E6CLm,Wren Tanaka,Wren,Tanaka,wren.tanaka.18@guest.example,,2026-04-02T17:00:00.000Z,approved,,0.00,GBP,General admission,,,None
+gst-DPHM6qHy6Q,Xan Mensah,Xan,Mensah,xan.mensah.19@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T17:44:00.000Z,0.00,GBP,General admission,3,Food was ok,
+gst-DezQBTKaqS,Dev Fischer,Dev,Fischer,dev.fischer.20@guest.example,,2026-04-19T17:00:00.000Z,approved,2026-04-23T17:53:00.000Z,0.00,GBP,General admission,,,Vegetarian
+gst-BzdBMS2mQB,Yusuf Young,Yusuf,Young,yusuf.young.21@guest.example,,2026-04-14T17:00:00.000Z,approved,,0.00,GBP,General admission,,,not too spicy
+gst-K8nPs67v5B,Ada Zielinski,Ada,Zielinski,ada.zielinski.22@guest.example,,2026-04-01T17:00:00.000Z,approved,2026-04-23T17:14:00.000Z,0.00,GBP,General admission,,,Halal only please
+gst-PWXdPwKmNV,Elif Mensah,Elif,Mensah,elif.mensah.23@guest.example,,2026-04-14T17:00:00.000Z,approved,2026-04-23T17:38:00.000Z,0.00,GBP,General admission,,,
+gst-bZJxrgEyaA,Femi Hughes,Femi,Hughes,femi.hughes.24@guest.example,,2026-04-11T17:00:00.000Z,approved,2026-04-23T18:04:00.000Z,0.00,GBP,General admission,,,No requirements
+gst-JMQjC5ej2G,Jonah Patel,Jonah,Patel,jonah.patel.25@guest.example,,2026-04-21T17:00:00.000Z,approved,2026-04-23T17:58:00.000Z,0.00,GBP,General admission,,,none
+gst-HMeuqWA6QW,Wren Singh,Wren,Singh,wren.singh.26@guest.example,,2026-04-17T17:00:00.000Z,approved,,0.00,GBP,General admission,,,none
+gst-L6APjKgrYG,Priya Tanaka,Priya,Tanaka,priya.tanaka.27@guest.example,,2026-04-07T17:00:00.000Z,approved,2026-04-23T17:19:00.000Z,0.00,GBP,General admission,,,veggie
+gst-6bN3AGUkGz,Jonah Walsh,Jonah,Walsh,jonah.walsh.28@guest.example,,2026-04-19T17:00:00.000Z,approved,,0.00,GBP,General admission,,,No requirements
+gst-VtPpX6nbR9,Elif Lopez,Elif,Lopez,elif.lopez.29@guest.example,,2026-04-09T17:00:00.000Z,approved,2026-04-23T18:12:00.000Z,0.00,GBP,General admission,5,Loved the food,Vegetarian
+gst-UbvK8xyzNG,Cora Dawson,Cora,Dawson,cora.dawson.30@guest.example,,2026-04-02T17:00:00.000Z,approved,2026-04-23T17:05:00.000Z,0.00,GBP,General admission,,,no
+gst-z9Ycoo6p4p,Aria Rossi,Aria,Rossi,aria.rossi.31@guest.example,,2026-04-05T17:00:00.000Z,approved,2026-04-23T17:29:00.000Z,0.00,GBP,General admission,4,,no
+gst-rbJh6pDiTr,Ada Young,Ada,Young,ada.young.32@guest.example,,2026-04-04T17:00:00.000Z,approved,2026-04-23T17:02:00.000Z,0.00,GBP,General admission,,,none
+gst-B8zmuRTCZG,Dev Lopez,Dev,Lopez,dev.lopez.33@guest.example,,2026-04-05T17:00:00.000Z,approved,2026-04-23T17:44:00.000Z,0.00,GBP,General admission,,,vegetarian
+gst-KErdnWxjaJ,Uma Jones,Uma,Jones,uma.jones.34@guest.example,,2026-04-01T17:00:00.000Z,approved,2026-04-23T18:13:00.000Z,0.00,GBP,General admission,,,Dairy free
+gst-d8weLWdh4f,Kemi Varga,Kemi,Varga,kemi.varga.35@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T17:44:00.000Z,0.00,GBP,General admission,,,no
+gst-SG7H9fSNrH,Nikhil Okafor,Nikhil,Okafor,nikhil.okafor.36@guest.example,,2026-04-12T17:00:00.000Z,approved,,0.00,GBP,General admission,,,"Nope, anything"
+gst-dBn79NhDK6,Wren Jones,Wren,Jones,wren.jones.37@guest.example,,2026-04-07T17:00:00.000Z,approved,2026-04-23T17:50:00.000Z,0.00,GBP,General admission,4,,None
+gst-vHeUfvUyyV,Jonah Jones,Jonah,Jones,jonah.jones.38@guest.example,,2026-04-01T17:00:00.000Z,approved,2026-04-23T18:13:00.000Z,0.00,GBP,General admission,4,Really well organised,veggie
+gst-ESLJEGUaPq,Elif Fischer,Elif,Fischer,elif.fischer.39@guest.example,,2026-04-14T17:00:00.000Z,approved,2026-04-23T17:28:00.000Z,0.00,GBP,General admission,5,,plant based
+gst-iP7XEbWRQs,Yusuf Evans,Yusuf,Evans,yusuf.evans.40@guest.example,,2026-04-10T17:00:00.000Z,approved,2026-04-23T18:06:00.000Z,0.00,GBP,General admission,5,"Food was great, thanks!",No requirements
+gst-XvyFMnfcVn,Olu Young,Olu,Young,olu.young.41@guest.example,,2026-04-10T17:00:00.000Z,approved,,0.00,GBP,General admission,,,None
+gst-cYkx9vaaPV,Priya Khan,Priya,Khan,priya.khan.42@guest.example,,2026-04-02T17:00:00.000Z,approved,2026-04-23T17:19:00.000Z,0.00,GBP,General admission,,,none
+gst-bt8Y3C5MB3,Hiro Zielinski,Hiro,Zielinski,hiro.zielinski.43@guest.example,,2026-04-10T17:00:00.000Z,approved,2026-04-23T17:20:00.000Z,0.00,GBP,General admission,,,None
+gst-D3ArEtuTqn,Hiro Usman,Hiro,Usman,hiro.usman.44@guest.example,,2026-04-04T17:00:00.000Z,approved,,0.00,GBP,General admission,,,veggie
+gst-2RNJdyLDFx,Tara Ibrahim,Tara,Ibrahim,tara.ibrahim.45@guest.example,,2026-04-19T17:00:00.000Z,approved,2026-04-23T17:19:00.000Z,0.00,GBP,General admission,,,Pescatarian
+gst-6qo58ftjnX,Zoe Quinn,Zoe,Quinn,zoe.quinn.46@guest.example,,2026-04-15T17:00:00.000Z,approved,,0.00,GBP,General admission,,,No pork
+gst-WdhxSn323Y,Nikhil Jones,Nikhil,Jones,nikhil.jones.47@guest.example,,2026-04-18T17:00:00.000Z,approved,2026-04-23T17:18:00.000Z,0.00,GBP,General admission,,,Dairy free
+gst-Ni2vEm2FPV,Nikhil Evans,Nikhil,Evans,nikhil.evans.48@guest.example,,2026-04-17T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Vegan
+gst-FwooiUsdPy,Yusuf Okafor,Yusuf,Okafor,yusuf.okafor.49@guest.example,,2026-04-01T17:00:00.000Z,approved,2026-04-23T17:54:00.000Z,0.00,GBP,General admission,,,plant based
+gst-oDi2K9r8X2,Wren Evans,Wren,Evans,wren.evans.50@guest.example,,2026-04-06T17:00:00.000Z,approved,2026-04-23T17:54:00.000Z,0.00,GBP,General admission,5,,No requirements
+gst-BGQQKjBahs,Dev Rossi,Dev,Rossi,dev.rossi.51@guest.example,,2026-04-14T17:00:00.000Z,approved,,0.00,GBP,General admission,,,lactose intolerant
+gst-HxzqheujLe,Nikhil Young,Nikhil,Young,nikhil.young.52@guest.example,,2026-04-13T17:00:00.000Z,approved,2026-04-23T17:21:00.000Z,0.00,GBP,General admission,,,None
+gst-9mChBHtFvT,Kemi Mensah,Kemi,Mensah,kemi.mensah.53@guest.example,,2026-04-15T17:00:00.000Z,approved,,0.00,GBP,General admission,,,none
+gst-Ttg5MKTQET,Elif Walsh,Elif,Walsh,elif.walsh.54@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T17:54:00.000Z,0.00,GBP,General admission,5,,vegan
+gst-UbWhKzopW5,Elif Okafor,Elif,Okafor,elif.okafor.55@guest.example,,2026-04-08T17:00:00.000Z,approved,,0.00,GBP,General admission,,,
+gst-sMdYBUSSjn,Femi Young,Femi,Young,femi.young.56@guest.example,,2026-04-07T17:00:00.000Z,approved,2026-04-23T17:33:00.000Z,0.00,GBP,General admission,,,N/A
+gst-bQkBEFCZFW,Ada Patel,Ada,Patel,ada.patel.57@guest.example,,2026-04-07T17:00:00.000Z,approved,2026-04-23T17:09:00.000Z,0.00,GBP,General admission,4,,halal
+gst-GJd4VZdJXF,Dev Jones,Dev,Jones,dev.jones.58@guest.example,,2026-04-08T17:00:00.000Z,approved,2026-04-23T17:24:00.000Z,0.00,GBP,General admission,4,"Food was great, thanks!",no
+gst-G5PnzQtQCN,Sami Gupta,Sami,Gupta,sami.gupta.59@guest.example,,2026-04-01T17:00:00.000Z,approved,2026-04-23T17:34:00.000Z,0.00,GBP,General admission,,,"Nope, anything"
+gst-bMVro7yzuQ,Chloe Tanaka,Chloe,Tanaka,chloe.tanaka.60@guest.example,,2026-04-07T17:00:00.000Z,approved,2026-04-23T17:23:00.000Z,0.00,GBP,General admission,4,Loved the food,
+gst-aSmFphUcKS,Nikhil Chen,Nikhil,Chen,nikhil.chen.61@guest.example,,2026-04-21T17:00:00.000Z,approved,,0.00,GBP,General admission,,,
+gst-KzmxoDdYzC,Isla Moreau,Isla,Moreau,isla.moreau.62@guest.example,,2026-04-14T17:00:00.000Z,approved,2026-04-23T17:04:00.000Z,0.00,GBP,General admission,,,no
+gst-6tpijKSMBN,Aria Quinn,Aria,Quinn,aria.quinn.63@guest.example,,2026-04-03T17:00:00.000Z,approved,,0.00,GBP,General admission,,,vegetarian
+gst-APa4XBH3N4,Yusuf Jones,Yusuf,Jones,yusuf.jones.64@guest.example,,2026-04-14T17:00:00.000Z,approved,2026-04-23T17:11:00.000Z,0.00,GBP,General admission,,,Halal only please
+gst-ydvpfjBH5k,Hiro Khan,Hiro,Khan,hiro.khan.65@guest.example,,2026-04-02T17:00:00.000Z,approved,2026-04-23T17:30:00.000Z,0.00,GBP,General admission,,,Vegetarian please
+gst-ncMD578zEy,Elif Quinn,Elif,Quinn,elif.quinn.66@guest.example,,2026-04-21T17:00:00.000Z,approved,2026-04-23T17:45:00.000Z,0.00,GBP,General admission,4,,
+gst-nzw5K6znrL,Dev Hughes,Dev,Hughes,dev.hughes.67@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T17:44:00.000Z,0.00,GBP,General admission,4,,vegetarian
+gst-BdtV64FkeA,Uma Brooks,Uma,Brooks,uma.brooks.68@guest.example,,2026-04-04T17:00:00.000Z,approved,2026-04-23T17:50:00.000Z,0.00,GBP,General admission,,,"Nope, anything"
+gst-q9qewtPUqK,Kemi Fischer,Kemi,Fischer,kemi.fischer.69@guest.example,,2026-04-21T17:00:00.000Z,approved,2026-04-23T17:38:00.000Z,0.00,GBP,General admission,,,veggie
+gst-NeQLDXqsJR,Olu Varga,Olu,Varga,olu.varga.70@guest.example,,2026-04-11T17:00:00.000Z,approved,2026-04-23T17:05:00.000Z,0.00,GBP,General admission,4,Really well organised,N/A
+gst-h5YZgv4bi7,Ben Gupta,Ben,Gupta,ben.gupta.71@guest.example,,2026-04-21T17:00:00.000Z,approved,,0.00,GBP,General admission,,,
+gst-VicJJMUdoH,Dami Chen,Dami,Chen,dami.chen.72@guest.example,,2026-04-17T17:00:00.000Z,approved,2026-04-23T18:04:00.000Z,0.00,GBP,General admission,5,"Food was great, thanks!",Vegan
+gst-KJXPa8CpGT,Vik Moreau,Vik,Moreau,vik.moreau.73@guest.example,,2026-04-14T17:00:00.000Z,approved,,0.00,GBP,General admission,,,"Nope, anything"
+gst-4sMRQeyWuU,Isla Patel,Isla,Patel,isla.patel.74@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T17:05:00.000Z,0.00,GBP,General admission,5,,Vegan
+gst-wHYV2ABwnw,Ada Evans,Ada,Evans,ada.evans.75@guest.example,,2026-04-04T17:00:00.000Z,approved,2026-04-23T17:40:00.000Z,0.00,GBP,General admission,,,N/A
+gst-n2mXx7YQfA,Femi Mensah,Femi,Mensah,femi.mensah.76@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T17:37:00.000Z,0.00,GBP,General admission,5,Loved the food,Vegetarian
+gst-HaVr2pJHqS,Maya Moreau,Maya,Moreau,maya.moreau.77@guest.example,,2026-04-15T17:00:00.000Z,approved,,0.00,GBP,General admission,,,no
+gst-SuzJQsiXMJ,Vik Gupta,Vik,Gupta,vik.gupta.78@guest.example,,2026-04-13T17:00:00.000Z,approved,,0.00,GBP,General admission,,,no
+gst-MjovvWCCnX,Zoe Gupta,Zoe,Gupta,zoe.gupta.79@guest.example,,2026-04-15T17:00:00.000Z,approved,,0.00,GBP,General admission,,,"Nope, anything"
+gst-RRrW4ETSZj,Grace Jones,Grace,Jones,grace.jones.80@guest.example,,2026-04-17T17:00:00.000Z,approved,,0.00,GBP,General admission,,,pescatarian - fish ok
+gst-HbTy7Zo3kr,Olu Khan,Olu,Khan,olu.khan.81@guest.example,,2026-04-15T17:00:00.000Z,approved,,0.00,GBP,General admission,,,GF please
+gst-ztgDgn3ZvD,Yusuf Patel,Yusuf,Patel,yusuf.patel.82@guest.example,,2026-04-05T17:00:00.000Z,approved,2026-04-23T17:56:00.000Z,0.00,GBP,General admission,,,No requirements
+gst-wbHgfaTdzG,Dami Mensah,Dami,Mensah,dami.mensah.83@guest.example,,2026-04-03T17:00:00.000Z,approved,2026-04-23T17:11:00.000Z,0.00,GBP,General admission,,,None
+gst-GZjE2hN77N,Sami Adeyemi,Sami,Adeyemi,sami.adeyemi.84@guest.example,,2026-04-05T17:00:00.000Z,approved,2026-04-23T18:11:00.000Z,0.00,GBP,General admission,,,Vegan (strict)
+gst-spZbaRYZPb,Aria Tanaka,Aria,Tanaka,aria.tanaka.85@guest.example,,2026-04-16T17:00:00.000Z,approved,,0.00,GBP,General admission,,,no
+gst-DoaDbwFhKM,Jonah Quinn,Jonah,Quinn,jonah.quinn.86@guest.example,,2026-04-07T17:00:00.000Z,approved,,0.00,GBP,General admission,,,No spicy food
+gst-9XDkaCu6Bc,Hiro Adeyemi,Hiro,Adeyemi,hiro.adeyemi.87@guest.example,,2026-04-12T17:00:00.000Z,approved,2026-04-23T18:00:00.000Z,0.00,GBP,General admission,4,,"Nope, anything"
+gst-cgvxBhebvR,Olu Adeyemi,Olu,Adeyemi,olu.adeyemi.88@guest.example,,2026-04-07T17:00:00.000Z,approved,,0.00,GBP,General admission,,,"Vegan, no nuts please"
+gst-zNgEchp4rJ,Kemi Young,Kemi,Young,kemi.young.89@guest.example,,2026-04-10T17:00:00.000Z,approved,,0.00,GBP,General admission,,,no
+gst-JhxVU78B8c,Dev Brooks,Dev,Brooks,dev.brooks.90@guest.example,,2026-04-14T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Halal only please
+gst-9vYbfzM5ZR,Dev Zielinski,Dev,Zielinski,dev.zielinski.91@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T17:46:00.000Z,0.00,GBP,General admission,4,,vegetarian
+gst-5vPTvSzcwj,Dami Lopez,Dami,Lopez,dami.lopez.92@guest.example,,2026-04-03T17:00:00.000Z,approved,2026-04-23T17:54:00.000Z,0.00,GBP,General admission,,,Pescatarian
+gst-vbyVd8MFQY,Hiro Okafor,Hiro,Okafor,hiro.okafor.93@guest.example,,2026-04-17T17:00:00.000Z,approved,2026-04-23T17:01:00.000Z,0.00,GBP,General admission,4,,halal
+gst-E76Wcfzz6g,Hiro Novak,Hiro,Novak,hiro.novak.94@guest.example,,2026-04-19T17:00:00.000Z,approved,2026-04-23T17:05:00.000Z,0.00,GBP,General admission,,,Halal only please
+gst-TfhZUdufKU,Elif Novak,Elif,Novak,elif.novak.95@guest.example,,2026-04-17T17:00:00.000Z,approved,,0.00,GBP,General admission,,,vegetarian
+gst-pAAFd9YhV3,Quinn Fischer,Quinn,Fischer,quinn.fischer.96@guest.example,,2026-04-13T17:00:00.000Z,approved,2026-04-23T18:08:00.000Z,0.00,GBP,General admission,4,"Food was great, thanks!",vegan
+gst-8aSsfEsWM8,Liam Evans,Liam,Evans,liam.evans.97@guest.example,,2026-04-18T17:00:00.000Z,approved,2026-04-23T17:59:00.000Z,0.00,GBP,General admission,,,no pork please
+gst-uiEnJWdkKJ,Rosa Gupta,Rosa,Gupta,rosa.gupta.98@guest.example,,2026-04-04T17:00:00.000Z,approved,,0.00,GBP,General admission,,,None
+gst-iKpKJcMa4L,Wren Zielinski,Wren,Zielinski,wren.zielinski.99@guest.example,,2026-04-09T17:00:00.000Z,approved,,0.00,GBP,General admission,,,
+gst-EDSq4xikWq,Ben Dawson,Ben,Dawson,ben.dawson.100@guest.example,,2026-04-02T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Nut allergy (severe)
+gst-oPAeA2e3fe,Uma Walsh,Uma,Walsh,uma.walsh.101@guest.example,,2026-04-17T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Vegetarian please
+gst-vSKZmZgDxD,Uma Zielinski,Uma,Zielinski,uma.zielinski.102@guest.example,,2026-04-13T17:00:00.000Z,approved,2026-04-23T18:00:00.000Z,0.00,GBP,General admission,5,Really well organised,Vegetarian please
+gst-wMuqkS93jh,Isla Tanaka,Isla,Tanaka,isla.tanaka.103@guest.example,,2026-04-05T17:00:00.000Z,approved,2026-04-23T17:04:00.000Z,0.00,GBP,General admission,,,gluten-free
+gst-iAWu6SRS2i,Femi Lopez,Femi,Lopez,femi.lopez.104@guest.example,,2026-04-03T17:00:00.000Z,approved,,0.00,GBP,General admission,,,
+gst-PTxouF3caU,Zoe Mensah,Zoe,Mensah,zoe.mensah.105@guest.example,,2026-04-13T17:00:00.000Z,approved,,0.00,GBP,General admission,,,pescatarian - fish ok
+gst-5pNNNx8MxZ,Elif Patel,Elif,Patel,elif.patel.106@guest.example,,2026-04-04T17:00:00.000Z,approved,2026-04-23T17:15:00.000Z,0.00,GBP,General admission,,,allergic to nuts
+gst-LzGpndvpVZ,Grace Lopez,Grace,Lopez,grace.lopez.107@guest.example,,2026-04-02T17:00:00.000Z,approved,2026-04-23T17:24:00.000Z,0.00,GBP,General admission,5,,"Nope, anything"
+gst-WBuqinNbHm,Kemi Jones,Kemi,Jones,kemi.jones.108@guest.example,,2026-04-12T17:00:00.000Z,approved,2026-04-23T17:59:00.000Z,0.00,GBP,General admission,,,Vegan (strict)
+gst-Du2as5xDPb,Yusuf Lopez,Yusuf,Lopez,yusuf.lopez.109@guest.example,,2026-04-14T17:00:00.000Z,approved,2026-04-23T17:10:00.000Z,0.00,GBP,General admission,,,no
+gst-rWW6NB7ofv,Tara Quinn,Tara,Quinn,tara.quinn.110@guest.example,,2026-04-13T17:00:00.000Z,approved,,0.00,GBP,General admission,,,none
+gst-J3XFUfio4r,Xan Jones,Xan,Jones,xan.jones.111@guest.example,,2026-04-12T17:00:00.000Z,approved,2026-04-23T17:52:00.000Z,0.00,GBP,General admission,4,,No requirements
+gst-faAmZnbwhJ,Sami Lopez,Sami,Lopez,sami.lopez.112@guest.example,,2026-04-18T17:00:00.000Z,approved,2026-04-23T18:10:00.000Z,0.00,GBP,General admission,,,coeliac - strict gluten free
+gst-dPxachSfYx,Grace Gupta,Grace,Gupta,grace.gupta.113@guest.example,,2026-04-08T17:00:00.000Z,approved,2026-04-23T17:55:00.000Z,0.00,GBP,General admission,,,No requirements
+gst-PvqnhkP7iM,Xan Brooks,Xan,Brooks,xan.brooks.114@guest.example,,2026-04-21T17:00:00.000Z,approved,,0.00,GBP,General admission,,,"Nope, anything"
+gst-RoWXgcZebt,Cora Singh,Cora,Singh,cora.singh.115@guest.example,,2026-04-04T17:00:00.000Z,approved,2026-04-23T17:37:00.000Z,0.00,GBP,General admission,,,Halal only please
+gst-noC8gDUjMs,Bilal Novak,Bilal,Novak,bilal.novak.116@guest.example,,2026-04-19T17:00:00.000Z,approved,2026-04-23T17:29:00.000Z,0.00,GBP,General admission,,,"Nope, anything"
+gst-rT67oXajux,Yusuf Quinn,Yusuf,Quinn,yusuf.quinn.117@guest.example,,2026-04-09T17:00:00.000Z,approved,,0.00,GBP,General admission,,,None
+gst-KTrr9JkbNH,Xan Okafor,Xan,Okafor,xan.okafor.118@guest.example,,2026-04-06T17:00:00.000Z,approved,2026-04-23T18:14:00.000Z,0.00,GBP,General admission,,,Vegan
+gst-zrWCBC2Kib,Priya Adeyemi,Priya,Adeyemi,priya.adeyemi.119@guest.example,,2026-04-06T17:00:00.000Z,approved,2026-04-23T18:07:00.000Z,0.00,GBP,General admission,,,no
+gst-Jpy7hjTZvm,Cora Gupta,Cora,Gupta,cora.gupta.120@guest.example,,2026-04-07T17:00:00.000Z,approved,2026-04-23T17:39:00.000Z,0.00,GBP,General admission,5,"Food was great, thanks!",None
+gst-jHtMg5jPFp,Ben Lopez,Ben,Lopez,ben.lopez.121@guest.example,,2026-04-07T17:00:00.000Z,approved,2026-04-23T17:43:00.000Z,0.00,GBP,General admission,5,Loved the food,None
+gst-Bc6vNtoUSa,Hiro Gupta,Hiro,Gupta,hiro.gupta.122@guest.example,,2026-04-04T17:00:00.000Z,approved,2026-04-23T17:20:00.000Z,0.00,GBP,General admission,,,lactose intolerant
+gst-9AxtgBYD2v,Tara Okafor,Tara,Okafor,tara.okafor.123@guest.example,,2026-04-15T17:00:00.000Z,approved,,0.00,GBP,General admission,,,No requirements
+gst-nraBtGLpdv,Liam Okafor,Liam,Okafor,liam.okafor.124@guest.example,,2026-04-09T17:00:00.000Z,approved,2026-04-23T17:59:00.000Z,0.00,GBP,General admission,,,Vegetarian please
+gst-8y9U8dbKpt,Olu Evans,Olu,Evans,olu.evans.125@guest.example,,2026-04-13T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Vegan
+gst-rfsUbTN2fn,Yusuf Zielinski,Yusuf,Zielinski,yusuf.zielinski.126@guest.example,,2026-04-09T17:00:00.000Z,approved,2026-04-23T17:18:00.000Z,0.00,GBP,General admission,,,vegetarian
+gst-FwvRcVtRyS,Femi Tanaka,Femi,Tanaka,femi.tanaka.127@guest.example,,2026-04-04T17:00:00.000Z,approved,,0.00,GBP,General admission,,,no pork please
+gst-wQQDWdCEjc,Dami Hughes,Dami,Hughes,dami.hughes.128@guest.example,,2026-04-02T17:00:00.000Z,approved,2026-04-23T17:12:00.000Z,0.00,GBP,General admission,5,,none
+gst-9d2EV2zV73,Xan Gupta,Xan,Gupta,xan.gupta.129@guest.example,,2026-04-01T17:00:00.000Z,approved,2026-04-23T18:12:00.000Z,0.00,GBP,General admission,4,,No pork
+gst-eMNqz5SZnB,Kemi Novak,Kemi,Novak,kemi.novak.130@guest.example,,2026-04-08T17:00:00.000Z,approved,2026-04-23T17:50:00.000Z,0.00,GBP,General admission,,,none
+gst-xMGXUNTTwh,Yusuf Fischer,Yusuf,Fischer,yusuf.fischer.131@guest.example,,2026-04-06T17:00:00.000Z,approved,,0.00,GBP,General admission,,,veggie
+gst-SsJtny7RC2,Xan Patel,Xan,Patel,xan.patel.132@guest.example,,2026-04-01T17:00:00.000Z,approved,2026-04-23T17:46:00.000Z,0.00,GBP,General admission,5,Really well organised,N/A
+gst-Qi5f5D3zkY,Sami Usman,Sami,Usman,sami.usman.133@guest.example,,2026-04-15T17:00:00.000Z,approved,2026-04-23T17:35:00.000Z,0.00,GBP,General admission,,,None
+gst-X9vYCTMhYD,Femi Walsh,Femi,Walsh,femi.walsh.134@guest.example,,2026-04-07T17:00:00.000Z,approved,2026-04-23T18:00:00.000Z,0.00,GBP,General admission,,,no pork please
+gst-d25M4UiLrT,Bilal Rossi,Bilal,Rossi,bilal.rossi.135@guest.example,,2026-04-08T17:00:00.000Z,approved,2026-04-23T17:59:00.000Z,0.00,GBP,General admission,,,vegan
+gst-Nh5jTceLFQ,Wren Usman,Wren,Usman,wren.usman.136@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T17:53:00.000Z,0.00,GBP,General admission,5,Loved the food,coeliac - strict gluten free
+gst-UVooZaYTcD,Ben Mensah,Ben,Mensah,ben.mensah.137@guest.example,,2026-04-11T17:00:00.000Z,approved,2026-04-23T18:01:00.000Z,0.00,GBP,General admission,,,No spicy food
+gst-q64DR3x4sA,Aria Fischer,Aria,Fischer,aria.fischer.138@guest.example,,2026-04-13T17:00:00.000Z,approved,2026-04-23T17:38:00.000Z,0.00,GBP,General admission,,,Gluten free
+gst-cBrsERjLdM,Ben Zielinski,Ben,Zielinski,ben.zielinski.139@guest.example,,2026-04-11T17:00:00.000Z,approved,2026-04-23T17:58:00.000Z,0.00,GBP,General admission,,,Vegan (strict)
+gst-jBA9rkZYMd,Dami Moreau,Dami,Moreau,dami.moreau.140@guest.example,,2026-04-15T17:00:00.000Z,approved,2026-04-23T17:28:00.000Z,0.00,GBP,General admission,4,The labels on the food were super helpful,No requirements
+gst-WKLCuASuhb,Ben Patel,Ben,Patel,ben.patel.141@guest.example,,2026-04-19T17:00:00.000Z,approved,,0.00,GBP,General admission,,,No requirements
+gst-7NRZxRAkMy,Bilal Usman,Bilal,Usman,bilal.usman.142@guest.example,,2026-04-17T17:00:00.000Z,approved,,0.00,GBP,General admission,,,vegetarian
+gst-2c4DXctAXz,Ben Tanaka,Ben,Tanaka,ben.tanaka.143@guest.example,,2026-04-17T17:00:00.000Z,approved,2026-04-23T17:53:00.000Z,0.00,GBP,General admission,,,"Nope, anything"
+gst-iiPcnAgZe4,Elif Zielinski,Elif,Zielinski,elif.zielinski.144@guest.example,,2026-04-03T17:00:00.000Z,approved,2026-04-23T18:12:00.000Z,0.00,GBP,General admission,4,,halal
+gst-FGmfLcJMGm,Dami Young,Dami,Young,dami.young.145@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T18:14:00.000Z,0.00,GBP,General admission,,,Vegetarian please
+gst-jGoAanDfst,Aria Mensah,Aria,Mensah,aria.mensah.146@guest.example,,2026-04-06T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Gluten free
+gst-jxGisxc3YL,Tara Zielinski,Tara,Zielinski,tara.zielinski.147@guest.example,,2026-04-12T17:00:00.000Z,approved,,0.00,GBP,General admission,,,no
+gst-KL9B4eiuWJ,Yusuf Khan,Yusuf,Khan,yusuf.khan.148@guest.example,,2026-04-20T17:00:00.000Z,approved,2026-04-23T18:06:00.000Z,0.00,GBP,General admission,4,,
+gst-T9NqcoaVJH,Ben Moreau,Ben,Moreau,ben.moreau.149@guest.example,,2026-04-16T17:00:00.000Z,approved,,0.00,GBP,General admission,,,No requirements
+gst-w2qCynbEVe,Liam Usman,Liam,Usman,liam.usman.150@guest.example,,2026-04-07T17:00:00.000Z,approved,2026-04-23T17:26:00.000Z,0.00,GBP,General admission,5,,"Nope, anything"
+gst-uxN6s8MpfJ,Rosa Lopez,Rosa,Lopez,rosa.lopez.151@guest.example,,2026-04-03T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Pescatarian
+gst-jobTFyhXm2,Uma Moreau,Uma,Moreau,uma.moreau.152@guest.example,,2026-04-16T17:00:00.000Z,approved,,0.00,GBP,General admission,,,no pork please
+gst-84HaDzVUue,Bilal Moreau,Bilal,Moreau,bilal.moreau.153@guest.example,,2026-04-20T17:00:00.000Z,approved,,0.00,GBP,General admission,,,Halal
+gst-iknfLU64Xg,Kemi Lopez,Kemi,Lopez,kemi.lopez.154@guest.example,,2026-04-12T17:00:00.000Z,approved,2026-04-23T18:13:00.000Z,0.00,GBP,General admission,5,,no
+gst-UfeXPSR8B9,Quinn Tanaka,Quinn,Tanaka,quinn.tanaka.155@guest.example,,2026-04-16T17:00:00.000Z,approved,2026-04-23T17:38:00.000Z,0.00,GBP,General admission,,,none
+gst-Yg6qLX62zR,Wren Moreau,Wren,Moreau,wren.moreau.156@guest.example,,2026-04-06T17:00:00.000Z,approved,2026-04-23T17:31:00.000Z,0.00,GBP,General admission,,,Vegetarian please
+gst-gUjd4P5dtN,Ada Tanaka,Ada,Tanaka,ada.tanaka.157@guest.example,,2026-04-10T17:00:00.000Z,approved,2026-04-23T17:35:00.000Z,0.00,GBP,General admission,4,,No pork
+gst-KA42k9Um3r,Hiro Singh,Hiro,Singh,hiro.singh.158@guest.example,,2026-04-15T17:00:00.000Z,approved,2026-04-23T17:04:00.000Z,0.00,GBP,General admission,5,Great vibe and good food,Vegetarian
+gst-Tb8RhXVdEo,Dev Gupta,Dev,Gupta,dev.gupta.159@guest.example,,2026-04-01T17:00:00.000Z,approved,2026-04-23T17:56:00.000Z,0.00,GBP,General admission,4,,"Nope, anything"

@@ -1,16 +1,50 @@
 # Pantry — TASKS
 
-_Last updated: Thu 22 Oct 2026, 16:55 BST. Hackathon 18:00–23:00 · code freeze 21:50 · top-5 demos 22:20._
+_Last updated: Thu 22 Oct 2026, 19:30 BST. Hackathon 18:00–23:00 · code freeze 21:50 · top-5 demos 22:20._
 
 ## Status in one line
-Pantry is now a real app on the live engine, with Today, Chat, Cart, Inbox and Home, and the old slide deck is gone. Its identity is final: the bowl character, the app icon and a monoline wordmark (see `/brand.html`). There are 46 tests, and the hands-free arc runs in 2:45 with zero console errors. What's left needs your logins: x.ai bot config, 1Password, Agentcard, the inbox address, and a real-browser product capture.
+**Pivoted (19:00): Pantry is now a Grok Bot that plans catering for community events. Tagline: "Order for who shows up."**
+- The events engine is built and tested: Luma import → turnout forecast → diet matrix → provider options (supermarket / caterer / restaurant) → plan → brief → approval → debrief and provider ledger.
+- The bot config is in `bot/`.
+- **It's a custom Grok Bot, not an app.** The demo runs inside Grok Bot (chat, voice, cards, phone approvals). `web/` and `server.js` are the old household app and aren't part of the event demo.
+- **Luma:** Grok Bot has no Luma connector. Pantry's MCP server reads Luma's public API (`x-luma-api-key`, needs Luma Plus; key stored as a Grok Bot secret `LUMA_API_KEY`). Without a key it reads the dummy calendar in `data/events/luma/`, written in the API's exact response shapes by `scripts/seed-luma.js`. Luma webhooks can't carry Grok's webhook auth header, so the routine polls hourly instead.
+- 58 tests pass.
 
-## Pick up here (later today)
-1. `npm test`, then `npm run demo` → http://127.0.0.1:4217 → **Shift+R** → run keys 0 → 9 once.
-2. Create the bot on x.ai and paste `bot/system-prompt.md` (`bot/SETUP.md` steps 1–3).
-3. Real product photos: `npm run snippet | pbcopy`, paste into DevTools on a few Sainsbury's search pages, then `pbpaste > captured.json && node src/cli.js catalog import captured.json --dry-run`.
-4. Put real names in place of `Wife` / `Daughter` in `data/household.json`.
-5. Optional: have Grok answer free-form chat behind the rule-based intents.
+## Pick up here
+1. `npm test`, then `node src/cli.js event plan`. Also try `event options`, `event inbox`, `event brief`, `event pay`.
+2. **Venue address and postcode** for Expedite London HQ go into `data/events/event.json`. Coverage stays unchecked until they're set.
+3. Update the live "Pantry" bot in Grok Bot (`bot/SETUP.md`): paste `bot/persona.md` (3,970 chars, under the 4,000 limit), shape `dome`, colour `yellow`, then audition voices Sal / Eve / Atlas (`bot/profile.json`).
+4. Install the engine on the bot's computer and add the MCP server (`bot/SETUP.md` step 9). Then test in Grok Bot: "How many are coming?" → "What are we serving?" → "Send the brief" → "Pay for it".
+5. Decide what happens to `web/` (the old household app): delete it, or keep it out of the demo.
+6. Later (deferred by Sergio): move supplier logins into the 1Password vault "Shared with Grok Bot".
+
+## Events engine (new)
+- `src/events/luma.js`: Luma CSV → approved guests and declared needs. Free text is normalised (vegan, coeliac, nut allergy, …). Nothing is inferred; X profiling is out by decision.
+- `src/events/plan.js`:
+  - Show rate is learned from past events, with the same kind of event weighted ×2.
+  - Plan-for = expected + 10% spare. Allergies and coeliac are planned at 100%.
+  - Lanes: Everyone / Vegan / Gluten-free / Allergy-safe.
+  - Hard filters: safe plate for every declared need, budget, lead time, delivery area.
+  - Ranking puts quality first inside the budget, and needs that ran out before get a +25% buffer.
+  - Late providers get an earlier drop.
+- `src/events/index.js`:
+  - The venue's 18:00 cut-off is learned from the inbox.
+  - Drafted briefs; quotes replace estimates.
+  - The payment approval is bound to the plan hash, and a changed plan voids it.
+  - Debriefs update the show rate and the ledger.
+- `src/events/luma-api.js`: the live Luma client (List Events, Get Event, List Guests, paginated) plus a dummy-calendar client. Both are mapped by the same code: registration answers → diets, `event_tickets[].checked_in_at` → attendance, `geo_address_json` → venue and postcode area.
+- Data in `data/events/`: catering settings (`event.json`), the catering ledger keyed by Luma event id (`history.json`), eight providers, fixture inbox mail, and the dummy Luma calendar (`luma/`, plus `guests.csv` as a Luma CSV export).
+- **Honesty:** the supermarket brands are real but their prices are estimates. Caterers and restaurants (Little Feast, Hearth & Co, Mezze Collective, Slice Theory, Bao Down) are **fictional examples**.
+- MCP (`src/mcp.js`) now serves 15 event tools; none can approve, pay, send or file. CLI: `pantry event <cmd>`.
+
+## Grok Bot facts (from Grok Bot.app 0.75)
+- Profile fields: name, description (the persona), avatarShape (25 shapes), avatarColor (11), voiceId (28 voices), voiceSpeed.
+- Templates: name, shape, colour, body ≤4000 chars, visibility.
+- Bots also get: a dedicated email (permanent once on), a vault (1Password service account), Link card payments, routines, skills, phone calls and voice chat.
+
+---
+
+## Before the pivot (household version, kept for reference)
 
 ## Build order (spec Part Eight)
 - [~] **1 Scaffold.** `bot/system-prompt.md` is ready to paste. **Yours:** create the bot on x.ai.

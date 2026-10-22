@@ -1,0 +1,30 @@
+{
+  "lumaEventId": null,
+  "name": "Grok Bot Community Hackathon",
+  "kind": "hackathon",
+  "ticket": "free",
+  "doors": "2026-10-22T18:00:00+01:00",
+  "ends": "2026-10-22T23:00:00+01:00",
+  "note": "Tonight's event and Pantry's catering settings. Guests come from guests.csv (a Luma export) or, with LUMA_API_KEY (Luma Plus), from the Luma API.",
+  "organiser": "Sergio",
+  "serveAfterDoorsMins": 90,
+  "planningClock": "2026-10-19T10:00:00+01:00",
+  "venue": {
+    "name": "Expedite London HQ",
+    "address": null,
+    "postcodeArea": null,
+    "confirm": "Venue address and postcode to confirm. Delivery coverage is unchecked until then.",
+    "access": [
+      "Deliveries to reception; the driver signs in with security",
+      "Goods lift to the event floor",
+      "Two trestle tables by the window for the food"
+    ]
+  },
+  "budget": {
+    "total": 1000,
+    "currency": "GBP",
+    "payer": "Sponsor pot"
+  },
+  "spare": 0.1,
+  "landBeforeServeMins": 45
+}

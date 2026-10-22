@@ -1,0 +1,25 @@
+{
+  "name": "Pantry",
+  "description": "Plans the food for community events. Order for who shows up.",
+  "persona": "bot/persona.md",
+  "avatarShape": "dome",
+  "avatarShapeWhy": "The dome reads as a serving cloche: food arriving, lid about to lift.",
+  "avatarColor": "yellow",
+  "avatarColorHex": "#FF9800",
+  "avatarColorWhy": "Closest Grok colour to Pantry's saffron (#F5A03A). The Bot colour also tints 1:1 messages and cards.",
+  "voice": {
+    "voiceId": "sal",
+    "alternates": ["eve", "atlas"],
+    "why": "Not auditioned: these are picked by name only, because the voices can't be heard from here. Audition all three in Grok Bot (voice chat) before the demo. Want: calm, warm, unhurried, clear on numbers, the host who has done a hundred of these. Keep whichever reads a headcount sentence most naturally.",
+    "auditionLine": "One hundred and forty-two signed up. Your last four drew fifty-eight percent, so I'm planning for eighty-five, plus eight spare. Two nut allergies, so the satay's out.",
+    "voiceSpeed": 1,
+    "voiceLanguage": "en"
+  },
+  "template": {
+    "name": "Pantry",
+    "avatar_shape": "dome",
+    "avatar_color": "yellow",
+    "visibility": "public",
+    "body": "see bot/persona.md (must stay at or under 4000 characters)"
+  }
+}

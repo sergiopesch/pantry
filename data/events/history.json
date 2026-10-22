@@ -1,0 +1,163 @@
+{
+  "note": "Pantry's catering ledger, one entry per past event: the same facts as the documents in archive/. Dummy data. Caterers and restaurants are fictional; supermarket prices are estimates.",
+  "events": [
+    {
+      "lumaEventId": "evt-d99EDT6HfCHm",
+      "date": "2026-01-22",
+      "orderedFor": 64,
+      "provider": "sainsburys",
+      "spend": 388,
+      "quoted": null,
+      "invoice": "SAI-20260122-01",
+      "onTime": true,
+      "minsLate": 0,
+      "leftoverPct": 0.33,
+      "rating": 3.7,
+      "ranOut": [],
+      "notes": "First one. Ordered for everyone who signed up; a third of the wraps went home with volunteers."
+    },
+    {
+      "lumaEventId": "evt-4caHNZBexTKA",
+      "date": "2026-02-19",
+      "orderedFor": 80,
+      "provider": "slice-theory",
+      "spend": 419.3,
+      "quoted": 419.3,
+      "invoice": "SLI-20260219-02",
+      "onTime": false,
+      "minsLate": 10,
+      "leftoverPct": 0.38,
+      "rating": 3.5,
+      "ranOut": [
+        "gluten-free"
+      ],
+      "notes": "Pizza for 80, 44 came. Only two gluten-free pizzas and the coeliac guest could not eat them (shared oven)."
+    },
+    {
+      "lumaEventId": "evt-xoraFcaJKdJw",
+      "date": "2026-03-12",
+      "orderedFor": 40,
+      "provider": "mands",
+      "spend": 300.6,
+      "quoted": null,
+      "invoice": "MAN-20260312-03",
+      "onTime": true,
+      "minsLate": 0,
+      "leftoverPct": 0.1,
+      "rating": 4.3,
+      "ranOut": [],
+      "notes": "Paid tickets, so nearly everyone came. M&S platters, collected by Dami. 25 minutes each way in the rain."
+    },
+    {
+      "lumaEventId": "evt-9Co5keQf8y7W",
+      "date": "2026-03-26",
+      "orderedFor": 60,
+      "provider": "bao-down",
+      "spend": 572.5,
+      "quoted": 572.5,
+      "invoice": "BAO-20260326-04",
+      "onTime": true,
+      "minsLate": 0,
+      "leftoverPct": 0.12,
+      "rating": 3.8,
+      "ranOut": [
+        "vegan"
+      ],
+      "notes": "Tofu bao gone in twenty minutes. Nine vegans that night, ordered for five."
+    },
+    {
+      "lumaEventId": "evt-jYnEiHmNeMLt",
+      "date": "2026-04-23",
+      "orderedFor": 120,
+      "provider": "hearth-and-co",
+      "spend": 1707,
+      "quoted": 1637,
+      "invoice": "HEA-20260423-05",
+      "onTime": true,
+      "minsLate": 0,
+      "leftoverPct": 0.15,
+      "rating": 4.4,
+      "ranOut": [],
+      "notes": "Excellent hot food. The invoice came in £70 over the quote: a \"service staff\" line nobody agreed to. Invoice £70 over the quote (service staff)."
+    },
+    {
+      "lumaEventId": "evt-oLiyPqjgnP4g",
+      "date": "2026-05-21",
+      "orderedFor": 60,
+      "provider": "mezze-collective",
+      "spend": 653.3,
+      "quoted": 653.3,
+      "invoice": "MEZ-20260521-06",
+      "onTime": true,
+      "minsLate": 0,
+      "leftoverPct": 0.14,
+      "rating": 3.9,
+      "ranOut": [],
+      "notes": "Good spread, generous portions. One labelling slip on the vegan platter. The falafel platter labelled vegan came with a yoghurt dip on the side. Two vegan guests flagged it."
+    },
+    {
+      "lumaEventId": "evt-EcuAdMN8scec",
+      "date": "2026-06-18",
+      "orderedFor": 96,
+      "provider": "slice-theory",
+      "spend": 501.8,
+      "quoted": 501.8,
+      "invoice": "SLI-20260618-07",
+      "onTime": true,
+      "minsLate": 0,
+      "leftoverPct": 0.41,
+      "rating": 3.6,
+      "ranOut": [
+        "vegan"
+      ],
+      "notes": "Ordered to the sign-up count again. Forty percent in the bin, and the vegan pizzas were gone by 19:10."
+    },
+    {
+      "lumaEventId": "evt-57DuDCzqEpqL",
+      "date": "2026-07-16",
+      "orderedFor": 80,
+      "provider": "sainsburys",
+      "spend": 483.1,
+      "quoted": null,
+      "invoice": "SAI-20260716-08",
+      "onTime": true,
+      "minsLate": 0,
+      "leftoverPct": 0.18,
+      "rating": 3.9,
+      "ranOut": [
+        "gluten-free"
+      ],
+      "notes": "Wraps and platters. Good value; the gluten-free wraps were too few."
+    },
+    {
+      "lumaEventId": "evt-vYML7b4qJRPt",
+      "date": "2026-08-20",
+      "orderedFor": 70,
+      "provider": "hearth-and-co",
+      "spend": 969,
+      "quoted": 969,
+      "invoice": "HEA-20260820-09",
+      "onTime": false,
+      "minsLate": 25,
+      "leftoverPct": 0.12,
+      "rating": 4.4,
+      "ranOut": [],
+      "notes": "Food was excellent. Arrived 25 minutes late; the room waited."
+    },
+    {
+      "lumaEventId": "evt-6vHH2zDUcYJ7",
+      "date": "2026-09-24",
+      "orderedFor": 100,
+      "provider": "little-feast",
+      "spend": 1094.2,
+      "quoted": 1094.2,
+      "invoice": "LIT-20260924-10",
+      "onTime": true,
+      "minsLate": 0,
+      "leftoverPct": 0.09,
+      "rating": 4.6,
+      "ranOut": [],
+      "notes": "Labelled bowls, every diet named on the lid. Best night so far."
+    }
+  ]
+}

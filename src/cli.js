@@ -7,9 +7,14 @@ import { acceptOffer, approveCheckout, declineCheckout, editCart, fileCase, requ
 import { say } from './chat.js';
 import { driverFromEnv } from './vault.js';
 import { importCaptured } from './sainsburys/catalog.js';
+import { EVENT_HELP, runEvent } from './events/cli.js';
 import { clock, gbp, longDate, shortDay } from './util.js';
 
-const HELP = `pantry — Pantry's engine for the household's weekly shop
+const HELP = `pantry — Pantry's engine
+
+  event <command>           Catering for community events (pantry event help)
+
+The household shop (the original demo):
 
   household                 Who's in the house and their rules
   predict                   What runs out, and when
@@ -59,6 +64,12 @@ function cartText(cart, totals, household) {
 function run() {
   const snap = () => snapshot(world, state);
   switch (cmd) {
+    case 'event':
+      if (!rest.length || rest[0] === 'help') return console.log(EVENT_HELP);
+      return runEvent(rest, out).catch(err => {
+        console.error(json ? JSON.stringify({ error: err.message, code: err.code ?? null }) : `pantry: ${err.message}`);
+        process.exit(1);
+      });
     case 'household': {
       const h = world.household;
       return out([h.name, ...h.members.map(m => `  ${m.name} (${m.role}${m.age ? `, ${m.age}` : ''}): ${m.summary}`), `  ${h.conflictPolicy}`].join('\n'), h);
