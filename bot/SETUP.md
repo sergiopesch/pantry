@@ -28,6 +28,21 @@ A "Pantry" bot already exists in your Grok Bot app with the old household person
   This sends 11 documents to the dataset `pantry-events`: ten events plus the provider list. Graph building runs on your Cognee credits and takes a few minutes. Guest names and emails are not sent, only counts and anonymous feedback.
 - **Check:** "Has Hearth & Co ever billed over quote?" Pantry recalls April's £70 service-staff line, with the date.
 
+## 4b. Notion (the organiser's events)
+- In Pantry's chat: "Add the MCP server https://mcp.notion.com/mcp" (OAuth; approve the sign-in once).
+- Pantry builds **Pantry · Events**: a **Past events** database (one row per archived event, all marked demo, with debrief, quote and invoice in the page body) and a page per upcoming event. The upcoming event page is the source for `pantry_event_set`: name, start, food time, venue address, delivery cut-off, budget and payer.
+- Nothing about the event is hard-coded in the engine. The clock is real, and the venue address comes from Pantry's own search, with a source.
+- **Check:** "What's the next event?" Pantry answers from Notion with the date relative to today.
+
+## 4c. Real providers
+- For each event, Pantry searches for real caterers and restaurants that deliver to the venue's postcode. It adds them with `pantry_provider_add`, each with a source URL, real dishes and prices, delivery terms, stated allergen handling (unknown counts as may-contain) and public reviews.
+- **Check:** `pantry_options` lists real providers, each with a source link.
+
+## 4d. Payments: Stripe
+- In Pantry's chat: "Add the MCP server https://mcp.stripe.com" (OAuth into your Stripe account; use a sandbox or test mode for the demo).
+- At checkout, Pantry creates a Stripe Payment Link for exactly the approved amount and attaches it with `pantry_payment_link`. **You** pay it; that's the approval. Pantry checks Stripe and records it with `pantry_payment_confirm` only when Stripe reports paid, for that amount.
+- **Check:** pay the test link with Stripe's test card 4242 4242 4242 4242. Pantry says "Paid", with the Stripe reference.
+
 ## 5. Pantry's own email
 - Turn on the Bot's dedicated email address. You can't change it once it's on, so choose carefully.
 - Point quotes, caterer confirmations and invoices at it.
