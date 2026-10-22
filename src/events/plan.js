@@ -147,10 +147,11 @@ export function option(world, state, provider, hc, ctx) {
   const { event } = world;
   const guests = world.guests.guests;
   const lines = new Map();
-  const add = (dish, lane, qty) => {
+  const addons = new Map();
+  const add = (dish, lane, qty, from = provider) => {
     if (qty <= 0) return;
     const key = `${lane}:${dish.id}`;
-    const l = lines.get(key) ?? { key, lane, dish: dish.id, name: dish.name, tags: dish.tags, price: dish.price, qty: 0 };
+    const l = lines.get(key) ?? { key, lane, dish: dish.id, name: dish.name, tags: dish.tags, price: dish.price, qty: 0, provider: from.id, providerName: from.name };
     l.qty += qty;
     lines.set(key, l);
   };
@@ -171,6 +172,13 @@ export function option(world, state, provider, hc, ctx) {
     }
     restricted += qty;
     if (!dish) {
+      // Allergy and coeliac plates can come sealed from a second provider, as real organisers do.
+      const addon = critical ? addonFor(provider, g.needs, ctx) : null;
+      if (addon) {
+        add(addon.dish, lane, qty, addon.provider);
+        addons.set(addon.provider.id, addon.provider);
+        continue;
+      }
       gaps.push({ needs: g.needs, label: g.needs.filter(n => !(n === 'gluten-free' && g.needs.includes('coeliac'))).map(n => NEEDS[n].label).join(' + '), guests: g.count });
       continue;
     }
@@ -184,7 +192,7 @@ export function option(world, state, provider, hc, ctx) {
   const portions = [...lines.values()].reduce((s, l) => s + l.qty, 0);
   const food = round2([...lines.values()].reduce((s, l) => s + l.qty * l.price, 0));
   const extras = round2((provider.extras?.perHead ?? 0) * hc.planFor);
-  const fee = provider.fulfilment.fee ?? 0;
+  const fee = (provider.fulfilment.fee ?? 0) + [...addons.values()].reduce((t, a) => t + (a.fulfilment.fee ?? 0), 0);
   const quoted = state.quotes?.[provider.id]?.amount;
   const total = round2(quoted ?? food + extras + fee);
 
@@ -202,7 +210,13 @@ export function option(world, state, provider, hc, ctx) {
   if (now > orderBy) excluded.push(`Needs ${provider.fulfilment.leadHours} hours' notice; the order-by time has passed`);
   if (area && provider.deliversTo && !provider.deliversTo.includes(area)) excluded.push(`Doesn't deliver to ${area}`);
   if (provider.maxPortions && portions > provider.maxPortions) excluded.push(`Takes at most ${provider.maxPortions} portions per order`);
-  const warnings = [];
+  const addonWarnings = [];
+  for (const a of addons.values()) {
+    if (now > addHours(landBy, -a.fulfilment.leadHours)) excluded.push(`${a.name} needs ${a.fulfilment.leadHours} hours' notice for the allergy-safe plates; too late`);
+    if (area && a.deliversTo && !a.deliversTo.includes(area)) excluded.push(`${a.name} doesn't deliver to ${area}`);
+    addonWarnings.push(`Allergy-safe plates come sealed from ${a.name}, delivered separately`);
+  }
+  const warnings = [...addonWarnings];
   if (!area) warnings.push('Venue postcode not set, so delivery coverage is unchecked');
   else if (!provider.deliversTo) warnings.push(`Delivery to ${area} not confirmed with them`);
   if (total < (provider.minOrder ?? 0)) warnings.push(`Below the ${gbp(provider.minOrder)} minimum order`);
@@ -220,7 +234,8 @@ export function option(world, state, provider, hc, ctx) {
 
   return {
     id: provider.id,
-    name: provider.name,
+    name: addons.size ? `${provider.name} + ${[...addons.values()].map(a => a.name).join(' + ')}` : provider.name,
+    addons: [...addons.values()].map(a => ({ id: a.id, name: a.name, source: a.source ?? null })),
     tier: provider.tier,
     source: provider.source ?? (provider.example ? 'example' : 'provider'),
     live: Boolean(provider.live),
@@ -247,6 +262,19 @@ export function option(world, state, provider, hc, ctx) {
   };
 }
 
+// The cheapest sealed dish another provider has that is safe for these needs.
+function addonFor(main, needs, ctx) {
+  let best = null;
+  for (const p of ctx.providers ?? []) {
+    if (p.id === main.id) continue;
+    for (const d of p.dishes) {
+      if (!safe(p, d, needs) || !has(d, 'sealed')) continue;
+      if (!best || d.price < best.dish.price) best = { provider: p, dish: d };
+    }
+  }
+  return best;
+}
+
 // Quality first, inside the budget: rating and reliability carry most of the weight, cost and logistics the rest.
 function score(o, cheapest) {
   const quality = Math.max(0, Math.min(1, (o.rating - 3) / 2));
@@ -258,7 +286,7 @@ function score(o, cheapest) {
 
 export function options(world, state, { now, latestDelivery } = {}) {
   const hc = headcount(world, state);
-  const ctx = { now: now ?? state.clock ?? world.event.planningClock, latestDelivery, ranOut: ranOutLanes(allHistory(world, state)), ledger: ledger(world, state) };
+  const ctx = { now: now ?? state.clock ?? new Date().toISOString(), latestDelivery, providers: world.providers, ranOut: ranOutLanes(allHistory(world, state)), ledger: ledger(world, state) };
   const all = world.providers.map(p => option(world, state, p, hc, ctx));
   const cheapest = Math.min(...all.filter(o => o.eligible).map(o => o.cost.total));
   for (const o of all) o.score = o.eligible ? score(o, cheapest) : null;

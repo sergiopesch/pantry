@@ -75,7 +75,7 @@ function buildEvent(policy, e) {
 
 export const freshEventState = () => ({
   version: 1,
-  clock: null,           // planning clock (ISO); null = the event's planningClock
+  clock: null,           // pinned clock for tests (ISO); null = real time
   luma: null,            // last read of the Luma API (Luma Plus only)
   event: null,           // the upcoming event, from the organiser's Notion (pantry_event_set)
   providers: [],         // real providers Pantry found for this event, with sources (pantry_provider_add)

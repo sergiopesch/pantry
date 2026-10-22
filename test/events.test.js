@@ -81,7 +81,10 @@ test('fictional past providers are memory only; real ones need a source and a sa
   const { options } = eventOptions(world, state);
   assert.ok(!options.some(o => o.id === 'little-feast'), 'past-only providers are not offered');
   assert.equal(options.find(o => o.id === 'test-kitchen').eligible, true);
-  assert.match(options.find(o => o.id === 'mands').excluded[0], /Nut allergy \+ Vegan/);
+  const mands = options.find(o => o.id === 'mands');
+  assert.equal(mands.eligible, true, 'the nut-allergy vegan plate comes sealed from a second provider');
+  assert.equal(mands.name, 'M&S Food to Order + Test Kitchen');
+  assert.ok(mands.lines.some(l => l.lane === 'allergy-safe' && l.provider === 'test-kitchen'));
   assert.throws(() => addProvider(freshEventState(), { ...KITCHEN, source: 'my head' }), /source URL/);
   assert.throws(() => addProvider(freshEventState(), { ...KITCHEN, dishes: [{ name: 'x', price: 3, tags: ['tasty'] }] }), /Unknown dish tags/);
   const unknown = addProvider(freshEventState(), { ...KITCHEN, allergens: 'unknown' });
@@ -96,6 +99,11 @@ test("recommends quality inside the budget, and applies the venue's delivery cut
   assert.match(p.text, /Sainsbury's would save £\d+\.\d\d, but gluten-free ran out last time\./);
   assert.equal(p.chosen.dropAt, '2026-10-29T18:00:00.000Z');
   assert.match(p.logistics[0], /venue takes deliveries until then/);
+});
+
+test('without a sealed safe plate anywhere, the option stays out with its reason', async () => {
+  const { world, state } = await ready({ kitchen: false });
+  assert.match(eventOptions(world, state).options.find(o => o.id === 'mands').excluded[0], /Nut allergy \+ Vegan/);
 });
 
 test('a live-checked provider replaces the estimate with the same id and keeps its history', async () => {
