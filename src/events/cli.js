@@ -1,7 +1,7 @@
 // pantry event <command> — the bot's hands for event catering. Called from src/cli.js.
 import { readFileSync } from 'node:fs';
 import {
-  approvePayment, choose, debrief, declinePayment, draftBrief, eventOptions, eventSnapshot, freshEventState, importGuestFile,
+  addProvider, setEvent, approvePayment, choose, debrief, declinePayment, draftBrief, eventOptions, eventSnapshot, freshEventState, importGuestFile,
   loadEventState, loadEventWorld, providerLedger, recordQuote, requestPayment, saveEventState, setHeadcount,
 } from './index.js';
 import { driverFromEnv } from '../vault.js';
@@ -10,6 +10,8 @@ import { clock, gbp, longDate, pct } from '../util.js';
 export const EVENT_HELP = `pantry event <command> — catering for the people who actually turn up
 
   sync                      Re-read guests: Luma CSV exports, or the Luma API with LUMA_API_KEY (Luma Plus)
+  set <event.json|->        Set the upcoming event (from Notion): name, start, venue, budget
+  provider add <p.json|->   Add a real provider with its source, dishes and prices
   show                      The event: venue, times, budget
   import <luma.csv>         Import a Luma guest export (sign-ups and dietary answers)
   headcount [n|auto]        Forecast turnout from past events, or set your own number
@@ -42,8 +44,20 @@ export async function runEvent(rest, out) {
       saveEventState(state);
       return out(`Read Luma (${l.source === 'luma-api' ? 'live API' : 'CSV exports, no Luma Plus'}): ${l.event.name}, ${l.guests.guests.length} going, ${l.guests.waitlist} waitlisted. ${l.past.length} past events with check-ins.`, { source: l.source, event: l.event, going: l.guests.guests.length, waitlist: l.guests.waitlist, past: l.past });
     }
+    case 'set': {
+      const e = setEvent(state, JSON.parse(readFileSync(args[0] === '-' || !args[0] ? 0 : args[0], 'utf8')));
+      save();
+      return out(`Event set: ${e.name}, ${e.start}.`, e);
+    }
+    case 'provider': {
+      if (args[0] !== 'add') throw new Error('usage: pantry event provider add <provider.json|->');
+      const p = addProvider(state, JSON.parse(readFileSync(args[1] === '-' || !args[1] ? 0 : args[1], 'utf8')));
+      save();
+      return out(`Added ${p.name} (${p.tier}), ${p.dishes.length} dishes. Source: ${p.source}`, p);
+    }
     case 'show': {
       const e = world.event;
+      if (!e) return out('No event yet. Set it from Notion: pantry event set <event.json>', null);
       return out(`${e.name}  ${e.url ?? ''}\n  ${longDate(e.serve)} · doors ${clock(e.doors)} · food ${clock(e.serve)}\n  ${e.venue.name}${e.venue.address ? `, ${e.venue.address}` : ` (${e.venue.confirm})`}\n  Budget ${gbp(e.budget.total)} (${e.budget.payer}) · source: ${world.source}`, e);
     }
     case 'import': {

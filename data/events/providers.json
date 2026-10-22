@@ -1,111 +1,514 @@
 {
-  "note": "Supermarket brands are real; their prices are estimates per dinner portion (source: estimate) and need checking on the live site. Caterers and restaurants are fictional examples until real ones are added.",
+  "note": "Supermarket brands are real; their prices are estimates (source: estimate) to check on the live site. Fictional caterers and restaurants (pastOnly) appear only in past events. For a new event Pantry adds real providers it has found, with sources, via pantry_provider_add.",
   "providers": [
     {
-      "id": "sainsburys", "name": "Sainsbury's", "tier": "supermarket", "source": "estimate", "url": "https://www.sainsburys.co.uk",
-      "fulfilment": { "type": "delivery", "fee": 4.5, "leadHours": 18, "windowMins": 60, "label": "one-off delivery slot" },
-      "minOrder": 25, "deliversTo": ["E", "EC", "N", "NW", "SE", "SW", "W", "WC"],
+      "id": "sainsburys",
+      "name": "Sainsbury's",
+      "tier": "supermarket",
+      "source": "estimate",
+      "url": "https://www.sainsburys.co.uk",
+      "fulfilment": {
+        "type": "delivery",
+        "fee": 4.5,
+        "leadHours": 18,
+        "windowMins": 60,
+        "label": "one-off delivery slot"
+      },
+      "minOrder": 25,
+      "deliversTo": [
+        "E",
+        "EC",
+        "N",
+        "NW",
+        "SE",
+        "SW",
+        "W",
+        "WC"
+      ],
       "allergens": "sealed-labelled",
       "dishes": [
-        { "id": "chicken-wraps", "name": "Chicken wraps and salad", "tags": ["meat"], "price": 4.4 },
-        { "id": "falafel-wraps", "name": "Falafel and houmous wraps", "tags": ["vegan"], "price": 3.9 },
-        { "id": "sushi", "name": "Sushi selection", "tags": ["fish"], "price": 5.0 },
-        { "id": "freefrom-pots", "name": "Free From pasta pots, sealed", "tags": ["vegan", "gluten-free", "coeliac-safe", "nut-free", "sealed"], "price": 4.8 }
+        {
+          "id": "chicken-wraps",
+          "name": "Chicken wraps and salad",
+          "tags": [
+            "meat"
+          ],
+          "price": 4.4
+        },
+        {
+          "id": "falafel-wraps",
+          "name": "Falafel and houmous wraps",
+          "tags": [
+            "vegan"
+          ],
+          "price": 3.9
+        },
+        {
+          "id": "sushi",
+          "name": "Sushi selection",
+          "tags": [
+            "fish"
+          ],
+          "price": 5.0
+        },
+        {
+          "id": "freefrom-pots",
+          "name": "Free From pasta pots, sealed",
+          "tags": [
+            "vegan",
+            "gluten-free",
+            "coeliac-safe",
+            "nut-free",
+            "sealed"
+          ],
+          "price": 4.8
+        }
       ],
-      "extras": { "label": "Crisps, fruit and soft drinks", "perHead": 1.6 },
-      "notes": ["Quantity caps per product can apply; split across products if a cap bites"]
+      "extras": {
+        "label": "Crisps, fruit and soft drinks",
+        "perHead": 1.6
+      },
+      "notes": [
+        "Quantity caps per product can apply; split across products if a cap bites"
+      ]
     },
     {
-      "id": "waitrose", "name": "Waitrose Entertaining", "tier": "supermarket", "source": "estimate", "url": "https://www.waitrose.com",
-      "fulfilment": { "type": "collection", "fee": 0, "leadHours": 48, "travelMins": 25, "label": "collect in store" },
-      "minOrder": 0, "deliversTo": ["E", "EC", "N", "NW", "SE", "SW", "W", "WC"],
+      "id": "waitrose",
+      "name": "Waitrose Entertaining",
+      "tier": "supermarket",
+      "source": "estimate",
+      "url": "https://www.waitrose.com",
+      "fulfilment": {
+        "type": "collection",
+        "fee": 0,
+        "leadHours": 48,
+        "travelMins": 25,
+        "label": "collect in store"
+      },
+      "minOrder": 0,
+      "deliversTo": [
+        "E",
+        "EC",
+        "N",
+        "NW",
+        "SE",
+        "SW",
+        "W",
+        "WC"
+      ],
       "allergens": "sealed-labelled",
       "dishes": [
-        { "id": "w-chicken", "name": "Chicken platter", "tags": ["meat"], "price": 6.2 },
-        { "id": "w-veg", "name": "Vegetable crudités and dips platter", "tags": ["vegan"], "price": 5.4 },
-        { "id": "w-salmon", "name": "Smoked salmon platter", "tags": ["fish", "gluten-free"], "price": 7.1 },
-        { "id": "w-freefrom", "name": "Free From sealed sandwiches", "tags": ["vegetarian", "gluten-free", "coeliac-safe", "nut-free", "sealed"], "price": 5.9 }
+        {
+          "id": "w-chicken",
+          "name": "Chicken platter",
+          "tags": [
+            "meat"
+          ],
+          "price": 6.2
+        },
+        {
+          "id": "w-veg",
+          "name": "Vegetable crudit\u00e9s and dips platter",
+          "tags": [
+            "vegan"
+          ],
+          "price": 5.4
+        },
+        {
+          "id": "w-salmon",
+          "name": "Smoked salmon platter",
+          "tags": [
+            "fish",
+            "gluten-free"
+          ],
+          "price": 7.1
+        },
+        {
+          "id": "w-freefrom",
+          "name": "Free From sealed sandwiches",
+          "tags": [
+            "vegetarian",
+            "gluten-free",
+            "coeliac-safe",
+            "nut-free",
+            "sealed"
+          ],
+          "price": 5.9
+        }
       ],
-      "extras": { "label": "Fruit platter and drinks", "perHead": 2.0 },
-      "notes": ["Someone has to collect: a car and about 25 minutes each way"]
+      "extras": {
+        "label": "Fruit platter and drinks",
+        "perHead": 2.0
+      },
+      "notes": [
+        "Someone has to collect: a car and about 25 minutes each way"
+      ]
     },
     {
-      "id": "mands", "name": "M&S Food to Order", "tier": "supermarket", "source": "estimate", "url": "https://www.marksandspencer.com",
-      "fulfilment": { "type": "collection", "fee": 0, "leadHours": 48, "travelMins": 15, "label": "collect in store" },
-      "minOrder": 0, "deliversTo": ["E", "EC", "N", "NW", "SE", "SW", "W", "WC"],
+      "id": "mands",
+      "name": "M&S Food to Order",
+      "tier": "supermarket",
+      "source": "estimate",
+      "url": "https://www.marksandspencer.com",
+      "fulfilment": {
+        "type": "collection",
+        "fee": 0,
+        "leadHours": 48,
+        "travelMins": 15,
+        "label": "collect in store"
+      },
+      "minOrder": 0,
+      "deliversTo": [
+        "E",
+        "EC",
+        "N",
+        "NW",
+        "SE",
+        "SW",
+        "W",
+        "WC"
+      ],
       "allergens": "sealed-labelled",
       "dishes": [
-        { "id": "m-chicken", "name": "Chicken party platter", "tags": ["meat"], "price": 5.8 },
-        { "id": "m-vegan", "name": "Plant Kitchen platter", "tags": ["vegan"], "price": 5.2 },
-        { "id": "m-sushi", "name": "Sushi platter", "tags": ["fish"], "price": 6.4 },
-        { "id": "m-madewithout", "name": "Made Without Wheat sandwiches, sealed", "tags": ["vegetarian", "gluten-free", "coeliac-safe", "nut-free", "sealed"], "price": 5.6 }
+        {
+          "id": "m-chicken",
+          "name": "Chicken party platter",
+          "tags": [
+            "meat"
+          ],
+          "price": 5.8
+        },
+        {
+          "id": "m-vegan",
+          "name": "Plant Kitchen platter",
+          "tags": [
+            "vegan"
+          ],
+          "price": 5.2
+        },
+        {
+          "id": "m-sushi",
+          "name": "Sushi platter",
+          "tags": [
+            "fish"
+          ],
+          "price": 6.4
+        },
+        {
+          "id": "m-madewithout",
+          "name": "Made Without Wheat sandwiches, sealed",
+          "tags": [
+            "vegetarian",
+            "gluten-free",
+            "coeliac-safe",
+            "nut-free",
+            "sealed"
+          ],
+          "price": 5.6
+        }
       ],
-      "extras": { "label": "Crisps, fruit and drinks", "perHead": 1.8 },
-      "notes": ["Someone has to collect: about 15 minutes each way"]
+      "extras": {
+        "label": "Crisps, fruit and drinks",
+        "perHead": 1.8
+      },
+      "notes": [
+        "Someone has to collect: about 15 minutes each way"
+      ]
     },
     {
-      "id": "little-feast", "name": "Little Feast", "tier": "caterer", "example": true,
-      "fulfilment": { "type": "delivery", "fee": 25, "leadHours": 48, "windowMins": 30, "label": "delivered and laid out" },
-      "minOrder": 250, "deliversTo": ["E", "EC", "N", "SE", "WC"],
+      "id": "little-feast",
+      "name": "Little Feast",
+      "tier": "caterer",
+      "example": true,
+      "fulfilment": {
+        "type": "delivery",
+        "fee": 25,
+        "leadHours": 48,
+        "windowMins": 30,
+        "label": "delivered and laid out"
+      },
+      "minOrder": 250,
+      "deliversTo": [
+        "E",
+        "EC",
+        "N",
+        "SE",
+        "WC"
+      ],
       "allergens": "sealed-labelled",
       "dishes": [
-        { "id": "lf-shawarma", "name": "Chicken shawarma bowl", "tags": ["meat", "halal", "gluten-free", "nut-free"], "price": 9.9 },
-        { "id": "lf-cauli", "name": "Harissa cauliflower bowl", "tags": ["vegan", "gluten-free", "coeliac-safe", "nut-free", "sealed"], "price": 9.5 },
-        { "id": "lf-salmon", "name": "Teriyaki salmon bowl", "tags": ["fish", "gluten-free", "nut-free"], "price": 10.5 }
+        {
+          "id": "lf-shawarma",
+          "name": "Chicken shawarma bowl",
+          "tags": [
+            "meat",
+            "halal",
+            "gluten-free",
+            "nut-free"
+          ],
+          "price": 9.9
+        },
+        {
+          "id": "lf-cauli",
+          "name": "Harissa cauliflower bowl",
+          "tags": [
+            "vegan",
+            "gluten-free",
+            "coeliac-safe",
+            "nut-free",
+            "sealed"
+          ],
+          "price": 9.5
+        },
+        {
+          "id": "lf-salmon",
+          "name": "Teriyaki salmon bowl",
+          "tags": [
+            "fish",
+            "gluten-free",
+            "nut-free"
+          ],
+          "price": 10.5
+        }
       ],
-      "extras": { "label": "Soft drinks", "perHead": 0.6 },
-      "notes": ["Every bowl is labelled with its diet on the lid", "Nut-free kitchen"]
+      "extras": {
+        "label": "Soft drinks",
+        "perHead": 0.6
+      },
+      "notes": [
+        "Every bowl is labelled with its diet on the lid",
+        "Nut-free kitchen"
+      ],
+      "pastOnly": true
     },
     {
-      "id": "hearth-and-co", "name": "Hearth & Co", "tier": "caterer", "example": true,
-      "fulfilment": { "type": "delivery", "fee": 35, "leadHours": 72, "windowMins": 30, "label": "delivered, hot, with staff" },
-      "minOrder": 300, "deliversTo": ["E", "EC", "N", "WC"],
+      "id": "hearth-and-co",
+      "name": "Hearth & Co",
+      "tier": "caterer",
+      "example": true,
+      "fulfilment": {
+        "type": "delivery",
+        "fee": 35,
+        "leadHours": 72,
+        "windowMins": 30,
+        "label": "delivered, hot, with staff"
+      },
+      "minOrder": 300,
+      "deliversTo": [
+        "E",
+        "EC",
+        "N",
+        "WC"
+      ],
       "allergens": "kitchen-may-contain",
       "dishes": [
-        { "id": "hc-chicken", "name": "Slow-roast chicken and grains", "tags": ["meat", "halal"], "price": 12.5 },
-        { "id": "hc-lentil", "name": "Roast veg and lentil stew", "tags": ["vegan", "gluten-free"], "price": 11.5 }
+        {
+          "id": "hc-chicken",
+          "name": "Slow-roast chicken and grains",
+          "tags": [
+            "meat",
+            "halal"
+          ],
+          "price": 12.5
+        },
+        {
+          "id": "hc-lentil",
+          "name": "Roast veg and lentil stew",
+          "tags": [
+            "vegan",
+            "gluten-free"
+          ],
+          "price": 11.5
+        }
       ],
-      "extras": { "label": "Bread and drinks", "perHead": 1.0 },
-      "notes": ["Kitchen handles nuts; no sealed portions"]
+      "extras": {
+        "label": "Bread and drinks",
+        "perHead": 1.0
+      },
+      "notes": [
+        "Kitchen handles nuts; no sealed portions"
+      ],
+      "pastOnly": true
     },
     {
-      "id": "mezze-collective", "name": "Mezze Collective", "tier": "caterer", "example": true,
-      "fulfilment": { "type": "delivery", "fee": 20, "leadHours": 48, "windowMins": 30, "label": "delivered" },
-      "minOrder": 200, "deliversTo": ["E", "EC", "N", "NW", "W", "WC"],
+      "id": "mezze-collective",
+      "name": "Mezze Collective",
+      "tier": "caterer",
+      "example": true,
+      "fulfilment": {
+        "type": "delivery",
+        "fee": 20,
+        "leadHours": 48,
+        "windowMins": 30,
+        "label": "delivered"
+      },
+      "minOrder": 200,
+      "deliversTo": [
+        "E",
+        "EC",
+        "N",
+        "NW",
+        "W",
+        "WC"
+      ],
       "allergens": "kitchen-may-contain",
       "dishes": [
-        { "id": "mz-kofta", "name": "Lamb kofta platter", "tags": ["meat", "halal"], "price": 10.0 },
-        { "id": "mz-falafel", "name": "Falafel and tabbouleh platter", "tags": ["vegan"], "price": 8.8 },
-        { "id": "mz-gf", "name": "Grilled halloumi salad", "tags": ["vegetarian", "gluten-free"], "price": 9.5 }
+        {
+          "id": "mz-kofta",
+          "name": "Lamb kofta platter",
+          "tags": [
+            "meat",
+            "halal"
+          ],
+          "price": 10.0
+        },
+        {
+          "id": "mz-falafel",
+          "name": "Falafel and tabbouleh platter",
+          "tags": [
+            "vegan"
+          ],
+          "price": 8.8
+        },
+        {
+          "id": "mz-gf",
+          "name": "Grilled halloumi salad",
+          "tags": [
+            "vegetarian",
+            "gluten-free"
+          ],
+          "price": 9.5
+        }
       ],
-      "extras": { "label": "Flatbreads and drinks", "perHead": 1.2 },
-      "notes": ["Gluten-free by recipe, not certified for coeliacs", "Sesame and nuts in the kitchen"]
+      "extras": {
+        "label": "Flatbreads and drinks",
+        "perHead": 1.2
+      },
+      "notes": [
+        "Gluten-free by recipe, not certified for coeliacs",
+        "Sesame and nuts in the kitchen"
+      ],
+      "pastOnly": true
     },
     {
-      "id": "slice-theory", "name": "Slice Theory", "tier": "restaurant", "example": true,
-      "fulfilment": { "type": "delivery", "fee": 15, "leadHours": 3, "windowMins": 30, "label": "group order, delivered" },
-      "minOrder": 0, "maxPortions": 120, "deliversTo": ["E", "EC", "N", "SE", "SW", "W", "WC"],
+      "id": "slice-theory",
+      "name": "Slice Theory",
+      "tier": "restaurant",
+      "example": true,
+      "fulfilment": {
+        "type": "delivery",
+        "fee": 15,
+        "leadHours": 3,
+        "windowMins": 30,
+        "label": "group order, delivered"
+      },
+      "minOrder": 0,
+      "maxPortions": 120,
+      "deliversTo": [
+        "E",
+        "EC",
+        "N",
+        "SE",
+        "SW",
+        "W",
+        "WC"
+      ],
       "allergens": "labelled",
       "dishes": [
-        { "id": "st-pepperoni", "name": "Pepperoni pizza", "tags": ["meat", "nut-free"], "price": 4.3 },
-        { "id": "st-margherita", "name": "Margherita pizza", "tags": ["vegetarian", "nut-free"], "price": 3.9 },
-        { "id": "st-vegan", "name": "Vegan pizza", "tags": ["vegan", "nut-free"], "price": 4.2 },
-        { "id": "st-gf", "name": "Gluten-free base pizza", "tags": ["vegetarian", "gluten-free", "nut-free"], "price": 4.8 }
+        {
+          "id": "st-pepperoni",
+          "name": "Pepperoni pizza",
+          "tags": [
+            "meat",
+            "nut-free"
+          ],
+          "price": 4.3
+        },
+        {
+          "id": "st-margherita",
+          "name": "Margherita pizza",
+          "tags": [
+            "vegetarian",
+            "nut-free"
+          ],
+          "price": 3.9
+        },
+        {
+          "id": "st-vegan",
+          "name": "Vegan pizza",
+          "tags": [
+            "vegan",
+            "nut-free"
+          ],
+          "price": 4.2
+        },
+        {
+          "id": "st-gf",
+          "name": "Gluten-free base pizza",
+          "tags": [
+            "vegetarian",
+            "gluten-free",
+            "nut-free"
+          ],
+          "price": 4.8
+        }
       ],
-      "extras": { "label": "Soft drinks", "perHead": 0.9 },
-      "notes": ["Gluten-free bases share the oven: not safe for coeliacs", "Nut-free kitchen"]
+      "extras": {
+        "label": "Soft drinks",
+        "perHead": 0.9
+      },
+      "notes": [
+        "Gluten-free bases share the oven: not safe for coeliacs",
+        "Nut-free kitchen"
+      ],
+      "pastOnly": true
     },
     {
-      "id": "bao-down", "name": "Bao Down", "tier": "restaurant", "example": true,
-      "fulfilment": { "type": "delivery", "fee": 18, "leadHours": 24, "windowMins": 30, "label": "group order, delivered" },
-      "minOrder": 150, "deliversTo": ["E", "EC", "SE", "WC"],
+      "id": "bao-down",
+      "name": "Bao Down",
+      "tier": "restaurant",
+      "example": true,
+      "fulfilment": {
+        "type": "delivery",
+        "fee": 18,
+        "leadHours": 24,
+        "windowMins": 30,
+        "label": "group order, delivered"
+      },
+      "minOrder": 150,
+      "deliversTo": [
+        "E",
+        "EC",
+        "SE",
+        "WC"
+      ],
       "allergens": "kitchen-may-contain",
       "dishes": [
-        { "id": "bd-chicken", "name": "Fried chicken bao", "tags": ["meat"], "price": 8.5 },
-        { "id": "bd-tofu", "name": "Crispy tofu bao", "tags": ["vegan"], "price": 8.0 }
+        {
+          "id": "bd-chicken",
+          "name": "Fried chicken bao",
+          "tags": [
+            "meat"
+          ],
+          "price": 8.5
+        },
+        {
+          "id": "bd-tofu",
+          "name": "Crispy tofu bao",
+          "tags": [
+            "vegan"
+          ],
+          "price": 8.0
+        }
       ],
-      "extras": { "label": "Pickles and drinks", "perHead": 1.0 },
-      "notes": ["Peanuts in the kitchen"]
+      "extras": {
+        "label": "Pickles and drinks",
+        "perHead": 1.0
+      },
+      "notes": [
+        "Peanuts in the kitchen"
+      ],
+      "pastOnly": true
     }
   ]
 }

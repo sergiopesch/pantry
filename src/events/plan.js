@@ -27,7 +27,7 @@ export function showRate(history, event) {
 
 export function headcount(world, state) {
   const { event } = world;
-  const guests = state.guests?.guests ?? world.guests.guests;
+  const guests = world.guests.guests;
   const signedUp = guests.length;
   const sr = showRate(allHistory(world, state), event);
   const expected = Math.round(signedUp * sr.rate);
@@ -50,7 +50,7 @@ export function headcount(world, state) {
 // --- What they need -----------------------------------------------------------------------------------
 
 export function diets(world, state) {
-  const guests = state.guests?.guests ?? world.guests.guests;
+  const guests = world.guests.guests;
   const counts = {};
   for (const g of guests) for (const n of g.needs) counts[n] = (counts[n] ?? 0) + 1;
   const prefs = {};
@@ -111,7 +111,7 @@ export const allHistory = (world, state) => [...world.history, ...(state.debrief
 
 export function ledger(world, state) {
   const history = allHistory(world, state);
-  return world.providers.map(p => {
+  return (world.knownProviders ?? world.providers).map(p => {
     const runs = history.filter(e => e.provider === p.id);
     const rating = runs.length ? round2(runs.reduce((s, e) => s + e.rating, 0) / runs.length) : null;
     const onTime = runs.length ? round2(runs.filter(e => e.onTime).length / runs.length) : null;
@@ -145,7 +145,7 @@ function groupGuests(guests) {
 
 export function option(world, state, provider, hc, ctx) {
   const { event } = world;
-  const guests = state.guests?.guests ?? world.guests.guests;
+  const guests = world.guests.guests;
   const lines = new Map();
   const add = (dish, lane, qty) => {
     if (qty <= 0) return;
@@ -200,17 +200,19 @@ export function option(world, state, provider, hc, ctx) {
   for (const g of gaps) excluded.push(`No safe option for ${g.label}: ${g.guests} ${g.guests === 1 ? 'guest' : 'guests'} would go without`);
   if (total > event.budget.total) excluded.push(`${gbp(total)} is over the ${gbp(event.budget.total)} budget by ${gbp(total - event.budget.total)}`);
   if (now > orderBy) excluded.push(`Needs ${provider.fulfilment.leadHours} hours' notice; the order-by time has passed`);
-  if (area && !provider.deliversTo.includes(area)) excluded.push(`Doesn't deliver to ${area}`);
+  if (area && provider.deliversTo && !provider.deliversTo.includes(area)) excluded.push(`Doesn't deliver to ${area}`);
   if (provider.maxPortions && portions > provider.maxPortions) excluded.push(`Takes at most ${provider.maxPortions} portions per order`);
   const warnings = [];
-  if (!area) warnings.push('Venue postcode not confirmed, so delivery coverage is unchecked');
+  if (!area) warnings.push('Venue postcode not set, so delivery coverage is unchecked');
+  else if (!provider.deliversTo) warnings.push(`Delivery to ${area} not confirmed with them`);
   if (total < (provider.minOrder ?? 0)) warnings.push(`Below the ${gbp(provider.minOrder)} minimum order`);
   if (provider.fulfilment.type === 'collection') warnings.push(`Someone has to collect it: about ${provider.fulfilment.travelMins} minutes each way`);
   if (provider.source === 'estimate') warnings.push('Prices are estimates; check them on the live site before paying');
   if (provider.example) warnings.push('Example provider until a real one is added');
 
   const book = ctx.ledger.find(l => l.id === provider.id);
-  const rating = book.rating ?? DEFAULT_RATING;
+  // Our own history first; otherwise the provider's public reviews; otherwise a neutral prior.
+  const rating = book.rating ?? provider.reviews?.rating ?? DEFAULT_RATING;
   const onTime = book.onTime ?? DEFAULT_ON_TIME;
   // Drop earlier for providers that ran late before.
   const earlierMins = book.avgMinsLate ? Math.ceil(book.avgMinsLate / 15) * 15 : 0;
@@ -221,6 +223,7 @@ export function option(world, state, provider, hc, ctx) {
     name: provider.name,
     tier: provider.tier,
     source: provider.source ?? (provider.example ? 'example' : 'provider'),
+    live: Boolean(provider.live),
     fulfilment: provider.fulfilment,
     allergens: provider.allergens,
     lines: [...lines.values()],
@@ -234,6 +237,7 @@ export function option(world, state, provider, hc, ctx) {
     venueCutoff: cutoff && cutoff < beforeServe ? cutoff.toISOString() : null,
     buffers,
     record: { events: book.events, rating: book.rating, onTime: book.onTime, ranOut: book.ranOut },
+    reviews: provider.reviews ?? null,
     rating,
     onTime,
     excluded,

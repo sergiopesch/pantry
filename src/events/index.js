@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { importGuests } from './luma.js';
 import { liveClient, syncLuma } from './luma-api.js';
-import { readArchive } from './archive.js';
+import { readPast } from './archive.js';
 import { LANES, allHistory, diets, headcount, ledger, options, plan } from './plan.js';
 import { approve, charge, decline, requestApproval } from '../vault.js';
 import { clock, dateKey, gbp, hm, iso, longDate, pct, round2, shortId } from '../util.js';
@@ -17,36 +17,67 @@ export const EVENT_STATE = process.env.PANTRY_EVENT_STATE ?? join(EVENTS_DIR, 's
 
 const read = name => JSON.parse(readFileSync(join(EVENTS_DIR, name), 'utf8'));
 
-// Luma says who's coming, when and where: the live API with Luma Plus, otherwise the organiser's Luma CSV
-// exports. Pantry's own ledger says how past food went. Cached in state.luma until the next sync.
+// The event comes from the organiser's Notion (pantry_event_set), guests from their Luma export (or the
+// Luma API with Luma Plus), past attendance from their records, and the clock is real. Nothing about the
+// event is hard-coded.
 export async function loadEventWorld(state = freshEventState(), { client, refresh = false } = {}) {
-  const settings = read('event.json');
-  if (!state.luma || refresh) {
-    const key = process.env.LUMA_API_KEY;
-    state.luma = client || key
-      ? await syncLuma(client ?? liveClient({ apiKey: key }), { eventId: settings.lumaEventId, now: state.clock ?? settings.planningClock })
-      : readArchive(EVENTS_DIR, settings);
+  const policy = read('event.json');
+  const key = process.env.LUMA_API_KEY;
+  if ((client || key) && (!state.luma || refresh)) {
+    state.luma = await syncLuma(client ?? liveClient({ apiKey: key }), { eventId: state.event?.lumaEventId, now: now(null, state) });
   }
-  const { event: luma, guests, past } = state.luma;
   const ledger = read('history.json').events;
-  const inbox = read('inbox.json');
-  const venue = { ...luma.venue, postcodeArea: luma.venue.postcodeArea ?? settings.venue.postcodeArea, access: settings.venue.access };
-  if (!venue.address) venue.confirm = settings.venue.confirm;
+  const past = state.luma?.past ?? readPast(EVENTS_DIR);
+  const known = read('providers.json').providers;
+  const added = state.providers ?? [];
   return {
-    event: { ...settings, ...luma, serve: new Date(new Date(luma.doors).getTime() + settings.serveAfterDoorsMins * 60_000).toISOString(), venue },
-    source: state.luma.source,
-    providers: read('providers.json').providers,
+    event: state.event ? buildEvent(policy, state.event) : null,
+    policy,
+    source: state.luma?.source ?? 'luma-csv',
+    providers: [...known.filter(p => !p.pastOnly), ...added],
+    knownProviders: [...known, ...added],
     history: past.map(p => ({ ...p, ...ledger.find(l => l.lumaEventId === p.lumaEventId) })),
-    guests,
-    inbox: inbox.emails,
-    inboxAddress: inbox.address,
+    guests: state.guests ?? state.luma?.guests ?? null,
+    inbox: state.inbox ?? [],
+    inboxAddress: state.inboxAddress ?? null,
+  };
+}
+
+const UK_POSTCODE = /\b([A-Z]{1,2})\d[A-Z\d]?\s*\d[A-Z]{2}\b/i;
+
+function buildEvent(policy, e) {
+  const doors = new Date(e.start);
+  const serve = e.serveAt ? new Date(e.serveAt) : new Date(doors.getTime() + policy.serveAfterDoorsMins * 60_000);
+  const address = e.venue?.address ?? null;
+  return {
+    ...policy,
+    name: e.name,
+    kind: e.kind ?? (/hack/i.test(e.name) ? 'hackathon' : 'meetup'),
+    ticket: e.ticket ?? 'free',
+    doors: doors.toISOString(),
+    ends: e.end ?? null,
+    serve: serve.toISOString(),
+    lumaEventId: e.lumaEventId ?? null,
+    url: e.url ?? null,
+    source: e.source ?? null,
+    venue: {
+      name: e.venue?.name ?? 'Venue',
+      address,
+      postcodeArea: address?.match(UK_POSTCODE)?.[1]?.toUpperCase() ?? null,
+      deliveriesBefore: e.venue?.deliveriesBefore ?? null,
+      access: e.venue?.access ?? [],
+      confirm: address ? undefined : 'Venue address not set, so delivery coverage is unchecked.',
+    },
+    budget: { total: Number(e.budget?.total), currency: 'GBP', payer: e.budget?.payer ?? 'Organiser' },
   };
 }
 
 export const freshEventState = () => ({
   version: 1,
   clock: null,           // planning clock (ISO); null = the event's planningClock
-  luma: null,            // last read of the Luma calendar: the event, its guests, past attendance
+  luma: null,            // last read of the Luma API (Luma Plus only)
+  event: null,           // the upcoming event, from the organiser's Notion (pantry_event_set)
+  providers: [],         // real providers Pantry found for this event, with sources (pantry_provider_add)
   guests: null,          // a re-imported Luma export replaces the bundled one
   planForOverride: null, // the organiser's own headcount
   choice: null,          // provider id, when the organiser picks something other than the recommendation
@@ -72,7 +103,13 @@ export function saveEventState(state) {
   renameSync(`${EVENT_STATE}.tmp`, EVENT_STATE);
 }
 
-const now = (world, state) => new Date(state.clock ?? world.event.planningClock);
+// Real time, unless a test pins it.
+const now = (world, state) => new Date(process.env.PANTRY_CLOCK ?? state?.clock ?? Date.now());
+
+function ready(world) {
+  if (!world.event) throw new Error('No event yet. Read the upcoming event from Notion and call pantry_event_set.');
+  if (!world.guests?.guests?.length) throw new Error('No guests yet. Import the Luma guest export with pantry_guests_import.');
+}
 
 // --- Edits (local draft only) ------------------------------------------------------------------------
 
@@ -106,9 +143,62 @@ export function recordQuote(world, state, { provider, amount, note }) {
   return state.quotes[provider];
 }
 
+// The upcoming event, as the organiser keeps it in Notion. Local draft only.
+export function setEvent(state, e) {
+  if (!e?.name || !e?.start) throw new Error('An event needs at least a name and a start time (ISO 8601).');
+  if (Number.isNaN(new Date(e.start).getTime())) throw new Error(`Start time "${e.start}" isn't a date.`);
+  if (!(Number(e.budget?.total) > 0)) throw new Error('Set a budget: budget.total in pounds.');
+  if (e.venue?.deliveriesBefore && !/^\d{1,2}:\d{2}$/.test(e.venue.deliveriesBefore)) throw new Error('venue.deliveriesBefore is a local time like "18:00".');
+  state.event = { ...e, setAt: iso(new Date()) };
+  state.choice = null;
+  return state.event;
+}
+
+const TAGS = new Set(['meat', 'pork', 'fish', 'vegetarian', 'vegan', 'halal', 'gluten-free', 'coeliac-safe', 'dairy-free', 'nut-free', 'sealed', 'spicy']);
+const TIERS = new Set(['supermarket', 'caterer', 'restaurant']);
+const ALLERGENS = new Set(['sealed-labelled', 'labelled', 'kitchen-may-contain', 'unknown']);
+
+// A real provider Pantry found for this event. Every fact needs a source; unknown allergen handling is
+// treated as "may contain", so nobody with an allergy is planned onto a guess.
+export function addProvider(state, p) {
+  if (!p?.name || !TIERS.has(p.tier)) throw new Error('A provider needs a name and a tier: supermarket, caterer or restaurant.');
+  if (!p.source || !/^https?:\/\//.test(p.source)) throw new Error('A provider needs a source URL: where these prices and dishes came from.');
+  if (!Array.isArray(p.dishes) || !p.dishes.length) throw new Error('A provider needs at least one dish with a price.');
+  const dishes = p.dishes.map((d, i) => {
+    const tags = (d.tags ?? []).map(t => String(t).toLowerCase());
+    const bad = tags.filter(t => !TAGS.has(t));
+    if (bad.length) throw new Error(`Unknown dish tags: ${bad.join(', ')}. Use: ${[...TAGS].join(', ')}.`);
+    if (!(Number(d.price) > 0)) throw new Error(`Dish "${d.name}" needs a price per portion, in pounds including VAT.`);
+    return { id: `${slug(p.name)}-${i}`, name: String(d.name), tags, price: Number(d.price) };
+  });
+  const f = p.fulfilment ?? {};
+  const provider = {
+    id: p.id ?? slug(p.name),
+    name: String(p.name),
+    tier: p.tier,
+    source: p.source,
+    live: true,
+    checkedAt: iso(new Date()),
+    fulfilment: { type: f.type === 'collection' ? 'collection' : 'delivery', fee: Number(f.fee ?? 0), leadHours: Number(f.leadHours ?? 48), travelMins: f.travelMins, label: f.label ?? f.type ?? 'delivery' },
+    minOrder: Number(p.minOrder ?? 0),
+    maxPortions: p.maxPortions ? Number(p.maxPortions) : undefined,
+    deliversTo: Array.isArray(p.deliversTo) && p.deliversTo.length ? p.deliversTo.map(a => String(a).toUpperCase()) : null,
+    allergens: ALLERGENS.has(p.allergens) && p.allergens !== 'unknown' ? p.allergens : 'kitchen-may-contain',
+    dishes,
+    extras: p.extras?.perHead ? { label: String(p.extras.label ?? 'Drinks'), perHead: Number(p.extras.perHead) } : undefined,
+    reviews: p.reviews?.rating ? { rating: Number(p.reviews.rating), count: Number(p.reviews.count ?? 0), source: p.reviews.source ?? p.source } : undefined,
+    notes: [...(p.notes ?? []), ...(p.allergens === 'unknown' || !p.allergens ? ['Allergen handling not confirmed, so treated as "may contain nuts"'] : [])],
+  };
+  state.providers = [...(state.providers ?? []).filter(x => x.id !== provider.id), provider];
+  return provider;
+}
+
+const slug = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
 // --- Inbox -------------------------------------------------------------------------------------------
 
 export function triage(world, state) {
+  if (!world.inbox.length) return { address: world.inboxAddress, items: [], needsYou: [], learned: [], text: "Pantry's own email isn't switched on yet, so there's nothing to triage." };
   const items = world.inbox.map(m => {
     switch (m.kind) {
       case 'registrations':
@@ -142,19 +232,19 @@ export function triage(world, state) {
   };
 }
 
-// Rules learned from mail. The venue's delivery cut-off moves every drop time.
+// The venue's delivery cut-off (from the event in Notion) moves every drop time.
 function venueCutoff(world) {
-  const m = world.inbox.find(e => e.kind === 'venue' && /before (\d{1,2}):(\d{2})/.test(e.body));
+  const m = world.event?.venue.deliveriesBefore?.match(/^(\d{1,2}):(\d{2})$/);
   if (!m) return null;
-  const [, h, min] = m.body.match(/before (\d{1,2}):(\d{2})/).map(Number);
   const serve = new Date(world.event.serve);
   const local = hm(serve);
-  return new Date(serve.getTime() - (local.h * 60 + local.m - (h * 60 + min)) * 60_000).toISOString();
+  return new Date(serve.getTime() - (local.h * 60 + local.m - (Number(m[1]) * 60 + Number(m[2]))) * 60_000).toISOString();
 }
 
 // --- Snapshot ----------------------------------------------------------------------------------------
 
 export function eventSnapshot(world, state) {
+  ready(world);
   const at = now(world, state);
   const cutoff = venueCutoff(world);
   const p = plan(world, state, { now: at, latestDelivery: cutoff });
@@ -172,6 +262,7 @@ export function eventSnapshot(world, state) {
 }
 
 export const eventOptions = (world, state, tier) => {
+  ready(world);
   const r = options(world, state, { now: now(world, state), latestDelivery: venueCutoff(world) });
   return { headcount: r.headcount, options: tier ? r.options.filter(o => o.tier === tier) : r.options };
 };
@@ -239,6 +330,35 @@ export function requestPayment(world, state) {
   const approval = requestApproval(state, { merchant: c.name, amount: c.cost.total, memo: `${world.event.name}: ${c.portions} plates`, cartHash: planHash(c), now: now(world, state) });
   approval.prompt = `Pantry wants to spend ${gbp(c.cost.total)} with ${c.name} for ${world.event.name}.`;
   return approval;
+}
+
+// Real payment processing: Pantry attaches the processor's payment link (e.g. a Stripe Payment Link it
+// created), the organiser pays it themselves, and Pantry records the payment only after the processor
+// reports it paid, for exactly the approved amount and an unchanged plan.
+export function attachPaymentLink(state, { approvalId, url, reference, processor = 'stripe' }) {
+  const a = state.approvals.find(x => x.id === approvalId);
+  if (!a || a.status !== 'pending') throw new Error('No pending approval with that id. Call pantry_checkout_request first.');
+  if (!/^https:\/\//.test(url ?? '')) throw new Error('The payment link must be an https URL from the processor.');
+  a.payment = { processor, url, reference: reference ?? null, status: 'awaiting-organiser', linkedAt: iso(new Date()) };
+  state.log.push({ at: iso(new Date()), event: 'payment.link', approval: a.id, processor, reference: reference ?? null });
+  return a;
+}
+
+export function confirmPayment(world, state, { approvalId, reference, amount, status }) {
+  const a = state.approvals.find(x => x.id === approvalId);
+  if (!a?.payment) throw new Error('That approval has no payment link.');
+  if (!['paid', 'succeeded', 'complete'].includes(String(status).toLowerCase())) throw new Error(`The processor says "${status}", not paid. Nothing recorded.`);
+  if (Math.abs(Number(amount) - a.amount) > 0.005) throw new Error(`The processor reports £${amount}, but the organiser approved ${gbp(a.amount)}. Nothing recorded.`);
+  const c = eventSnapshot(world, state).plan.chosen;
+  if (a.cartHash !== planHash(c)) throw new Error('The plan changed after the payment request. Raise a new one.');
+  const at = now(world, state);
+  a.status = 'charged';
+  a.payment = { ...a.payment, status: 'paid', reference: reference ?? a.payment.reference, paidAt: iso(at) };
+  a.receipt = { id: reference ?? a.payment.reference, status: 'cleared', merchant: a.merchant, amount: a.amount, at: iso(at), driver: a.payment.processor };
+  const order = { id: shortId('ord'), provider: c.id, name: c.name, amount: a.amount, plates: c.portions, dropAt: c.dropAt, planHash: planHash(c), placedAt: iso(at), status: 'paid', driver: a.payment.processor, reference: a.receipt.id };
+  state.orders.push(order);
+  state.log.push({ at: iso(at), event: 'payment.confirmed', approval: a.id, reference: a.receipt.id, amount: a.amount });
+  return { approval: a, order };
 }
 
 // Human only: the CLI's stub stands in for the organiser's approval on their phone.

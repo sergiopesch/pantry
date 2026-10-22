@@ -4,8 +4,8 @@
 import { createInterface } from 'node:readline';
 import { readFileSync } from 'node:fs';
 import {
-  choose, debrief, draftBrief, eventOptions, eventSnapshot, importGuestFile, loadEventState, loadEventWorld,
-  providerLedger, recordQuote, requestPayment, saveEventState, setHeadcount,
+  addProvider, attachPaymentLink, choose, confirmPayment, debrief, draftBrief, eventOptions, eventSnapshot, importGuestFile,
+  loadEventState, loadEventWorld, providerLedger, recordQuote, requestPayment, saveEventState, setEvent, setHeadcount,
 } from './events/index.js';
 
 const obj = (properties = {}, required = []) => ({ type: 'object', properties, required, additionalProperties: false });
@@ -20,10 +20,37 @@ const TOOLS = [
     run: (_, w, state) => ({ source: state.luma.source, syncedAt: state.luma.syncedAt, event: state.luma.event, going: state.luma.guests.guests.length, waitlist: state.luma.guests.waitlist, past: state.luma.past }),
   },
   {
+    name: 'pantry_event_set',
+    description: "Set the upcoming event from the organiser's Notion page: name, start (ISO 8601 with offset), optional serveAt, kind (meetup|hackathon|workshop|social), ticket (free|paid), venue {name, address, deliveriesBefore 'HH:MM', access[]}, budget {total, payer}, source (the Notion URL). Draft only.",
+    inputSchema: obj({
+      name: { type: 'string' }, start: { type: 'string' }, end: { type: 'string' }, serveAt: { type: 'string' },
+      kind: { type: 'string' }, ticket: { type: 'string', enum: ['free', 'paid'] }, source: { type: 'string' },
+      venue: { type: 'object', properties: { name: { type: 'string' }, address: { type: 'string' }, deliveriesBefore: { type: 'string' }, access: { type: 'array', items: { type: 'string' } } } },
+      budget: { type: 'object', properties: { total: { type: 'number' }, payer: { type: 'string' } }, required: ['total'] },
+    }, ['name', 'start', 'budget']),
+    mutates: true,
+    run: (a, w, state) => setEvent(state, a),
+  },
+  {
     name: 'pantry_event',
-    description: 'The event: name, doors and serving times, venue (address, postcode area, access notes), budget and payer.',
+    description: 'The upcoming event as set from Notion: name, doors and serving times, venue (address, postcode area, delivery cut-off, access), budget. Also the current time.',
     inputSchema: obj(),
-    run: (_, w) => w.event,
+    run: (_, w) => ({ now: new Date().toISOString(), event: w.event ?? 'No event yet. Read it from Notion and call pantry_event_set.' }),
+  },
+  {
+    name: 'pantry_provider_add',
+    description: 'Add a real provider you found for this event (supermarket, caterer or restaurant), with a source URL for the facts. dishes: [{name, price per portion in £ incl. VAT, tags from: meat, pork, fish, vegetarian, vegan, halal, gluten-free, coeliac-safe, dairy-free, nut-free, sealed, spicy}]. fulfilment {type delivery|collection, fee, leadHours}, minOrder, deliversTo (postcode areas), allergens (sealed-labelled|labelled|kitchen-may-contain|unknown). Unknown allergen handling counts as may-contain. reviews {rating out of 5, count, source} is the public review score, used until there is own history.',
+    inputSchema: obj({
+      name: { type: 'string' }, tier: { type: 'string', enum: ['supermarket', 'caterer', 'restaurant'] }, source: { type: 'string' },
+      dishes: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, price: { type: 'number' }, tags: { type: 'array', items: { type: 'string' } } }, required: ['name', 'price'] } },
+      fulfilment: { type: 'object', properties: { type: { type: 'string' }, fee: { type: 'number' }, leadHours: { type: 'number' }, travelMins: { type: 'number' }, label: { type: 'string' } } },
+      minOrder: { type: 'number' }, maxPortions: { type: 'number' }, deliversTo: { type: 'array', items: { type: 'string' } },
+      allergens: { type: 'string', enum: ['sealed-labelled', 'labelled', 'kitchen-may-contain', 'unknown'] },
+      extras: { type: 'object', properties: { label: { type: 'string' }, perHead: { type: 'number' } } }, notes: { type: 'array', items: { type: 'string' } },
+      reviews: { type: 'object', properties: { rating: { type: 'number' }, count: { type: 'number' }, source: { type: 'string' } } },
+    }, ['name', 'tier', 'source', 'dishes']),
+    mutates: true,
+    run: (a, w, state) => addProvider(state, a),
   },
   {
     name: 'pantry_guests_import',
@@ -92,6 +119,20 @@ const TOOLS = [
     run: (_, w, state) => requestPayment(w, state),
   },
   {
+    name: 'pantry_payment_link',
+    description: "Attach the payment link you created with the payment processor (e.g. a Stripe Payment Link for exactly the approval's amount) to a pending approval. The organiser pays it themselves; you never pay.",
+    inputSchema: obj({ approvalId: { type: 'string' }, url: { type: 'string' }, reference: { type: 'string' }, processor: { type: 'string' } }, ['approvalId', 'url']),
+    mutates: true,
+    run: (a, w, state) => attachPaymentLink(state, a),
+  },
+  {
+    name: 'pantry_payment_confirm',
+    description: "Record a payment only after the processor reports it paid. Pass the processor's status and amount exactly as it reports them; anything but paid, or a different amount, records nothing.",
+    inputSchema: obj({ approvalId: { type: 'string' }, reference: { type: 'string' }, amount: { type: 'number' }, status: { type: 'string' } }, ['approvalId', 'amount', 'status']),
+    mutates: true,
+    run: (a, w, state) => confirmPayment(w, state, a),
+  },
+  {
     name: 'pantry_status',
     description: 'Latest approval (pending / approved / charged / declined / void) and the order it produced.',
     inputSchema: obj(),
@@ -153,7 +194,7 @@ createInterface({ input: process.stdin }).on('line', async line => {
           protocolVersion: params.protocolVersion ?? '2025-06-18',
           capabilities: { tools: {} },
           serverInfo: { name: 'pantry', version: '0.1.0' },
-          instructions: 'Pantry plans catering for community events. Read with pantry_headcount / pantry_diets / pantry_options / pantry_plan; edit the draft freely; checkout only creates an approval request. Never claim a purchase happened until pantry_status says charged.',
+          instructions: 'Pantry plans catering for community events. Start with pantry_event_set (from Notion) and pantry_guests_import. Read with pantry_headcount / pantry_diets / pantry_options / pantry_plan; edit the draft freely; checkout only creates an approval request. Never claim a purchase happened until pantry_status says charged.',
         });
       case 'ping':
         return reply(id, {});
