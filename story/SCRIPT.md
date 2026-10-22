@@ -1,53 +1,52 @@
-# Pantry: stage script (3:00), driven by the Stream Deck
+# Pantry: stage script (about 5:00), driven by the Stream Deck
 
-One key per segment, left to right on the top row of the Stream Deck profile **Pantry Demo**:
+Stream Deck profile **Pantry Demo** (MK.2, 5×3):
 
-| # | Key | What it does | Length | Running |
-|---|---|---|---|---|
-| 1 | **Scene** | Opens the deck full screen and plays the opening by itself: the coeliac email, February, June, then 41% in the bin. | 0:20 | 0:20 |
-| 2 | **Pantry** | Plays the turn by itself: "We order for who ~~signs up~~ shows up", then Pantry lands in its chef's hat. It ends on a still. | 0:10 | 0:30 |
-| 3 | **Grok Bot** | Switches to the Grok Bot app on Pantry's chat (`grokbot://app/v1/agent?id=5ab715a0-…`). You drive the conversation. | ~2:10 | 2:40 |
-| 4 | **Wrap** | Brings the deck back and plays the close by itself: 93 / 47 / 0, then the template and agentic commerce, then "Nobody should have to bring their own." | 0:20 | 3:00 |
-| 5 | **Reset** | Reloads the deck at the start, idle: black, nothing playing. Press it before you go on. | | |
+| Row | Key 1 | Key 2 | Key 3 | Key 4 | Key 5 |
+|---|---|---|---|---|---|
+| 1 | **Scene** | **Pantry** | **Grok Bot** | **Next prompt** | **Send** |
+| 2 | **Connections** | **How it works** | **Agentcard** | **Grok full** | **Wrap** |
+| 3 | **Prompt reset** | | | | **Reset deck** |
 
-Nothing needs a click once a key is pressed. While a segment plays, **Right/Space** skips to its next cue and **Left** steps back one cue and pauses. With no Stream Deck, the same segments open from the browser at `story/index.html#scene`, `#pantry`, `#wrap` or `#idle`. Plain `index.html` opens idle, and Right then steps through every slide by hand.
-
----
+- **Scene / Pantry / Wrap / Reset deck:** the full-screen deck (kiosk Chrome). Wrap is pulled in front of Grok Bot.
+- **Grok Bot:** opens Pantry's chat (deep link) and makes Grok Bot full width (0,25, 1710×1087).
+- **Next prompt / Send / Prompt reset:** `prompt.sh next|send|reset`. Next types the next line of `prompts.txt` into Pantry's chat box without sending, Send sends it, and Prompt reset starts again from prompt 1.
+- **Connections / How it works / Agentcard:** the split view. The deck panel opens on the LEFT half (0–855) and Grok Bot moves to the RIGHT half (855–1710).
+- **Grok full:** Grok Bot goes back to full width and to the front; the panel stays behind.
 
 ## Before you go on
-- [ ] Press **Reset**. The projector should show black.
-- [ ] Grok Bot is open on **Pantry**, in a fresh chat. The window is maximised and the text is large enough to read from the back.
-- [ ] The Pantry MCP and Cognee are connected. Ask once, off stage: "How many signed up?" The answer should say 140.
-- [ ] If you rehearsed a payment, reset the engine: `node src/cli.js event reset`.
-- [ ] Payment on stage: Pantry raises the request and it stays pending. It needs your approval in Grok Bot, and it's fine to leave it unapproved (the caterer is fictional).
-- [ ] A Terminal window is open at the repo, behind Grok Bot, for the fallbacks. Every fallback command is read-only except `pay`.
-- [ ] Optional live number: put `CAME=…` (and `SIGNED=…`) in `story/streamdeck/tonight.env`, but **only numbers you've actually counted**. The Wrap key then adds "Tonight, in this room" to the close.
+- [ ] Press **Reset deck** (black) and **Prompt reset**.
+- [ ] Grok Bot is on **Pantry**, in a fresh chat, with the MCP and Cognee connected.
+- [ ] **Press every key once off stage.** macOS asks once per key app for Accessibility, which moving or typing into Grok Bot needs: System Settings, Privacy & Security, Accessibility, then allow "Pantry …". Until you do, Connections, How it works, Agentcard, Grok full, Next prompt and Send can't move or type into Grok Bot.
+- [ ] Optional: `tonight.env` with numbers you've actually counted.
 
 ---
 
-## 1 · Scene (20 s, plays by itself)
-| Time | On screen | You say |
-|---|---|---|
-| 0:00 | The guest's email types itself; "bring my own?" lands in yellow | Nothing. Let it land. |
-| 0:07 | February: "Pizza for 80." "44 came." "The coeliac guest couldn't eat." | "February. Pizza for eighty. Forty-four came. And the coeliac guest couldn't eat a thing." |
-| 0:12 | June: 96 dots, then "51 came" as 45 empty out | "June. Ninety-six signed up. Fifty-one came." |
-| 0:16 | "41% of the food in the bin." Holds to 0:20 | "Forty-one percent, in the bin." [beat] |
+## Run of show
 
-## 2 · Pantry (10 s, plays by itself)
-| Time | On screen | You say |
-|---|---|---|
-| 0:00 | "We order for who signs up." | "Too much food, and still not the right food. Because we order for who signs up." |
-| 0:02 | Red strike, then "Order for who shows up." | "Pantry orders for who shows up." |
-| 0:05 | Pantry lands (dome, hat bounce): "A Grok Bot that plans the food for your event." Holds still | "Pantry is a Grok Bot that plans the food for your event. Let me show you." |
+| # | Key | Time | On screen | You say |
+|---|---|---|---|---|
+| 1 | **Scene** | 0:00–0:20 | The coeliac email, February, June, 41% in the bin (plays by itself) | [Silent over the email.] "February. Pizza for eighty. Forty-four came. The coeliac guest couldn't eat." "June. Ninety-six signed up. Fifty-one came. Forty-one percent, in the bin." |
+| 2 | **Pantry** | 0:20–0:30 | "We order for who ~~signs up~~ shows up", then Pantry lands in its hat | "Too much food, and still not the right food, because we order for who signs up. Pantry orders for who shows up. It's a Grok Bot. Let me show you." |
+| 3 | **Grok Bot**, then **Next prompt** | 0:30–0:45 | Pantry's chat, full width. Prompt 1 appears in the box: the hack night, check past events, plan for who shows up, best local caterer | "This is the whole job in one sentence." Then **Send**. |
+| 4 | **Connections** | 0:45–1:30 | LEFT: "Where Pantry is connected" (Pantry at the centre: Notion, Cognee, Luma, web and places, Sainsbury's, 1Password, Agentcard, Grok Bot). RIGHT: Pantry working | "While it works: Pantry reads the organiser's events in Notion and the Luma guest export, with diets. It remembers every past event in Cognee. It searches the web for real local caterers, live. Logins come from 1Password and it never sees them. Payments go through Agentcard." Land it on Pantry's answer: the headcount (planned for who shows up, not the sign-ups) and the caterer it picks. |
+| 5 | **Next prompt**, **Send** | 1:30–2:00 | Prompt 2: one level deeper, one card per meal | "One level deeper." The meal cards arrive as images. Use **Grok full** if you want them bigger. |
+| 6 | **Next prompt**, **Send** | 2:00–2:15 | Prompt 3: contact them. The brief is emailed to your own address, not the provider | "Go ahead and contact them. For tonight it emails me, not the caterer." |
+| 7 | **How it works** | 2:15–3:00 | LEFT: "How Pantry works": tools by job, three card thumbnails, the rules | "Under the hood it's an engine with tools for each job: who's coming, what to serve, making it happen, and remembering. Answers come back as cards, one idea each, number first. And the rules: allergies planned at a hundred percent, nothing invented, every source linked, and no tool can pay." |
+| 8 | **Next prompt**, **Send** | 3:00–3:20 | Prompt 4: the simulated reply (coeliac meals sealed, delivery to W6 by 6 PM at the price). "Yes, pay them with Agentcard and request the invoice." | "The caterer said yes. So do I." |
+| 9 | **Agentcard** | 3:20–4:00 | LEFT: "How Pantry pays": 5 steps, "Pantry never sees a card number. It can't approve." "Sandbox tonight" | "Pantry raises the request, bound to this plan, this amount and this provider. I say yes. Agentcard issues a single-use card for exactly that amount. Tonight the charge is simulated in sandbox, and then the card closes. Pantry never sees the number, and 1Password does the same for logins." Approve when Grok Bot asks. |
+| 10 | **Wrap** | 4:00–4:25 | 93 / 47 / 0, then "Time for the community, not the logistics.", then brief out, quotes back, one card, one yes, then "Nobody should have to bring their own." | "Ninety-three plates, not a hundred and forty. Forty-seven never bought for empty chairs. Not one declared need without a safe plate. For community builders it's the same tools, agentic workflows and agentic payments, so organisers spend their time on the community, not the logistics. So the next time a guest asks if they should bring their own, nobody should have to." |
+| 11 | (Wrap continues) | 4:25 | Pantry happy: "Order for who shows up." then "Thank you." | "Pantry. Order for who shows up. Thank you." |
 
-## 3 · Grok Bot (live, about 2:00)
-Press **Grok Bot**. Type the prompts exactly as written. Everything Pantry says now is live:
-- the real date and the venue's real address;
-- real providers near the venue, with Sainsbury's prices it checked in its own browser;
-- Cognee for memory, Notion for the events, and Agentcard's sandbox for the payment.
+**Payment line:** Pantry raises the payment and it waits for your approval in Grok Bot. Never point the audience to a phone.
+**If a prompt misfires:** type it yourself from `story/streamdeck/prompts.txt`, or use Prompt reset and step again.
+**If the bot is down:** use Grok full, then Terminal with `node src/cli.js event headcount`, `options`, `plan`, `inbox`. Say "Same engine Pantry calls." Don't fake a chat.
 
-Only the past events and the upcoming event's guest list are demo data. Prices can move, so **don't quote a number before Pantry does.** Say "a demo organiser's data" once, at the start of this section.
+Deck URLs, for testing in a browser: `index.html#scene`, `#pantry`, `#wrap`, `#idle`, plus the panels `#connect`, `#tools`, `#agentcard` (designed for an 855×1087 window).
 
+---
+
+## Appendix: the earlier rehearsed prompts (fallback)
 ### Beat 1 · The event (0:00–0:20)
 **Type:** `What's my next event, and how many should I plan for?`
 
@@ -83,40 +82,11 @@ Only the past events and the upcoming event's guest list are demo data. Prices c
 3. Creates a **single-use Agentcard** for the amount (sandbox).
 4. Asks you to approve it in Agentcard.
 
-**Do:** approve in Agentcard, on your phone or the dashboard.
+**Do:** approve in Agentcard when it asks.
 **Then type:** `Approved.`
 **Pantry:** places the simulated order (sandbox `test_charge`), checks the transaction has settled, and confirms: "Paid £… on a single-use card. It's closed now."
 
 **Say:** "Pantry can't approve anything. I said yes, the card paid once and died. Nothing else can be charged."
-
-If you're past 2:30 overall, skip Beat 3 and press **Wrap**.
-
-> If the bot is down completely: `node src/cli.js event headcount`, then `options` and `plan`, in Terminal. Say "Same engine Pantry calls. The Bot is having a moment." Don't fake a chat.
-
-## 4 · Wrap (about 20 s, plays by itself)
-| Time | On screen | You say |
-|---|---|---|
-| 0:00 | **93** (plates, not 140) | "Ninety-three plates, not a hundred and forty." |
-| 0:02 | **47** (never bought for empty chairs) | "Forty-seven never bought for empty chairs." |
-| 0:04 | **0** (declared needs without a safe plate) | "And not one declared need without a safe plate." |
-| (0:06) | Only with `tonight.env` set: "Tonight, in this room…" | Read the number. |
-| 0:07 | "A public Grok Bot template." | "Pantry is a public Grok Bot template. Any organiser imports it, and it learns their room." |
-| 0:09.5 | Brief out, Quotes back, One card, one yes | "And it speaks commerce. A structured brief goes out, quotes come back, and a single-use card pays only on a human yes." |
-| 0:14.5 | "Nobody should have to bring their own." | "So the next time a guest asks if they should bring their own" [beat] "nobody should have to." |
-| 0:17 | Pantry, happy: "Order for who shows up." | "Pantry. Order for who shows up. Thank you." |
-
-With `tonight.env` set, everything after 0:04 shifts about 2 s later.
-
----
-
-## Keys on the laptop (fallback for the Stream Deck)
-Right / Space / PageDown / Enter go forward, Left / PageUp go back, F is fullscreen (in a normal browser window), N shows notes with timers, 1/2/3 jump to the opening, hand-off and close, Home and End go to the start and end. The kiosk window has no browser UI; Cmd+Q closes it.
-
-## How the keys work (story/streamdeck/)
-- Each key is the Stream Deck's built-in **System: Open** action, pointing at a small AppleScript applet in `story/streamdeck/` (`Pantry Scene.app`, `Pantry Pantry.app`, `Pantry Grok Bot.app`, `Pantry Wrap.app`, `Pantry Reset.app`). Each one runs `deck.sh <mode>`.
-- `deck.sh scene|pantry|wrap|idle` opens `story/index.html#<mode>` in a separate, full-screen (kiosk) Chrome with its own profile (`~/Library/Application Support/PantryDeckChrome`), so your normal Chrome is untouched and no permissions are needed. Every press loads the deck fresh. Old tabs pile up behind it, which is harmless.
-- `deck.sh grok` opens the Pantry deep link and brings Grok Bot forward.
-- `Pantry Demo.streamDeckProfile` is the same profile as a file. Double-click it to import if the profile isn't listed.
 
 ## Honesty notes
 - Every number on screen comes from the **demo dataset** (`data/events/`): one fictional organiser's ten past events. The slides label it that way. There are no real-world statistics in the deck.

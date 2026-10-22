@@ -168,6 +168,7 @@ body.cursor { cursor: default; }
 #s-end .sign .bot { width: 220px; height: 220px; }
 #s-end .sign .name { font-size: 64px; font-weight: 620; letter-spacing: -.03em; text-align: left; }
 #s-end .sign .tag { font-size: 40px; font-weight: 450; color: var(--yellow); letter-spacing: -.012em; margin-top: 4px; text-align: left; }
+#s-end .thanks { position: absolute; left: 0; right: 0; bottom: 150px; text-align: center; color: var(--ink); }
 #s-end .credit { position: absolute; bottom: 72px; left: 0; right: 0; text-align: center; }
 
 /* ===== Pantry: Grok Bot "dome", yellow. Geometry from the Grok Bot bundle (see SCRIPT.md). ===== */
@@ -215,6 +216,63 @@ body.notes #notes { display: grid; grid-template-columns: 1fr 300px; gap: 36px; 
 #notes .meta b { color: var(--ink); font-weight: 500; font-size: 30px; display: block; letter-spacing: .02em; }
 #notes .meta .over { color: var(--red); }
 #hint { position: fixed; right: 18px; bottom: 14px; font-family: var(--mono); font-size: 12px; color: rgba(255,255,255,.28); z-index: 5; transition: opacity 1s; pointer-events: none; }
+
+/* ===== Side panels for the split view (#connect, #tools, #agentcard), sized for a ~855x1087 window ===== */
+.panel { position: fixed; inset: 0; display: none; background: #000; color: var(--ink); overflow: hidden; font-size: min(1.6vh, 2.1vw); }
+body.panel-on #stage, body.panel-on #notes, body.panel-on #hint { display: none !important; }
+body.panel-on { cursor: default; }
+.panel.on { display: block; }
+.panel .pglow { position: absolute; inset: 0; background: radial-gradient(70% 45% at 50% 108%, rgba(255,152,0,.20), rgba(0,0,0,0) 70%); pointer-events: none; }
+.panel .phead { position: absolute; left: 7%; right: 7%; top: 5.5%; }
+.panel .phead .label { font-size: 1.15em; color: var(--yellow); }
+.panel .phead h1 { margin-top: .5em; font-size: 3.6em; line-height: 1.04; font-weight: 600; letter-spacing: -.035em; }
+.panel .phead p { margin-top: .55em; font-size: 1.45em; line-height: 1.35; color: var(--ink-2); font-weight: 420; }
+.panel .rise { opacity: 0; transform: translateY(16px); filter: blur(6px); animation: rise .9s var(--ease) forwards; }
+@keyframes rise { to { opacity: 1; transform: none; filter: none; } }
+.panel .pfoot { position: absolute; left: 7%; right: 7%; bottom: 3.6%; font-family: var(--mono); font-size: .95em; color: var(--ink-3); }
+
+/* connect: constellation */
+#p-connect .sky { position: absolute; left: 0; right: 0; top: 23%; bottom: 7%; }
+#p-connect svg.lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#p-connect svg.lines line { stroke: rgba(255,152,0,.38); stroke-width: 1.4; stroke-dasharray: 3 7; animation: flow 1.6s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -20; } }
+#p-connect .hub { position: absolute; left: 50%; top: 50%; width: 21%; aspect-ratio: 1; transform: translate(-50%, -54%); }
+#p-connect .hub .bot { width: 100%; height: 100%; }
+#p-connect .hub::after { content: "Pantry"; position: absolute; left: 0; right: 0; top: 100%; text-align: center; font-weight: 600; font-size: 1.5em; letter-spacing: -.02em; }
+#p-connect .node { position: absolute; width: 28%; transform: translate(-50%, -50%); text-align: center; }
+#p-connect .node .mk { width: 3.6em; height: 3.6em; margin: 0 auto .55em; border-radius: 1em; background: #0d0d0d; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); display: grid; place-items: center; }
+#p-connect .node .mk svg { width: 58%; height: 58%; }
+#p-connect .node b { display: block; font-size: 1.28em; font-weight: 600; letter-spacing: -.012em; }
+#p-connect .node span { display: block; margin-top: .25em; font-size: 1.02em; line-height: 1.3; color: var(--ink-2); }
+
+/* tools */
+#p-tools .groups { position: absolute; left: 7%; right: 7%; top: 21%; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5em 1.4em; }
+#p-tools .grp .label { font-size: 1em; color: var(--yellow); margin-bottom: .55em; }
+#p-tools .grp .t { font-size: 1.32em; font-weight: 560; letter-spacing: -.012em; margin-bottom: .45em; }
+#p-tools .chips { display: flex; flex-wrap: wrap; gap: .4em; }
+#p-tools .chips i { font-family: var(--mono); font-size: .86em; padding: .32em .55em; border-radius: 7px; background: #111; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); color: var(--ink); }
+#p-tools .cards { position: absolute; left: 7%; right: 7%; top: 53%; }
+#p-tools .cards .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3%; align-items: start; margin-top: .7em; }
+#p-tools .cards img { width: 100%; border-radius: 10px; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 18px 40px -10px rgba(0,0,0,.8); }
+#p-tools .cards .cap { font-size: 1.15em; color: var(--ink-2); }
+#p-tools .cards .cap b { color: var(--ink); font-weight: 560; }
+#p-tools .rules { position: absolute; left: 7%; right: 7%; bottom: 8%; display: grid; grid-template-columns: 1fr 1fr; gap: .7em 1.4em; }
+#p-tools .rules div { font-size: 1.2em; line-height: 1.3; padding-left: 1.1em; position: relative; }
+#p-tools .rules div::before { content: ""; position: absolute; left: 0; top: .42em; width: .5em; height: .5em; border-radius: 50%; background: var(--yellow); }
+
+/* agentcard */
+#p-agentcard .steps { position: absolute; left: 7%; right: 7%; top: 24%; }
+#p-agentcard .step { position: relative; display: grid; grid-template-columns: 3.2em 1fr; gap: 1em; align-items: start; padding-bottom: 1.55em; }
+#p-agentcard .step::before { content: ""; position: absolute; left: 1.55em; top: 3.2em; bottom: .2em; width: 2px; background: rgba(255,255,255,.12); }
+#p-agentcard .step:last-child::before { display: none; }
+#p-agentcard .num { width: 3.2em; height: 3.2em; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-size: 1em; box-shadow: inset 0 0 0 2px rgba(255,152,0,.6); color: var(--yellow); background: #000; }
+#p-agentcard .step.you .num { background: var(--yellow); color: #000; box-shadow: none; font-weight: 600; }
+#p-agentcard .step b { display: block; font-size: 1.6em; font-weight: 580; letter-spacing: -.02em; line-height: 1.15; padding-top: .35em; }
+#p-agentcard .step span { display: block; margin-top: .25em; font-size: 1.15em; color: var(--ink-2); line-height: 1.3; }
+#p-agentcard .never { position: absolute; left: 7%; right: 7%; bottom: 10%; border-top: 1px solid rgba(255,255,255,.12); padding-top: 1.3em; }
+#p-agentcard .never .big { font-size: 2em; line-height: 1.15; font-weight: 600; letter-spacing: -.025em; }
+#p-agentcard .never .sm { margin-top: .6em; font-size: 1.2em; color: var(--ink-2); line-height: 1.35; }
+#p-agentcard .tag { position: absolute; right: 7%; top: 6%; font-family: var(--mono); font-size: 1em; color: #000; background: var(--yellow); padding: .35em .7em; border-radius: 6px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
 </style>
 </head>
@@ -374,9 +432,9 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
 &quot;And it speaks commerce. A structured brief goes out. Quotes come back. A single-use card pays, only on a human yes.&quot;">
     <div class="glow cold"></div>
     <div class="wrap">
-      <div class="label">Next</div>
-      <div class="h-l">A public Grok Bot template.</div>
-      <div class="sub">Any organiser imports Pantry. It learns their room.</div>
+      <div class="label">For community builders</div>
+      <div class="h-l">Time for the community,<br>not the logistics.</div>
+      <div class="sub">A public Grok Bot template: the same tools, agentic workflows and agentic payments, for every organiser.</div>
       <div class="flow" data-b="1">
         <div class="label flowlabel">Agentic commerce for catering</div>
         <div class="track"><div class="fill"></div></div>
@@ -403,10 +461,42 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
         <div><div class="name">Pantry</div><div class="tag">Order for who shows up.</div></div>
       </div>
     </div>
+    <div class="thanks h-m" data-b="2">Thank you.</div>
     <div class="credit label" data-b="1">A Grok Bot · Grok Bot Community Hackathon · <span id="today"></span></div>
   </section>
 
 </div>
+
+
+<!-- Side panels for the split view: index.html#connect, #tools, #agentcard -->
+<section class="panel" id="p-connect"><div class="pglow"></div>
+  <div class="phead rise"><div class="label">Live, behind the chat</div><h1>Where Pantry<br>is connected.</h1></div>
+  <div class="sky"><svg class="lines"><line x1="50%" y1="48%" x2="50.0%" y2="7.0%"/><line x1="50%" y1="48%" x2="73.3%" y2="18.7%"/><line x1="50%" y1="48%" x2="83.0%" y2="47.0%"/><line x1="50%" y1="48%" x2="73.3%" y2="75.3%"/><line x1="50%" y1="48%" x2="50.0%" y2="87.0%"/><line x1="50%" y1="48%" x2="26.7%" y2="75.3%"/><line x1="50%" y1="48%" x2="17.0%" y2="47.0%"/><line x1="50%" y1="48%" x2="26.7%" y2="18.7%"/></svg><div class="hub"><div class="rise" style="width:100%;height:100%"><div class="bot idle"></div></div></div><div class="node" style="left:50.0%;top:10.0%"><div class="rise" style="animation-delay:0.25s"><div class="mk"><svg viewBox="0 0 40 40"><rect x="6" y="5" width="28" height="30" rx="4" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M14 27V13l12 14V13" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><b>Notion</b><span>The organiser's events</span></div></div><div class="node" style="left:73.3%;top:21.7%"><div class="rise" style="animation-delay:0.37s"><div class="mk"><svg viewBox="0 0 40 40"><g stroke="#fff" stroke-width="2.2"><line x1="11" y1="12" x2="28" y2="15"/><line x1="11" y1="12" x2="16" y2="29"/><line x1="28" y1="15" x2="16" y2="29"/><line x1="28" y1="15" x2="31" y2="30"/></g><g fill="#fff"><circle cx="11" cy="12" r="4.2"/><circle cx="28" cy="15" r="3.4"/><circle cx="16" cy="29" r="3.8"/><circle cx="31" cy="30" r="2.8"/></g></svg></div><b>Cognee</b><span>Memory of every past event</span></div></div><div class="node" style="left:83.0%;top:50.0%"><div class="rise" style="animation-delay:0.49s"><div class="mk"><svg viewBox="0 0 40 40"><rect x="6" y="9" width="28" height="25" rx="4" fill="none" stroke="#fff" stroke-width="2.6"/><line x1="6" y1="16" x2="34" y2="16" stroke="#fff" stroke-width="2.6"/><line x1="13" y1="5" x2="13" y2="11" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><line x1="27" y1="5" x2="27" y2="11" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="20" cy="25" r="3.4" fill="#fff"/></svg></div><b>Luma</b><span>Guest export with diets</span></div></div><div class="node" style="left:73.3%;top:78.3%"><div class="rise" style="animation-delay:0.61s"><div class="mk"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="none" stroke="#fff" stroke-width="2.4"/><ellipse cx="20" cy="20" rx="6" ry="14" fill="none" stroke="#fff" stroke-width="2.2"/><line x1="6" y1="20" x2="34" y2="20" stroke="#fff" stroke-width="2.2"/></svg></div><b>Web and places</b><span>Real local caterers, live</span></div></div><div class="node" style="left:50.0%;top:90.0%"><div class="rise" style="animation-delay:0.73s"><div class="mk"><svg viewBox="0 0 40 40"><path d="M7 15h26l-3 16a3 3 0 0 1-3 2.5H13A3 3 0 0 1 10 31z" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><path d="M14 15c0-5 2.5-8 6-8s6 3 6 8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></div><b>Sainsbury's</b><span>Live prices, real browser</span></div></div><div class="node" style="left:26.7%;top:78.3%"><div class="rise" style="animation-delay:0.85s"><div class="mk"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="none" stroke="#fff" stroke-width="2.6"/><circle cx="20" cy="16.5" r="3.6" fill="#fff"/><rect x="18.2" y="18" width="3.6" height="10" rx="1.8" fill="#fff"/></svg></div><b>1Password</b><span>Supplier logins, never seen</span></div></div><div class="node" style="left:17.0%;top:50.0%"><div class="rise" style="animation-delay:0.97s"><div class="mk"><svg viewBox="0 0 40 40"><rect x="5" y="10" width="30" height="21" rx="4" fill="none" stroke="#fff" stroke-width="2.6"/><rect x="10" y="16" width="7" height="5.5" rx="1.4" fill="#fff"/><line x1="10" y1="26" x2="24" y2="26" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg></div><b>Agentcard</b><span>Single-use cards, sandbox</span></div></div><div class="node" style="left:26.7%;top:21.7%"><div class="rise" style="animation-delay:1.09s"><div class="mk"><svg viewBox="0 0 40 40"><rect x="6" y="6" width="28" height="28" rx="9" fill="none" stroke="#fff" stroke-width="2.6"/><rect x="14.5" y="13" width="4" height="10" rx="2" fill="#fff"/><rect x="21.5" y="13" width="4" height="10" rx="2" fill="#fff"/></svg></div><b>Grok Bot</b><span>Persona, skills, routines, its own email</span></div></div></div>
+</section>
+<section class="panel" id="p-tools"><div class="pglow"></div>
+  <div class="phead rise"><div class="label">The engine Pantry calls</div><h1>How Pantry works.</h1></div>
+  <div class="groups">
+    <div class="grp rise" style="animation-delay:.2s"><div class="label">01</div><div class="t">Who's coming</div><div class="chips"><i>guests_import</i><i>headcount</i><i>diets</i></div></div>
+    <div class="grp rise" style="animation-delay:.32s"><div class="label">02</div><div class="t">What to serve</div><div class="chips"><i>provider_add</i><i>options</i><i>plan</i><i>plan_item</i></div></div>
+    <div class="grp rise" style="animation-delay:.44s"><div class="label">03</div><div class="t">Make it happen</div><div class="chips"><i>brief</i><i>checkout_request</i><i>payment_confirm</i></div></div>
+    <div class="grp rise" style="animation-delay:.56s"><div class="label">04</div><div class="t">Remember</div><div class="chips"><i>cognee recall</i><i>cognee remember</i><i>debrief</i></div></div>
+  </div>
+  <div class="cards rise" style="animation-delay:.75s"><div class="cap"><b>Cards, not walls of text.</b> One idea per card, the number first, sent as an image.</div>
+    <div class="row"><img src="assets/cards/plan.png" alt="Plan card"><img src="assets/cards/provider-1.png" alt="Provider card"><img src="assets/cards/payment-paid.png" alt="Payment card"></div></div>
+  <div class="rules rise" style="animation-delay:1s"><div>Allergies planned at 100%</div><div>Nothing invented</div><div>Every source linked</div><div>No tool can pay</div></div>
+</section>
+<section class="panel" id="p-agentcard"><div class="pglow"></div>
+  <div class="tag rise">Sandbox tonight</div>
+  <div class="phead rise"><div class="label">Agentcard</div><h1>How Pantry pays.</h1></div>
+  <div class="steps">
+    <div class="step rise" style="animation-delay:.2s"><div class="num">1</div><div><b>Pantry raises the request</b><span>Bound to the plan, the amount and the provider.</span></div></div>
+    <div class="step you rise" style="animation-delay:.4s"><div class="num">2</div><div><b>You say yes</b><span>Nothing moves without a human.</span></div></div>
+    <div class="step rise" style="animation-delay:.6s"><div class="num">3</div><div><b>A single-use card is issued</b><span>For exactly that amount, by Agentcard.</span></div></div>
+    <div class="step rise" style="animation-delay:.8s"><div class="num">4</div><div><b>The charge goes through</b><span>Simulated in sandbox tonight.</span></div></div>
+    <div class="step rise" style="animation-delay:1s"><div class="num">5</div><div><b>The card closes</b><span>It can't be used again.</span></div></div>
+  </div>
+  <div class="never rise" style="animation-delay:1.25s"><div class="big">Pantry never sees a card number.<br><span class="y">It can't approve.</span></div><div class="sm">1Password does the same for logins: Pantry signs in to suppliers without ever seeing the password.</div></div>
+</section>
 
 <div id="notes"><div class="say" id="say"></div><div class="meta" id="meta"></div></div>
 <div id="hint">Right or Space next · Left back · F fullscreen · N notes · 1 2 3 sections</div>
@@ -530,8 +620,8 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
     scene: [[0, 's-email', 0], [7000, 's-feb', 0], [8300, 's-feb', 1], [9600, 's-feb', 2], [12200, 's-june', 0], [14000, 's-june', 1], [15800, 's-june', 2]],
     pantry: [[0, 's-turn', 0], [1700, 's-turn', 1], [3100, 's-turn', 2], [4900, 's-turn', 3]],
     wrap: [[0, 's-changed', 0], [2000, 's-changed', 1], [4000, 's-changed', 2]].concat(
-      hasTonight ? [[6000, 's-changed', 3], [9000, 's-vision', 0], [11500, 's-vision', 1], [16500, 's-end', 0], [19000, 's-end', 1]]
-                 : [[7000, 's-vision', 0], [9500, 's-vision', 1], [14500, 's-end', 0], [17000, 's-end', 1]])
+      hasTonight ? [[6000, 's-changed', 3], [9000, 's-vision', 0], [12000, 's-vision', 1], [17000, 's-end', 0], [19500, 's-end', 1], [22500, 's-end', 2]]
+                 : [[7000, 's-vision', 0], [10000, 's-vision', 1], [15000, 's-end', 0], [17500, 's-end', 1], [20500, 's-end', 2]])
   };
   let play = null, cue = 0, timer = null;
   function blank(on) { document.body.classList.toggle('blank', on); }
@@ -557,7 +647,9 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
     play = null; manualNext();
   }
   function back() { if (play && cue > 0) { clearTimeout(timer); cue--; applyCue(); return; } play = null; manualBack(); }
-  addEventListener('hashchange', () => { const h = location.hash.slice(1); if (PLAYS[h] || h === 'idle') startPlay(h); });
+  const PANELS = ['connect', 'tools', 'agentcard'];
+  function showPanel(name) { document.body.classList.add('panel-on'); clearTimeout(timer); play = null; document.querySelectorAll('.panel').forEach(x => x.classList.toggle('on', x.id === 'p-' + name)); }
+  addEventListener('hashchange', () => { const h = location.hash.slice(1); if (PANELS.includes(h)) showPanel(h); else if (PLAYS[h] || h === 'idle') { document.body.classList.remove('panel-on'); startPlay(h); } });
 
   // ---- The email, typed one line at a time ----
   const LINES = ["Hi! I'm coeliac (strict).", 'Will there be anything', 'I can eat, or should I', 'bring my own?'];
@@ -619,7 +711,8 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
   const m = /^#(\d+)(?:\.(\d+))?$/.exec(location.hash);
   const mode = location.hash.slice(1);
   slides[0].classList.add('on');
-  if (PLAYS[mode]) startPlay(mode);
+  if (PANELS.includes(mode)) { go(0); showPanel(mode); }
+  else if (PLAYS[mode]) startPlay(mode);
   else if (m) { cur = 0; go(Math.min(slides.length - 1, +m[1])); if (m[2]) { step = Math.min(+m[2], maxStep(cur)); apply(); } }
   else { go(0); startPlay('idle'); }
 })();
