@@ -235,7 +235,7 @@ function paymentCard(s, extra) {
   const [label, tone] = stopped ? (PAY_STATUS[a.status] ?? [a.status, 'bad']) : paid ? ['Paid', 'ok'] : approved ? ['Approved, settling', 'ok'] : ['Needs your approval', 'a'];
   const done = 1 + (approved ? 1 : 0) + (paid ? 1 : 0); // steps completed; the next one is current
   const at = done - 1;
-  const steps = [['Requested', 'by Pantry'], ['Approved by you', 'Face ID'], ['Paid', 'card closed']];
+  const steps = [['Requested', 'by Pantry'], ['Approved by you', 'your yes'], ['Paid', 'card closed']];
   const track = stopped ? '' : `<div class="track" role="list" aria-label="Payment progress"><span class="fill" style="width:${['0px', 'calc(50% - 8px)', 'calc(100% - 16px)'][at]}"></span>${steps.map(([t, sub], i) => `<div role="listitem" class="step ${i < done ? 'done' : i === done ? 'now' : ''}"><b>${esc(t)}</b>${esc(sub)}</div>`).join('')}</div>`;
   const processor = pay ? `${PROCESSOR[pay.processor] ?? pay.processor}${pay.sandbox ? ' · sandbox' : ''}` : 'single-use card, issued on approval';
   const masked = maskCard(pay?.card) ?? (a.card?.last4 ? `•••• ${a.card.last4}` : null);
