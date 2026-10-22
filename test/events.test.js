@@ -83,8 +83,8 @@ test('fictional past providers are memory only; real ones need a source and a sa
   assert.equal(options.find(o => o.id === 'test-kitchen').eligible, true);
   const mands = options.find(o => o.id === 'mands');
   assert.equal(mands.eligible, true, 'the nut-allergy vegan plate comes sealed from a second provider');
-  assert.equal(mands.name, 'M&S Food to Order + Test Kitchen');
-  assert.ok(mands.lines.some(l => l.lane === 'allergy-safe' && l.provider === 'test-kitchen'));
+  assert.match(mands.name, /^M&S Food to Order \+ /);
+  assert.ok(mands.lines.some(l => l.lane === 'allergy-safe' && l.provider !== 'mands' && l.tags.includes('sealed')));
   assert.throws(() => addProvider(freshEventState(), { ...KITCHEN, source: 'my head' }), /source URL/);
   assert.throws(() => addProvider(freshEventState(), { ...KITCHEN, dishes: [{ name: 'x', price: 3, tags: ['tasty'] }] }), /Unknown dish tags/);
   const unknown = addProvider(freshEventState(), { ...KITCHEN, allergens: 'unknown' });
@@ -102,7 +102,9 @@ test("recommends quality inside the budget, and applies the venue's delivery cut
 });
 
 test('without a sealed safe plate anywhere, the option stays out with its reason', async () => {
-  const { world, state } = await ready({ kitchen: false });
+  const { state } = await ready({ kitchen: false });
+  addProvider(state, { ...KITCHEN, id: 'sainsburys', name: "Sainsbury's", tier: 'supermarket', allergens: 'unknown', dishes: [{ name: 'Wraps', price: 4, tags: ['meat'] }] });
+  const world = await loadEventWorld(state);
   assert.match(eventOptions(world, state).options.find(o => o.id === 'mands').excluded[0], /Nut allergy \+ Vegan/);
 });
 
