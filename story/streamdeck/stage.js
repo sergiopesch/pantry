@@ -114,6 +114,7 @@ let step = 0;
 Object.assign(KEYS, {
   shownext: async () => { if (step >= SHOW.length) return log('show: at the end'); const [label, act] = SHOW[step++]; log(`show ${step}/${SHOW.length}: ${label}`); await act(); },
   showback: async () => { step = Math.max(0, step - 2); await KEYS.shownext(); },
+  showstart: async () => { step = 0; await prompt('reset'); log('show: start'); await KEYS.shownext(); },
   showreset: async () => { step = 0; await prompt('reset'); await KEYS.idle(); log('show: reset'); },
 });
 
