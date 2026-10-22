@@ -41,51 +41,57 @@ Nothing needs a click once a key is pressed. While a segment plays, **Right/Spac
 | 0:05 | Pantry lands (dome, hat bounce): "A Grok Bot that plans the food for your event." Holds still | "Pantry is a Grok Bot that plans the food for your event. Let me show you." |
 
 ## 3 · Grok Bot (live, about 2:00)
-Press **Grok Bot**. Type the prompts exactly as written. Pantry's wording will vary; the **numbers** shouldn't. They come from the engine (`src/cli.js event …`).
+Press **Grok Bot**. Type the prompts exactly as written. Everything Pantry says now is live:
+- the real date and the venue's real address;
+- real providers near the venue, with Sainsbury's prices it checked in its own browser;
+- Cognee for memory, Notion for the events, and Agentcard's sandbox for the payment.
 
-### Beat 1 · Who's coming (0:00–0:20)
-**Type:** `How many should I plan for on Thursday?`
+Only the past events and the upcoming event's guest list are demo data. Prices can move, so **don't quote a number before Pantry does.** Say "a demo organiser's data" once, at the start of this section.
 
-**Pantry should say:** "140 signed up. Your last 10 events point to 60% turning up, so I'm planning for 93, not 140. Six allergy or coeliac guests get sealed plates regardless."
+### Beat 1 · The event (0:00–0:20)
+**Type:** `What's my next event, and how many should I plan for?`
 
-**While it thinks:** "It's reading the Luma guest export and my last ten events."
+**Pantry says (from Notion + the engine):** Grok Builders Hack Night, next Thursday, at Expedite London HQ, 7 Lyric Square, W6. 140 signed up; past events point to 60%, so plan for 93. Six allergy or coeliac guests get sealed plates regardless.
+
+**If it doesn't show a card, type:** `Show me.` It renders the headcount card: 93 big, bars for 140 / 84 / 93, turnout at the last 10 events.
 **Land it:** "Ninety-three. Not a hundred and forty."
-**Fallback:** "Pantry's thinking. It'll tell you ninety-three, not a hundred and forty. Sixty percent of my sign-ups actually come." Then show `node src/cli.js event headcount` in Terminal.
 
-### Beat 2 · What we're serving (0:20–0:50)
+### Beat 2 · What we're serving (0:20–1:00)
 **Type:** `What are we serving?`
 
-**Pantry should say:** "Little Feast. 93 plates, £995.50 of your £1,000. Sainsbury's is £446.50 cheaper, but gluten-free ran out with them last time."
+**Pantry says:** it checked real caterers that deliver to W6, and none of them can guarantee a safe plate for the two coeliac guests and the nut-allergy guests. So the pick is Sainsbury's, with tonight's prices: about £240 for 93 plates. The six allergy plates are sealed, labelled and on their own table. It shows the **plan card**: total, budget bar, plates by lane.
 
-**Then type:** `Why not pizza?`
-**Pantry should say:** "Slice Theory has no safe option for coeliac. Two guests would go without." It may add that six of the eight options fail on a declared need (four on coeliac, two on nut allergy plus vegan).
+**Land it:** "Real caterers, real menus, real prices, checked tonight. It turned down every one that would have left somebody without a safe plate."
+**Payoff (don't skip):** "Remember the email from the start? That guest gets a sealed sandwich labelled 'suitable for coeliacs'."
 
-**Land it:** "It threw out six of eight options, because somebody would have gone without."
-**Fallback:** "It picks Little Feast, nine ninety-five fifty on a thousand-pound budget. Pizza's out: two coeliac guests would go without." Then show `node src/cli.js event options`.
+### Beat 3 · What it remembers (1:00–1:20)
+**Type:** `Anything I should know from past events?`
 
-### Beat 3 · What it caught (0:50–1:15)
-**Type:** `Check my inbox.`
+**Pantry says (from Cognee):**
+- Gluten-free ran out with Sainsbury's in July, so it has added a buffer.
+- Hearth & Co billed £70 over its quote in April.
+- Vegan ran out twice, at Bao Down and Slice Theory.
 
-**Pantry should say:** "Three need you. Little Feast offered 18:45, but the venue stops deliveries at 18:00, so the brief asks for 6. A coeliac guest asked if there'll be anything safe. I've drafted: 'Yes. Sealed coeliac-safe plates, on their own table.' It sends on your yes. And the sponsor wants a PO number."
+**Say:** "That's Cognee: Pantry's memory of every event I've run. The plans get better every time."
 
-**Land it:** "Remember the email from the start? That's the reply." (This is the payoff of the opening. Don't skip it.)
+### Beat 4 · Order it (1:20–1:55)
+**Type:** `Order it. Send the brief to me first.`
 
-**Only if you're under 1:05 here. Type:** `Anything I should know about caterers from past events?`
-**Pantry should say (from Cognee):** "Hearth & Co billed £70 over the quote in April, for a service-staff line nobody agreed to." It may add that the brief asks Little Feast to confirm the total.
-**Say:** "That's Cognee: Pantry's memory of every past event."
+**Pantry:**
+1. Emails the brief to your own address, not to a business.
+2. Raises the payment request.
+3. Creates a **single-use Agentcard** for the amount (sandbox).
+4. Asks you to approve it in Agentcard.
 
-**Fallback:** "It read the venue's email, deliveries before six, and caught that the caterer's quote said six forty-five." Then show `node src/cli.js event inbox`.
+**Do:** approve in Agentcard, on your phone or the dashboard.
+**Then type:** `Approved.`
+**Pantry:** places the simulated order (sandbox `test_charge`), checks the transaction has settled, and confirms: "Paid £… on a single-use card. It's closed now."
 
-### Beat 4 · Brief and payment (1:15–1:35)
-**Type:** `Send the brief and pay Little Feast.`
+**Say:** "Pantry can't approve anything. I said yes, the card paid once and died. Nothing else can be charged."
 
-**Pantry should say:** "The brief's ready. It goes out on your yes. Payment request raised for £995.50. It needs your approval; I can't approve it myself." (In rehearsal it also advised holding the approval until Little Feast confirms the 6:00 drop and sends a real price. Let it say that; it's a great line.)
+If you're past 2:30 overall, skip Beat 3 and press **Wrap**.
 
-**Say:** "Pantry can raise the request, but it can't pay. A human says yes, every time. The money moves on a single-use card, never the real one."
-
-If you're past 2:30 overall, skip anything optional and press **Wrap**.
-
-> If the bot is down completely, run beats 1 to 4 in Terminal: `node src/cli.js event headcount`, `options`, `plan`, `inbox`, `brief`. Say "Same engine Pantry calls. The Bot is having a moment." Don't fake a chat.
+> If the bot is down completely: `node src/cli.js event headcount`, then `options` and `plan`, in Terminal. Say "Same engine Pantry calls. The Bot is having a moment." Don't fake a chat.
 
 ## 4 · Wrap (about 20 s, plays by itself)
 | Time | On screen | You say |
@@ -115,7 +121,7 @@ Right / Space / PageDown / Enter go forward, Left / PageUp go back, F is fullscr
 ## Honesty notes
 - Every number on screen comes from the **demo dataset** (`data/events/`): one fictional organiser's ten past events. The slides label it that way. There are no real-world statistics in the deck.
 - The only date on screen, in the closing credit, comes from the browser clock (en-GB, Europe/London). Nothing else is dated, and no venue is named.
-- Little Feast, Hearth & Co, Mezze Collective, Slice Theory and Bao Down are fictional. The supermarkets appear only as examples in the live demo, with estimated prices.
+- Little Feast, Hearth & Co, Mezze Collective, Slice Theory and Bao Down are fictional and appear only in past events. In the live demo the providers are real, found tonight with sourcesd prices.
 - No real names appear on screen. "47" is simply 140 minus 93.
 
 ## Where the look comes from (Grok Bot.app 0.75)
