@@ -34,8 +34,9 @@ export async function loadEventWorld(state = freshEventState(), { client, refres
     event: state.event ? buildEvent(policy, state.event) : null,
     policy,
     source: state.luma?.source ?? 'luma-csv',
-    providers: [...known.filter(p => !p.pastOnly), ...added],
-    knownProviders: [...known, ...added],
+    // A provider Pantry checked live replaces the estimated entry with the same id (its history stays).
+    providers: [...known.filter(p => !p.pastOnly && !added.some(a => a.id === p.id)), ...added],
+    knownProviders: [...known.filter(p => !added.some(a => a.id === p.id)), ...added],
     history: past.map(p => ({ ...p, ...ledger.find(l => l.lumaEventId === p.lumaEventId) })),
     guests: state.guests ?? state.luma?.guests ?? null,
     inbox: state.inbox ?? [],

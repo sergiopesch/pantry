@@ -98,6 +98,16 @@ test("recommends quality inside the budget, and applies the venue's delivery cut
   assert.match(p.logistics[0], /venue takes deliveries until then/);
 });
 
+test('a live-checked provider replaces the estimate with the same id and keeps its history', async () => {
+  const { world, state } = await ready();
+  addProvider(state, { ...KITCHEN, id: 'sainsburys', name: "Sainsbury's", tier: 'supermarket', source: 'https://www.sainsburys.co.uk/gol-ui/product/x' });
+  const w = await loadEventWorld(state);
+  const s = w.providers.filter(p => p.id === 'sainsburys');
+  assert.equal(s.length, 1);
+  assert.equal(s[0].live, true);
+  assert.ok(eventOptions(w, state).options.find(o => o.id === 'sainsburys').record.ranOut.includes('gluten-free'));
+});
+
 test('a quote replaces the estimate, and an override changes the headcount', async () => {
   const { world, state } = await ready();
   recordQuote(world, state, { provider: 'test-kitchen', amount: 940 });
