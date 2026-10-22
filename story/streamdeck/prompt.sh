@@ -2,6 +2,7 @@
 # prompt.sh next | send | reset: the Stream Deck's prompt keys for the live Grok Bot demo.
 #   next   clears Pantry's chat box and types the next line of prompts.txt (doesn't send)
 #   send   sends what's in the chat box (a real click on Grok Bot's send button)
+#   type N types prompt N (used by the stage show)
 #   reset  starts again from the first prompt
 DIR="${0:A:h}"
 PANTRY="5ab715a0-38f1-42bb-b342-f792ecd90270"
@@ -17,8 +18,9 @@ front() {
 
 case "${1:-next}" in
   reset) echo 0 > "$STEP" ;;
-  next)
+  next|type)
     n=$(( $(cat "$STEP" 2>/dev/null || echo 0) + 1 ))
+    [ "$1" = type ] && n="$2"
     text=$(sed -n "${n}p" "$DIR/prompts.txt")
     [ -z "$text" ] && { osascript -e 'display notification "No more prompts" with title "Pantry"'; exit 0; }
     echo $n > "$STEP"

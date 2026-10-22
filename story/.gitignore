@@ -3,3 +3,4 @@ bin/
 .prompt-step
 .queue
 keyd.log
+streamdeck/stage.log
