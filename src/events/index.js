@@ -345,16 +345,22 @@ export function attachPaymentLink(state, { approvalId, url, reference, processor
   return a;
 }
 
-export function confirmPayment(world, state, { approvalId, reference, amount, status }) {
+// Agentcard (sandbox or live): the organiser approves the single-use card in Agentcard, the charge
+// settles, the card closes. Pantry passes the card and transaction as Agentcard reports them.
+export function confirmPayment(world, state, { approvalId, reference, amount, status, processor, card, sandbox }) {
   const a = state.approvals.find(x => x.id === approvalId);
-  if (!a?.payment) throw new Error('That approval has no payment link.');
-  if (!['paid', 'succeeded', 'complete'].includes(String(status).toLowerCase())) throw new Error(`The processor says "${status}", not paid. Nothing recorded.`);
+  if (!a) throw new Error('No approval with that id. Call pantry_checkout_request first.');
+  if (!a.payment) {
+    if (!processor) throw new Error('Say which processor took the payment (e.g. agentcard), or attach a payment link first.');
+    a.payment = { processor, reference: reference ?? null, card: card ?? null, sandbox: Boolean(sandbox), status: 'awaiting-settlement' };
+  }
+  if (!['paid', 'succeeded', 'complete', 'settled', 'cleared'].includes(String(status).toLowerCase())) throw new Error(`The processor says "${status}", not settled. Nothing recorded.`);
   if (Math.abs(Number(amount) - a.amount) > 0.005) throw new Error(`The processor reports £${amount}, but the organiser approved ${gbp(a.amount)}. Nothing recorded.`);
   const c = eventSnapshot(world, state).plan.chosen;
   if (a.cartHash !== planHash(c)) throw new Error('The plan changed after the payment request. Raise a new one.');
   const at = now(world, state);
   a.status = 'charged';
-  a.payment = { ...a.payment, status: 'paid', reference: reference ?? a.payment.reference, paidAt: iso(at) };
+  a.payment = { ...a.payment, status: 'paid', reference: reference ?? a.payment.reference, card: card ?? a.payment.card ?? null, sandbox: Boolean(sandbox ?? a.payment.sandbox), paidAt: iso(at) };
   a.receipt = { id: reference ?? a.payment.reference, status: 'cleared', merchant: a.merchant, amount: a.amount, at: iso(at), driver: a.payment.processor };
   const order = { id: shortId('ord'), provider: c.id, name: c.name, amount: a.amount, plates: c.portions, dropAt: c.dropAt, planHash: planHash(c), placedAt: iso(at), status: 'paid', driver: a.payment.processor, reference: a.receipt.id };
   state.orders.push(order);

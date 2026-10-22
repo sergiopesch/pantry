@@ -4,13 +4,14 @@
 
 **Inputs:** the chosen plan and provider, and Pantry's Link card in Grok Bot.
 
-**Sequence**
+**Sequence** (Agentcard, sandbox for the demo)
 1. Call `pantry_checkout_request`. It creates an approval bound to this provider, this amount and this plan.
-2. Create a payment link with the payment processor (Stripe, through its MCP, in test mode unless the organiser says live). It's for exactly the approval's amount in GBP, with the provider and event in the description. Attach it with `pantry_payment_link {approvalId, url, reference}`.
-3. Send the organiser the link: "Payment request: £<amount> to <provider>. Pay here when you're happy: <link>." You never pay, never see a card number, and no Pantry tool can pay. The organiser pays it themselves; that's the approval.
-4. When they say it's done, check the processor (the payment link's or checkout session's status). Only if it reports paid, call `pantry_payment_confirm {approvalId, amount, status, reference}` with the values exactly as the processor reports them.
-5. Say "paid" only after `pantry_status` reads charged. If the plan changes after the request, the old approval is void. Ask again.
-6. Supplier logins (a caterer's portal, a supermarket checkout) come from the 1Password vault "Shared with Grok Bot" only. Autofill does the typing; never type, echo or store a password.
+2. With Agentcard's MCP (`https://mcp.agentcard.sh/mcp`), `create_card`: `type single_use`, `amount_cents` = the approved amount (Agentcard cards are in USD; say the £ amount and the $ conversion you used), and the merchant locked to the provider if a preset allows.
+3. Tell the organiser: "Single-use card for £<amount> to <provider>. Approve it in Agentcard." Only the organiser approves. **Never call `approve_request` yourself**, never see or echo the card number, and never pay without their yes.
+4. Once they've approved, place the order. In sandbox, the simulated order is `test_charge {card_id, amount, merchant}`: authorised, then cleared, then the card closes. Live, it's the provider's checkout with the card.
+5. Check `list_transactions {card_id}`. Only when it reads SETTLED (or cleared), call `pantry_payment_confirm {approvalId, amount (the approved £), status, processor 'agentcard', card, reference (transaction id), sandbox}`.
+6. Say "paid" only after `pantry_status` reads charged: "Paid £<amount> on a single-use Agentcard. It's closed now." In the demo, say it's the sandbox.
+7. Supplier logins come only from the 1Password vault "Shared with Grok Bot". Autofill does the typing.
 
 **Validate:** the amount charged is the amount the organiser saw. One approval, one charge.
 

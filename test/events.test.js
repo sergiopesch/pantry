@@ -133,12 +133,22 @@ test('payment: the organiser pays a processor link; Pantry records it only when 
   const a = requestPayment(world, state);
   assert.throws(() => attachPaymentLink(state, { approvalId: a.id, url: 'http://insecure' }), /https/);
   attachPaymentLink(state, { approvalId: a.id, url: 'https://buy.stripe.com/test_123', reference: 'plink_1' });
-  assert.throws(() => confirmPayment(world, state, { approvalId: a.id, amount: a.amount, status: 'open' }), /not paid/);
+  assert.throws(() => confirmPayment(world, state, { approvalId: a.id, amount: a.amount, status: 'open' }), /not settled/);
   assert.throws(() => confirmPayment(world, state, { approvalId: a.id, amount: a.amount + 1, status: 'paid' }), /approved/);
   const r = confirmPayment(world, state, { approvalId: a.id, amount: a.amount, status: 'paid', reference: 'cs_test_1' });
   assert.equal(r.approval.status, 'charged');
   assert.equal(r.order.driver, 'stripe');
   assert.throws(() => requestPayment(world, state), /already paid/);
+});
+
+test('Agentcard: a settled single-use card charge is recorded; anything else is not', async () => {
+  const { world, state } = await ready();
+  const a = requestPayment(world, state);
+  assert.throws(() => confirmPayment(world, state, { approvalId: a.id, amount: a.amount, status: 'SETTLED' }), /which processor/);
+  assert.throws(() => confirmPayment(world, state, { approvalId: a.id, amount: a.amount, status: 'PENDING', processor: 'agentcard', card: 'card_1' }), /not settled/);
+  const r = confirmPayment(world, state, { approvalId: a.id, amount: a.amount, status: 'SETTLED', processor: 'agentcard', card: 'card_1', reference: 'txn_1', sandbox: true });
+  assert.equal(r.order.driver, 'agentcard');
+  assert.equal(r.approval.payment.sandbox, true);
 });
 
 test('a changed plan voids the approval', async () => {

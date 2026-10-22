@@ -128,8 +128,8 @@ const TOOLS = [
   },
   {
     name: 'pantry_payment_confirm',
-    description: "Record a payment only after the processor reports it paid. Pass the processor's status and amount exactly as it reports them; anything but paid, or a different amount, records nothing.",
-    inputSchema: obj({ approvalId: { type: 'string' }, reference: { type: 'string' }, amount: { type: 'number' }, status: { type: 'string' } }, ['approvalId', 'amount', 'status']),
+    description: "Record a payment only after the processor reports it settled. With Agentcard: processor 'agentcard', card = the single-use card id, reference = the transaction id, status as list_transactions reports it (SETTLED), sandbox true in the demo environment, amount = the approved amount in £. Anything not settled, or a different amount, records nothing.",
+    inputSchema: obj({ approvalId: { type: 'string' }, reference: { type: 'string' }, amount: { type: 'number' }, status: { type: 'string' }, processor: { type: 'string' }, card: { type: 'string' }, sandbox: { type: 'boolean' } }, ['approvalId', 'amount', 'status']),
     mutates: true,
     run: (a, w, state) => confirmPayment(w, state, a),
   },
