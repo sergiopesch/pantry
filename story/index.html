@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pantry · Order for who shows up</title>
+<style>
+/* Grok Bot (sand) tokens, read from Grok Bot.app 0.75 renderer CSS/JS. See SCRIPT.md for sources. */
+@font-face { font-family: "XVF"; font-weight: 200 800; font-display: swap; src: url("assets/fonts/X-VF.woff2") format("woff2"); }
+@font-face { font-family: "XVF Mono"; font-weight: 200 800; font-display: swap; src: url("assets/fonts/XMono-VF.woff2") format("woff2"); }
+
+:root {
+  --sans: "XVF", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+  --mono: "XVF Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --bg: #000;
+  --ink: #fcfcfc;                 /* --sand-text-inverted */
+  --ink-2: rgba(245,245,245,.66); /* --sand-text-secondary on dark (#f5f5f5a8) */
+  --ink-3: rgba(252,252,252,.38);
+  --ink-4: rgba(252,252,252,.14);
+  --yellow: #FF9800;              /* Grok Bot avatar colour "yellow" */
+  --yellow-hi: #FFB547;
+  --red: #FF263C;                 /* Grok Bot avatar colour "red" */
+  --green: #00C972;
+  --ease: cubic-bezier(.2,.8,.2,1);
+  --ease-spring: linear(0, .016 2%, .056 4%, .112 6%, .177 8%, .246 10%, .316 12%, .384 14%, .449 16%, .511 18%, .623 22%, .718 26%, .796 30%, .858 34%, .906 38%, .943 42%, .97 46%, .99 50%, 1.012 56%, 1.02 62%, 1.018 70%, 1.008 82%, 1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-style: normal !important; font-synthesis: none; }
+em, i, cite, var, address, dfn { font-style: normal !important; }
+html, body { width: 100%; height: 100%; background: var(--bg); overflow: hidden; }
+body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; cursor: none; }
+body.cursor { cursor: default; }
+
+/* Fixed 1920x1080 stage, scaled to fit, letterboxed on black. */
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+
+.slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .7s var(--ease), visibility 0s linear .7s; }
+.slide.on { opacity: 1; visibility: visible; transition: opacity .7s var(--ease), visibility 0s; }
+
+/* Atmosphere: a low horizon of light, never a cream wash. */
+.glow { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 1.6s var(--ease); }
+.on .glow { opacity: 1; }
+.glow.warm { background: radial-gradient(1100px 520px at 50% 118%, rgba(255,152,0,.22), rgba(255,152,0,.06) 45%, rgba(0,0,0,0) 72%); }
+.glow.cold { background: radial-gradient(1200px 600px at 50% 120%, rgba(255,255,255,.07), rgba(0,0,0,0) 70%); }
+.glow.red  { background: radial-gradient(900px 500px at 76% 60%, rgba(255,38,60,.12), rgba(0,0,0,0) 70%); }
+
+.label { font-family: var(--mono); font-size: 26px; font-weight: 400; letter-spacing: .02em; color: var(--ink-3); }
+.foot { position: absolute; left: 160px; bottom: 72px; font-family: var(--mono); font-size: 20px; color: var(--ink-3); letter-spacing: .02em; }
+.foot b { color: var(--ink-2); font-weight: 500; }
+
+.h-xxl { font-size: 196px; line-height: .98; font-weight: 600; letter-spacing: -.045em; }
+.h-xl  { font-size: 132px; line-height: 1.02; font-weight: 600; letter-spacing: -.04em; }
+.h-l   { font-size: 96px;  line-height: 1.06; font-weight: 560; letter-spacing: -.032em; }
+.h-m   { font-size: 64px;  line-height: 1.14; font-weight: 500; letter-spacing: -.022em; }
+.sub   { font-size: 44px;  line-height: 1.3;  font-weight: 420; letter-spacing: -.01em; color: var(--ink-2); }
+.y { color: var(--yellow); }
+.r { color: var(--red); }
+.dim { color: var(--ink-3); }
+
+/* Builds: each [data-b="n"] appears on the nth press. */
+[data-b] { opacity: 0; transform: translateY(28px); filter: blur(10px); transition: opacity .9s var(--ease), transform 1.1s var(--ease-spring), filter .9s var(--ease); }
+[data-b].in { opacity: 1; transform: none; filter: none; }
+.recede { transition: opacity .9s var(--ease), color .9s var(--ease); }
+.recede.back { opacity: .32; }
+
+/* 1 · The email */
+#s-email .wrap { position: absolute; left: 200px; top: 230px; right: 160px; }
+#s-email .label { margin-bottom: 64px; }
+#s-email .mail { font-size: 92px; line-height: 1.16; font-weight: 520; letter-spacing: -.03em; min-height: 440px; }
+#s-email .mail .ln { display: block; white-space: pre; }
+#s-email .mail .ln.hl { color: var(--yellow); }
+.caret { display: inline-block; width: 6px; height: .86em; background: var(--yellow); vertical-align: -.08em; margin-left: 8px; border-radius: 1px; animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+
+/* 2 · February */
+#s-feb .wrap { position: absolute; left: 200px; top: 200px; right: 160px; }
+#s-feb .label { margin-bottom: 56px; }
+#s-feb .h-xl + .h-xl { margin-top: 8px; }
+#s-feb .after { margin-top: 72px; }
+#s-feb .after .h-m { color: var(--ink); }
+#s-feb .after .sub { margin-top: 16px; }
+
+/* 3 · June */
+#s-june .left { position: absolute; left: 200px; top: 220px; width: 720px; }
+#s-june .label { margin-bottom: 56px; }
+#s-june .slot { position: relative; }
+#s-june .one { position: absolute; left: 0; top: 0; width: 720px; }
+#s-june .big41 { font-size: 260px; line-height: .86; font-weight: 640; letter-spacing: -.055em; color: var(--red); margin-bottom: 28px; margin-left: -10px; }
+[data-only].gone { opacity: 0; transform: translateY(-28px); filter: blur(10px); }
+#plates { position: absolute; left: 1000px; top: 290px; width: 760px; height: 506px; }
+#plates i { position: absolute; width: 40px; height: 40px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 0 rgba(255,152,0,0); transform: scale(0); transition: transform .7s var(--ease-spring), background .8s var(--ease), box-shadow .8s var(--ease), opacity .8s var(--ease); }
+#plates.show i { transform: scale(1); }
+#plates.empty i.no { background: rgba(255,255,255,0); box-shadow: inset 0 0 0 2px rgba(252,252,252,.24); }
+#plates.bin i.waste { box-shadow: inset 0 0 0 2px rgba(255,38,60,.9); transform: scale(.82); }
+#plates.vegan i:not(.no) { opacity: .35; }
+#plates .cap { position: absolute; left: 0; top: 530px; font-family: var(--mono); font-size: 22px; color: var(--ink-3); white-space: nowrap; }
+
+/* 4 · The turn */
+#s-turn .wrap { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+#s-turn .lines { position: relative; height: 140px; width: 1700px; }
+#s-turn .line { position: absolute; left: 0; right: 0; top: 0; font-size: 128px; line-height: 1.04; font-weight: 600; letter-spacing: -.042em; white-space: nowrap; transition: opacity .8s var(--ease), transform 1s var(--ease-spring), filter .8s var(--ease); }
+#s-turn .line.b { opacity: 0; transform: translateY(50px); filter: blur(12px); }
+#s-turn.st2 .line.a { opacity: 0; transform: translateY(-50px); filter: blur(12px); }
+#s-turn.st2 .line.b { opacity: 1; transform: none; filter: none; }
+#s-turn .x { position: relative; display: inline-block; }
+#s-turn .strike { position: absolute; left: -6px; right: -6px; top: 56%; height: 10px; border-radius: 5px; background: var(--red); transform: scaleX(0); transform-origin: 0 50%; transition: transform .6s var(--ease); }
+#s-turn.st1 .strike { transform: scaleX(1); }
+#s-turn.st1 .x { color: var(--ink-3); transition: color .6s var(--ease); }
+#s-turn .hero { height: 0; transition: height 1.1s var(--ease-spring); display: flex; align-items: flex-end; justify-content: center; }
+#s-turn.st3 .hero { height: 360px; }
+#s-turn .hero .bot { width: 300px; height: 300px; margin-bottom: 36px; opacity: 0; }
+#s-turn.st3 .hero .bot { opacity: 1; }
+#s-turn .intro { margin-top: 44px; }
+#s-turn .intro .name { font-size: 54px; font-weight: 600; letter-spacing: -.02em; }
+#s-turn .intro .sub { margin-top: 10px; font-size: 40px; }
+
+/* 5 · Live hand-off */
+#s-live .wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 120px; }
+#s-live .bot { width: 520px; height: 520px; }
+#s-live .txt .label { margin-bottom: 30px; color: var(--yellow); display: flex; align-items: center; gap: 16px; }
+#s-live .txt .label .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 rgba(255,38,60,.6); animation: rec 1.6s var(--ease) infinite; }
+@keyframes rec { 0% { box-shadow: 0 0 0 0 rgba(255,38,60,.55); } 100% { box-shadow: 0 0 0 22px rgba(255,38,60,0); } }
+#s-live .txt .h-xl { font-size: 150px; }
+#s-live .txt .sub { margin-top: 28px; }
+
+/* 6 · What changed */
+#s-changed .wrap { position: absolute; left: 160px; right: 160px; top: 230px; }
+#s-changed .label { margin-bottom: 90px; }
+#s-changed .cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 72px; }
+#s-changed .n { font-size: 220px; line-height: .9; font-weight: 640; letter-spacing: -.05em; }
+#s-changed .k .w { color: var(--ink); }
+#s-changed .n small { font-size: 72px; font-weight: 500; letter-spacing: -.03em; color: var(--ink-3); margin-left: 10px; }
+#s-changed .k { margin-top: 30px; font-size: 40px; line-height: 1.25; font-weight: 450; color: var(--ink-2); letter-spacing: -.01em; }
+#s-changed .rule { height: 2px; background: var(--ink-4); margin-bottom: 44px; position: relative; overflow: hidden; }
+#s-changed .rule::after { content: ""; position: absolute; inset: 0; background: var(--yellow); transform: scaleX(0); transform-origin: 0 50%; transition: transform 1.2s var(--ease) .2s; }
+#s-changed .in .rule::after { transform: scaleX(1); }
+#s-changed .tonight { position: absolute; left: 160px; bottom: 150px; font-size: 48px; font-weight: 500; letter-spacing: -.015em; color: var(--ink); }
+#s-changed .tonight .label { display: block; margin-bottom: 14px; }
+
+/* 7 · Vision */
+#s-vision .wrap { position: absolute; left: 160px; right: 160px; top: 170px; }
+#s-vision .label { margin-bottom: 44px; }
+#s-vision .h-l + .sub { margin-top: 26px; }
+#s-vision .flow { position: relative; margin-top: 150px; height: 260px; }
+#s-vision .flowlabel { position: absolute; top: -66px; left: 0; color: var(--yellow); }
+#s-vision .track { position: absolute; left: 14px; right: 14px; top: 13px; height: 2px; background: var(--ink-4); }
+#s-vision .track .fill { position: absolute; inset: 0; background: linear-gradient(90deg, var(--yellow), var(--yellow-hi)); transform: scaleX(0); transform-origin: 0 50%; transition: transform 2.2s var(--ease) .3s; }
+#s-vision .flow.in .track .fill { transform: scaleX(1); }
+#s-vision .pulse { position: absolute; top: 6px; left: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--yellow-hi); box-shadow: 0 0 24px 6px rgba(255,152,0,.5); opacity: 0; }
+#s-vision .flow.in .pulse { animation: travel 3.6s var(--ease) 2.6s infinite; }
+@keyframes travel { 0% { left: 6px; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { left: calc(100% - 22px); opacity: 0; } }
+#s-vision .nodes { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; }
+#s-vision .node .dot { width: 28px; height: 28px; border-radius: 50%; background: #000; box-shadow: inset 0 0 0 3px var(--ink-3); transition: box-shadow .6s var(--ease), background .6s var(--ease); }
+#s-vision .flow.in .node .dot { box-shadow: inset 0 0 0 3px var(--yellow); }
+#s-vision .flow.in .node:nth-child(1) .dot { transition-delay: .3s; }
+#s-vision .flow.in .node:nth-child(2) .dot { transition-delay: 1.3s; }
+#s-vision .flow.in .node:nth-child(3) .dot { transition-delay: 2.3s; background: var(--yellow); }
+#s-vision .node:nth-child(2) { justify-self: center; text-align: center; }
+#s-vision .node:nth-child(2) .dot { margin: 0 auto; }
+#s-vision .node:nth-child(3) { justify-self: end; text-align: right; }
+#s-vision .node:nth-child(3) .dot { margin-left: auto; }
+#s-vision .node .t { margin-top: 40px; font-size: 52px; font-weight: 560; letter-spacing: -.02em; }
+#s-vision .node .d { margin-top: 10px; font-size: 32px; color: var(--ink-2); line-height: 1.3; }
+
+/* 8 · The last line */
+#s-end .wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+#s-end .h-xl { font-size: 140px; }
+#s-end .sign { margin-top: 96px; display: flex; align-items: center; gap: 36px; }
+#s-end .sign .bot { width: 168px; height: 168px; }
+#s-end .sign .name { font-size: 64px; font-weight: 620; letter-spacing: -.03em; text-align: left; }
+#s-end .sign .tag { font-size: 40px; font-weight: 450; color: var(--yellow); letter-spacing: -.012em; margin-top: 4px; text-align: left; }
+#s-end .credit { position: absolute; bottom: 72px; left: 0; right: 0; text-align: center; }
+
+/* ===== Pantry: Grok Bot "dome", yellow. Geometry from the Grok Bot bundle (see SCRIPT.md). ===== */
+.bot { position: relative; display: block; }
+.bot svg { position: relative; z-index: 1; width: 100%; height: 100%; overflow: visible; display: block; }
+.bot .body { transform-box: fill-box; transform-origin: 50% 100%; }
+.bot .eye { transform-box: fill-box; transform-origin: 50% 50%; transition: opacity .25s var(--ease); }
+.bot .eyes { transition: transform .6s var(--ease-spring); }
+.bot .joy { opacity: 0; transition: opacity .3s var(--ease); }
+.bot .shadow { transform-box: fill-box; transform-origin: 50% 50%; }
+
+/* idle: slow breath and a blink every few seconds */
+.bot.idle .body, .bot.think .body { animation: breathe 4.2s ease-in-out infinite; }
+.bot.idle .eye, .bot.think .eye { animation: blink 5.2s infinite; }
+@keyframes breathe { 0%,100% { transform: scale(1, 1); } 50% { transform: scale(1.012, .988); } }
+@keyframes blink { 0%, 91%, 97%, 100% { transform: scaleY(1); } 94% { transform: scaleY(.08); } }
+/* thinking: eyes drift up and across, as if reading */
+.bot.think .eyes { animation: read 3.4s ease-in-out infinite; }
+@keyframes read { 0%,100% { transform: translate(-7px,-7px); } 45% { transform: translate(8px,-9px); } 70% { transform: translate(8px,-9px); } }
+/* happy: eyes curve up */
+.bot.happy .eye { opacity: 0; }
+.bot.happy .joy { opacity: 1; }
+.bot.happy .body { animation: hop 1.8s var(--ease) 1; }
+@keyframes hop { 0% { transform: none; } 18% { transform: scale(1.04,.94); } 38% { transform: translateY(-14%) scale(.97,1.04); } 60% { transform: none; } 72% { transform: scale(1.03,.97); } 100% { transform: none; } }
+/* arrive: the cloche lands */
+.bot.arrive .body { animation: land 1.25s var(--ease) both, breathe 4.2s ease-in-out 1.25s infinite; }
+.bot.arrive .shadow { animation: shadowIn 1.25s var(--ease) both; }
+@keyframes land { 0% { transform: translateY(-90%) scale(.96,1.05); opacity: 0; } 45% { transform: translateY(0) scale(1,1); opacity: 1; } 58% { transform: scale(1.07,.9); } 76% { transform: scale(.98,1.03); } 100% { transform: none; } }
+@keyframes shadowIn { 0% { transform: scale(.3); opacity: 0; } 45% { transform: scale(1); opacity: 1; } 58% { transform: scale(1.08); } 100% { transform: none; } }
+/* listening: a soft halo, for the live hand-off */
+.bot.listen::before { content: ""; position: absolute; left: -10%; right: -10%; top: 6%; bottom: -6%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,152,0,.34), rgba(255,152,0,0)); filter: blur(30px); animation: halo 3.2s ease-in-out infinite; }
+@keyframes halo { 0%,100% { opacity: .45; transform: scale(.94); } 50% { opacity: 1; transform: scale(1.06); } }
+
+/* Speaker notes (N) */
+#notes { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(14,14,14,.96); border-top: 1px solid rgba(255,255,255,.12); color: var(--ink); padding: 22px 36px 26px; font-family: var(--sans); display: none; z-index: 10; cursor: default; }
+body.notes #notes { display: grid; grid-template-columns: 1fr 300px; gap: 36px; }
+#notes .say { font-size: 24px; line-height: 1.42; color: var(--ink); max-height: 30vh; overflow: auto; white-space: pre-line; }
+#notes .meta { font-family: var(--mono); font-size: 16px; color: var(--ink-2); line-height: 1.7; text-align: right; }
+#notes .meta b { color: var(--ink); font-weight: 500; font-size: 30px; display: block; letter-spacing: .02em; }
+#notes .meta .over { color: var(--red); }
+#hint { position: fixed; right: 18px; bottom: 14px; font-family: var(--mono); font-size: 12px; color: rgba(255,255,255,.28); z-index: 5; transition: opacity 1s; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+
+<!-- One dome, defined once. ViewBox is the Grok Bot shape space (2B, B = 114.2705). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="domeShade" cx="38%" cy="24%" r="85%">
+      <stop offset="0" stop-color="#FFB547"/>
+      <stop offset=".45" stop-color="#FF9800"/>
+      <stop offset="1" stop-color="#EE8200"/>
+    </radialGradient>
+    <radialGradient id="domeShadow"><stop offset="0" stop-color="#FF9800" stop-opacity=".30"/><stop offset="1" stop-color="#FF9800" stop-opacity="0"/></radialGradient>
+  </defs>
+</svg>
+
+<template id="domeTpl"><svg viewBox="0 0 228.541 228.541" aria-label="Pantry, a yellow Grok Bot dome">
+      <ellipse class="shadow" cx="114.27" cy="212" rx="98" ry="9" fill="url(#domeShadow)"/>
+      <g class="body">
+        <path d="M0.27 170.27 A114 138 0 0 1 228.27 170.27 C228.27 196.27 228.27 196.27 202.27 196.27 L26.27 196.27 C0.27 196.27 0.27 196.27 0.27 170.27 Z" fill="url(#domeShade)"/>
+        <g class="eyes" fill="#000">
+          <rect class="eye" x="74.7"  y="99.7" width="24.4" height="53.4" rx="12.2"/>
+          <rect class="eye" x="129.4" y="99.7" width="24.4" height="53.4" rx="12.2"/>
+          <g class="joy" fill="none" stroke="#000" stroke-width="13" stroke-linecap="round">
+            <path d="M74.5 132 Q86.9 112 99.3 132"/>
+            <path d="M129.2 132 Q141.6 112 154 132"/>
+          </g>
+        </g>
+      </g>
+    </svg></template>
+
+<div id="stage">
+
+  <!-- 1 · OPENING: the email -->
+  <section class="slide" id="s-email" data-section="1" data-title="The email" data-target="10"
+    data-notes="[Silence while it types. Let it land.]
+Then, slowly: &quot;If you've ever run a meetup, you've had this email.&quot;
+[Click on.]">
+    <div class="glow cold"></div>
+    <div class="wrap">
+      <div class="label">Monday 09:12 · to the organiser · from a guest</div>
+      <div class="mail" id="mail"></div>
+    </div>
+  </section>
+
+  <!-- 2 · OPENING: February -->
+  <section class="slide" id="s-feb" data-section="1" data-title="February" data-target="10"
+    data-notes="&quot;February. One organiser's year. Pizza for eighty.&quot; [click]
+&quot;Forty-four came.&quot; [click]
+&quot;And the coeliac guest couldn't eat a thing. Shared oven.&quot;">
+    <div class="glow cold"></div>
+    <div class="wrap">
+      <div class="label">February · one organiser's year</div>
+      <div class="h-xl recede" data-b="0">Pizza for 80.</div>
+      <div class="h-xl recede" data-b="1">44 came.</div>
+      <div class="after" data-b="2">
+        <div class="h-m">The coeliac guest couldn't eat.</div>
+        <div class="sub">Two gluten-free pizzas. One shared oven.</div>
+      </div>
+    </div>
+    <div class="foot">From a demo organiser's year · ten events, Jan to Sep 2026</div>
+  </section>
+
+  <!-- 3 · OPENING: June -->
+  <section class="slide" id="s-june" data-section="1" data-title="June" data-target="13"
+    data-notes="&quot;June. Ninety-six signed up, so we ordered for ninety-six.&quot; [click]
+&quot;Fifty-one came.&quot; [click]
+&quot;Forty-one percent went in the bin.&quot; [beat] [click]
+&quot;And the vegan pizzas were still gone by ten past seven.&quot;">
+    <div class="glow red"></div>
+    <div class="left">
+      <div class="label">June</div>
+      <div class="slot">
+        <div class="h-xl one" data-b="0" data-only>Ordered<br>for 96.</div>
+        <div class="h-xl one" data-b="1" data-only>51 came.</div>
+        <div class="one" data-b="2" data-only><div class="big41">41%</div><div class="h-m">of the food<br>in the bin.</div></div>
+        <div class="h-l one" data-b="3" data-only>And still, the vegan pizzas were gone by <span class="y">19:10</span>.</div>
+      </div>
+    </div>
+    <div id="plates"><div class="cap" id="platesCap">96 signed up · one dot each</div></div>
+    <div class="foot">From a demo organiser's year · ten events, Jan to Sep 2026</div>
+  </section>
+
+  <!-- 4 · OPENING: the turn -->
+  <section class="slide" id="s-turn" data-section="1" data-title="The turn" data-target="12"
+    data-notes="&quot;Too much food. And still not the right food.&quot;
+&quot;Because we order for who signs up.&quot; [click: strike]
+[click] &quot;Pantry orders for who shows up.&quot;
+[click: Pantry lands] &quot;Pantry is a Grok Bot that plans the food for your event.&quot;">
+    <div class="glow warm"></div>
+    <div class="wrap">
+      <div class="hero"><div class="bot" id="turnBot"></div></div>
+      <div class="lines">
+        <div class="line a">We order for who <span class="x">signs up.<span class="strike"></span></span></div>
+        <div class="line b">Order for who <span class="y">shows up.</span></div>
+      </div>
+      <div class="intro" data-b="3">
+        <div class="name">Pantry</div>
+        <div class="sub">A Grok Bot that plans the food for your event.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · LIVE hand-off -->
+  <section class="slide" id="s-live" data-section="2" data-title="Live in Grok Bot" data-target="5"
+    data-notes="&quot;Pantry isn't an app. It's a Grok Bot. Let me show you.&quot;
+[Switch to the Grok Bot app. Run-of-show in SCRIPT.md.]
+Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
+    <div class="glow warm"></div>
+    <div class="wrap">
+      <div class="bot think listen"></div>
+      <div class="txt">
+        <div class="label"><span class="dot"></span>Live</div>
+        <div class="h-xl">Live in<br>Grok Bot.</div>
+        <div class="sub">A demo organiser's data. A real Bot.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · CLOSING: what changed -->
+  <section class="slide" id="s-changed" data-section="3" data-title="What changed" data-target="10"
+    data-notes="&quot;Ninety-three plates, not a hundred and forty.&quot; [click]
+&quot;Forty-seven never bought for empty chairs.&quot; [click]
+&quot;And not one declared need without a safe plate.&quot;">
+    <div class="glow warm"></div>
+    <div class="wrap">
+      <div class="label">Thursday's event, planned by Pantry</div>
+      <div class="cols">
+        <div data-b="0"><div class="rule"></div><div class="n y">93</div><div class="k"><span class="w">Plates, not 140.</span> Planned for who turns up.</div></div>
+        <div data-b="1"><div class="rule"></div><div class="n">47</div><div class="k"><span class="w">Never bought</span> for empty chairs.</div></div>
+        <div data-b="2"><div class="rule"></div><div class="n">0</div><div class="k"><span class="w">Declared needs</span> without a safe plate.</div></div>
+      </div>
+    </div>
+    <div class="tonight" id="tonight" data-b="3" hidden></div>
+  </section>
+
+  <!-- 7 · CLOSING: vision -->
+  <section class="slide" id="s-vision" data-section="3" data-title="Vision" data-target="10"
+    data-notes="&quot;Pantry is a public Grok Bot template. Any organiser imports it, and it learns their room.&quot; [click]
+&quot;And it speaks commerce. A structured brief goes out. Quotes come back. A single-use card pays, only on a human yes.&quot;">
+    <div class="glow cold"></div>
+    <div class="wrap">
+      <div class="label">Next</div>
+      <div class="h-l">A public Grok Bot template.</div>
+      <div class="sub">Any organiser imports Pantry. It learns their room.</div>
+      <div class="flow" data-b="1">
+        <div class="label flowlabel">Agentic commerce for catering</div>
+        <div class="track"><div class="fill"></div></div>
+        <div class="pulse"></div>
+        <div class="nodes">
+          <div class="node"><div class="dot"></div><div class="t">Brief out</div><div class="d">Headcount, diets, drop time.<br>Structured.</div></div>
+          <div class="node"><div class="dot"></div><div class="t">Quotes back</div><div class="d">Caterers answer<br>in the same shape.</div></div>
+          <div class="node"><div class="dot"></div><div class="t">One card, one yes</div><div class="d">Single-use, scoped<br>to the order.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · CLOSING: last line -->
+  <section class="slide" id="s-end" data-section="3" data-title="Last line" data-target="8"
+    data-notes="&quot;So the next time a guest asks if they should bring their own&quot; [beat]
+&quot;nobody should have to.&quot; [click]
+&quot;Pantry. Order for who shows up. Thank you.&quot;">
+    <div class="glow warm"></div>
+    <div class="wrap">
+      <div class="h-xl">Nobody should have to<br><span class="y">bring their own.</span></div>
+      <div class="sign" data-b="1">
+        <div class="bot happy" id="endBot"></div>
+        <div><div class="name">Pantry</div><div class="tag">Order for who shows up.</div></div>
+      </div>
+    </div>
+    <div class="credit label" data-b="1">A Grok Bot · Grok Bot Community Hackathon · London · 22 Oct 2026</div>
+  </section>
+
+</div>
+
+<div id="notes"><div class="say" id="say"></div><div class="meta" id="meta"></div></div>
+<div id="hint">Right or Space next · Left back · F fullscreen · N notes · 1 2 3 sections</div>
+
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const tpl = document.getElementById('domeTpl').innerHTML;
+  document.querySelectorAll('.bot').forEach(b => { b.innerHTML = tpl; });
+  const slides = [...document.querySelectorAll('.slide')];
+  const q = new URLSearchParams(location.search);
+  let cur = 0, step = 0, typer = null, t0 = null, slideT0 = Date.now();
+
+  // ---- Fit the 1920x1080 stage to any screen ----
+  function fit() {
+    const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+    stage.style.transform = `translate(-50%, -50%) scale(${k})`;
+    stage.style.transformOrigin = '50% 50%';
+  }
+  addEventListener('resize', fit); fit();
+
+  // ---- Optional "tonight" number: ?came=…&signed=… (nothing is shown unless set) ----
+  const came = parseInt(q.get('came'), 10), signed = parseInt(q.get('signed'), 10);
+  const tonight = document.getElementById('tonight');
+  if (Number.isFinite(came) && came > 0) {
+    tonight.hidden = false;
+    tonight.innerHTML = `<span class="label">Tonight, in this room</span>` +
+      (Number.isFinite(signed) && signed > 0 ? `${signed} signed up. <span class="y">${came} came.</span>` : `<span class="y">${came} came.</span> Pantry plans for the room, not the list.`);
+  } else tonight.remove();
+
+  // ---- June: 96 plates in a 12 x 8 grid ----
+  const plates = document.getElementById('plates');
+  const cols = 12, gap = 64;
+  // Deterministic shuffle so the "didn't come" seats are scattered, like real no-shows.
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const order = [...Array(96).keys()].sort(() => rnd() - .5);
+  const noShow = new Set(order.slice(0, 45));         // 96 signed up, 51 came
+  const waste = new Set(order.slice(0, 39));          // ~41% of 96 plates binned
+  for (let k = 0; k < 96; k++) {
+    const d = document.createElement('i');
+    d.style.left = (k % cols) * gap + 'px'; d.style.top = Math.floor(k / cols) * gap + 'px';
+    d.style.transitionDelay = `${(k % cols) * 18 + Math.floor(k / cols) * 30}ms`;
+    if (noShow.has(k)) d.classList.add('no');
+    if (waste.has(k)) d.classList.add('waste');
+    plates.appendChild(d);
+  }
+  const cap = document.getElementById('platesCap');
+
+  // ---- Per-slide build logic ----
+  const steps = s => {
+    const bs = [...s.querySelectorAll('[data-b]')].map(e => +e.dataset.b);
+    return bs.length ? Math.max(...bs) : 0;
+  };
+  const hooks = {
+    's-email': { enter() { typeMail(); }, leave() { clearTimeout(typer); } },
+    's-june': {
+      render(n) {
+        plates.classList.toggle('show', n >= 0);
+        plates.classList.toggle('empty', n >= 1);
+        plates.classList.toggle('bin', n >= 2);
+        plates.classList.toggle('vegan', n >= 3);
+        cap.textContent = ['96 signed up · we ordered a plate each', '51 came · 45 empty chairs', 'Food for the empty chairs, binned', 'Too much food. Not enough of the right food.'][n];
+      }
+    },
+    's-turn': {
+      render(n) {
+        const s = document.getElementById('s-turn');
+        s.classList.toggle('st1', n >= 1); s.classList.toggle('st2', n >= 2); s.classList.toggle('st3', n >= 3);
+        const b = document.getElementById('turnBot');
+        b.className = 'bot';
+        if (n >= 3) { void b.offsetWidth; b.className = 'bot arrive idle'; }
+      },
+      max: 3
+    },
+    's-end': {
+      render(n) {
+        const b = document.getElementById('endBot');
+        b.className = 'bot idle';
+        if (n >= 1) { void b.offsetWidth; b.className = 'bot happy'; }
+      }
+    }
+  };
+
+  // Recede earlier lines when a later one arrives (one idea on screen at a time).
+  function apply() {
+    const s = slides[cur];
+    s.querySelectorAll('[data-b]').forEach(e => e.classList.toggle('in', +e.dataset.b <= step));
+    s.querySelectorAll('.recede').forEach(e => {
+      const b = +e.dataset.b; const later = [...s.querySelectorAll('[data-b]')].some(x => +x.dataset.b > b && +x.dataset.b <= step);
+      e.classList.toggle('back', later);
+    });
+    s.querySelectorAll('[data-only]').forEach(e => e.classList.toggle('gone', +e.dataset.b < step));
+    const h = hooks[s.id]; if (h && h.render) h.render(step);
+    history.replaceState(null, '', `#${cur + 1}.${step}`);
+    renderNotes();
+  }
+  function maxStep(i) { const h = hooks[slides[i].id]; return h && h.max != null ? h.max : steps(slides[i]); }
+  function firstStep() { return 0; }
+
+  function go(i, atEnd = false) {
+    if (i < 0 || i >= slides.length) return;
+    const prev = slides[cur]; const ph = hooks[prev.id];
+    if (i !== cur && ph && ph.leave) ph.leave();
+    prev.classList.remove('on');
+    cur = i; step = atEnd ? maxStep(i) : firstStep(i);
+    slides[cur].classList.add('on');
+    slideT0 = Date.now();
+    const h = hooks[slides[cur].id]; if (h && h.enter) h.enter();
+    apply();
+  }
+  function next() { if (!t0) t0 = Date.now(); if (step < maxStep(cur)) { step++; apply(); } else go(cur + 1); }
+  function back() { if (step > firstStep(cur)) { step--; apply(); } else go(cur - 1, true); }
+
+  // ---- The email, typed one line at a time ----
+  const LINES = ["Hi! I'm coeliac (strict).", 'Will there be anything', 'I can eat, or should I', 'bring my own?'];
+  function typeMail() {
+    const box = document.getElementById('mail'); box.innerHTML = '';
+    clearTimeout(typer);
+    let li = 0, ci = 0, el = null;
+    const caret = document.createElement('span'); caret.className = 'caret';
+    const tick = () => {
+      if (!el) { el = document.createElement('span'); el.className = 'ln' + (li === LINES.length - 1 ? ' hl' : ''); box.appendChild(el); }
+      const line = LINES[li];
+      el.textContent = line.slice(0, ++ci); el.appendChild(caret);
+      if (ci < line.length) { const ch = line[ci - 1]; typer = setTimeout(tick, /[.,?!]/.test(ch) ? 260 : 34 + Math.random() * 40); }
+      else if (++li < LINES.length) { ci = 0; el = null; typer = setTimeout(tick, li === 1 ? 900 : 520); }
+    };
+    typer = setTimeout(tick, 900);
+  }
+
+  // ---- Keys ----
+  const SECTION_START = { 1: 0, 2: 4, 3: 5 };
+  addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(k)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); back(); }
+    else if (k === 'f' || k === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); }
+    else if (k === 'n' || k === 'N') { document.body.classList.toggle('notes'); renderNotes(); }
+    else if (k === 'Home') go(0);
+    else if (k === 'End') go(slides.length - 1, true);
+    else if (/^[0-9]$/.test(k)) {
+      const n = +k;
+      if (SECTION_START[n] != null) go(SECTION_START[n]);
+      else if (n >= 4 && n <= slides.length) go(n - 1);
+    }
+    else if (k === 'r' || k === 'R') { t0 = null; renderNotes(); }
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('#notes')) next(); });
+  let mt; addEventListener('mousemove', () => { document.body.classList.add('cursor'); clearTimeout(mt); mt = setTimeout(() => document.body.classList.remove('cursor'), 1600); });
+  setTimeout(() => { const h = document.getElementById('hint'); if (h) h.style.opacity = 0; }, 6000);
+
+  // ---- Notes overlay with timers ----
+  const fmt = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+  function renderNotes() {
+    if (!document.body.classList.contains('notes')) return;
+    const s = slides[cur], nx = slides[cur + 1];
+    document.getElementById('say').textContent = s.dataset.notes || '';
+    const inSlide = Date.now() - slideT0, target = (+s.dataset.target || 0) * 1000;
+    document.getElementById('meta').innerHTML =
+      `<b>${t0 ? fmt(Date.now() - t0) : '0:00'}</b>total · R resets<br>` +
+      `<span class="${target && inSlide > target ? 'over' : ''}">this slide ${fmt(inSlide)} / ${fmt(target)}</span><br>` +
+      `${cur + 1}/${slides.length} · ${s.dataset.title} · build ${step}/${maxStep(cur)}<br>` +
+      `next: ${nx ? nx.dataset.title : 'end'}`;
+  }
+  setInterval(renderNotes, 500);
+
+  // ---- Start ----
+  if (q.get('notes') === '1') document.body.classList.add('notes');
+  const m = /^#(\d+)(?:\.(\d+))?$/.exec(location.hash);
+  slides[0].classList.add('on');
+  if (m) { cur = 0; go(Math.min(slides.length, +m[1]) - 1); if (m[2]) { step = Math.min(+m[2], maxStep(cur)); apply(); } }
+  else go(0);
+})();
+</script>
+</body>
+</html>
