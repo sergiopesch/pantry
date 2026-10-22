@@ -106,8 +106,8 @@ body.cursor { cursor: default; }
 #s-turn.st1 .strike { transform: scaleX(1); }
 #s-turn.st1 .x { color: var(--ink-3); transition: color .6s var(--ease); }
 #s-turn .hero { height: 0; transition: height 1.1s var(--ease-spring); display: flex; align-items: flex-end; justify-content: center; }
-#s-turn.st3 .hero { height: 360px; }
-#s-turn .hero .bot { width: 300px; height: 300px; margin-bottom: 36px; opacity: 0; }
+#s-turn.st3 .hero { height: 440px; }
+#s-turn .hero .bot { width: 390px; height: 390px; margin-bottom: 28px; opacity: 0; }
 #s-turn.st3 .hero .bot { opacity: 1; }
 #s-turn .intro { margin-top: 44px; }
 #s-turn .intro .name { font-size: 54px; font-weight: 600; letter-spacing: -.02em; }
@@ -115,7 +115,7 @@ body.cursor { cursor: default; }
 
 /* 5 · Live hand-off */
 #s-live .wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 120px; }
-#s-live .bot { width: 520px; height: 520px; }
+#s-live .bot { width: 620px; height: 620px; }
 #s-live .txt .label { margin-bottom: 30px; color: var(--yellow); display: flex; align-items: center; gap: 16px; }
 #s-live .txt .label .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 rgba(255,38,60,.6); animation: rec 1.6s var(--ease) infinite; }
 @keyframes rec { 0% { box-shadow: 0 0 0 0 rgba(255,38,60,.55); } 100% { box-shadow: 0 0 0 22px rgba(255,38,60,0); } }
@@ -165,7 +165,7 @@ body.cursor { cursor: default; }
 #s-end .wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 #s-end .h-xl { font-size: 140px; }
 #s-end .sign { margin-top: 96px; display: flex; align-items: center; gap: 36px; }
-#s-end .sign .bot { width: 168px; height: 168px; }
+#s-end .sign .bot { width: 220px; height: 220px; }
 #s-end .sign .name { font-size: 64px; font-weight: 620; letter-spacing: -.03em; text-align: left; }
 #s-end .sign .tag { font-size: 40px; font-weight: 450; color: var(--yellow); letter-spacing: -.012em; margin-top: 4px; text-align: left; }
 #s-end .credit { position: absolute; bottom: 72px; left: 0; right: 0; text-align: center; }
@@ -197,6 +197,12 @@ body.cursor { cursor: default; }
 .bot.arrive .shadow { animation: shadowIn 1.25s var(--ease) both; }
 @keyframes land { 0% { transform: translateY(-90%) scale(.96,1.05); opacity: 0; } 45% { transform: translateY(0) scale(1,1); opacity: 1; } 58% { transform: scale(1.07,.9); } 76% { transform: scale(.98,1.03); } 100% { transform: none; } }
 @keyframes shadowIn { 0% { transform: scale(.3); opacity: 0; } 45% { transform: scale(1); opacity: 1; } 58% { transform: scale(1.08); } 100% { transform: none; } }
+.bot .hat { transform-box: fill-box; transform-origin: 50% 100%; }
+.bot.arrive .hat { animation: hatPop 1.5s var(--ease) .5s both; }
+.bot.happy .hat { animation: hatPop 1.3s var(--ease) .2s 1; }
+@keyframes hatPop { 0% { transform: none; } 28% { transform: translateY(-16%) rotate(-7deg); } 55% { transform: translateY(0) rotate(4deg); } 75% { transform: rotate(-1.5deg); } 100% { transform: none; } }
+/* idle state of the whole deck: black, nothing playing */
+body.blank .slide { opacity: 0 !important; visibility: hidden !important; }
 /* listening: a soft halo, for the live hand-off */
 .bot.listen::before { content: ""; position: absolute; left: -10%; right: -10%; top: 6%; bottom: -6%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,152,0,.34), rgba(255,152,0,0)); filter: blur(30px); animation: halo 3.2s ease-in-out infinite; }
 @keyframes halo { 0%,100% { opacity: .45; transform: scale(.94); } 50% { opacity: 1; transform: scale(1.06); } }
@@ -222,14 +228,31 @@ body.notes #notes { display: grid; grid-template-columns: 1fr 300px; gap: 36px; 
       <stop offset=".45" stop-color="#FF9800"/>
       <stop offset="1" stop-color="#EE8200"/>
     </radialGradient>
+    <linearGradient id="hatPuff" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".7" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4E7EC"/></linearGradient>
+    <linearGradient id="hatBand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F1F3F6"/><stop offset=".35" stop-color="#FFFFFF"/><stop offset="1" stop-color="#ECEEF2"/></linearGradient>
     <radialGradient id="domeShadow"><stop offset="0" stop-color="#FF9800" stop-opacity=".30"/><stop offset="1" stop-color="#FF9800" stop-opacity="0"/></radialGradient>
   </defs>
 </svg>
 
-<template id="domeTpl"><svg viewBox="0 0 228.541 228.541" aria-label="Pantry, a yellow Grok Bot dome">
+<template id="domeTpl"><svg viewBox="-31 -64 290 290" aria-label="Pantry, a yellow Grok Bot dome in a chef's hat">
       <ellipse class="shadow" cx="114.27" cy="212" rx="98" ry="9" fill="url(#domeShadow)"/>
       <g class="body">
         <path d="M0.27 170.27 A114 138 0 0 1 228.27 170.27 C228.27 196.27 228.27 196.27 202.27 196.27 L26.27 196.27 C0.27 196.27 0.27 196.27 0.27 170.27 Z" fill="url(#domeShade)"/>
+        <g transform="translate(122 49) rotate(8)">
+  <g class="hat">
+    <path d="M-40 -6 Q0 -18 40 -6 L40 2 Q0 -12 -40 2 Z" fill="#B85F00" opacity=".28"/>
+    <path d="M-40 -30 Q0 -34 40 -30 L40 0 Q0 -14 -40 0 Z" fill="url(#hatBand)" stroke="#D3D7DD" stroke-width="2.5" stroke-linejoin="round"/>
+    <g stroke="#D6DAE0" stroke-width="3" stroke-linecap="round" fill="none">
+      <path d="M-25 -27 L-25.4 -5"/><path d="M-8.5 -29 L-8.6 -8.5"/><path d="M8.5 -29 L8.6 -8.5"/><path d="M25 -27 L25.4 -5"/>
+    </g>
+    <g transform="translate(0 12)">
+      <path d="M-46 -40 C-64 -40 -66 -72 -46 -80 C-48 -104 -20 -116 -4 -104 C6 -122 40 -116 40 -92 C62 -94 70 -62 50 -48 C50 -42 46 -38 40 -38 Q0 -44 -40 -38 C-43 -38 -45 -39 -46 -40 Z" fill="url(#hatPuff)" stroke="#D3D7DD" stroke-width="2.5" stroke-linejoin="round"/>
+      <g stroke="#DDE1E6" stroke-width="3" stroke-linecap="round" fill="none">
+        <path d="M-30 -48 Q-30 -66 -18 -78"/><path d="M4 -47 Q2 -70 10 -88"/><path d="M30 -48 Q34 -62 42 -70"/>
+      </g>
+    </g>
+  </g>
+</g>
         <g class="eyes" fill="#000">
           <rect class="eye" x="74.7"  y="99.7" width="24.4" height="53.4" rx="12.2"/>
           <rect class="eye" x="129.4" y="99.7" width="24.4" height="53.4" rx="12.2"/>
@@ -243,6 +266,9 @@ body.notes #notes { display: grid; grid-template-columns: 1fr 300px; gap: 36px; 
 
 <div id="stage">
 
+  <!-- 0 · Idle: black, nothing playing -->
+  <section class="slide" id="s-idle" data-section="0" data-title="Idle (black)" data-target="0" data-notes="Black. Press Scene on the Stream Deck, or Right to step through by hand."></section>
+
   <!-- 1 · OPENING: the email -->
   <section class="slide" id="s-email" data-section="1" data-title="The email" data-target="10"
     data-notes="[Silence while it types. Let it land.]
@@ -250,7 +276,7 @@ Then, slowly: &quot;If you've ever run a meetup, you've had this email.&quot;
 [Click on.]">
     <div class="glow cold"></div>
     <div class="wrap">
-      <div class="label">Monday 09:12 · to the organiser · from a guest</div>
+      <div class="label">09:12 · to the organiser · from a guest</div>
       <div class="mail" id="mail"></div>
     </div>
   </section>
@@ -270,7 +296,7 @@ Then, slowly: &quot;If you've ever run a meetup, you've had this email.&quot;
         <div class="sub">Two gluten-free pizzas. One shared oven.</div>
       </div>
     </div>
-    <div class="foot">From a demo organiser's year · ten events, Jan to Sep 2026</div>
+    <div class="foot">From a demo organiser's year · ten past events</div>
   </section>
 
   <!-- 3 · OPENING: June -->
@@ -290,7 +316,7 @@ Then, slowly: &quot;If you've ever run a meetup, you've had this email.&quot;
       </div>
     </div>
     <div id="plates"><div class="cap" id="platesCap">96 signed up · one dot each</div></div>
-    <div class="foot">From a demo organiser's year · ten events, Jan to Sep 2026</div>
+    <div class="foot">From a demo organiser's year · ten past events</div>
   </section>
 
   <!-- 4 · OPENING: the turn -->
@@ -336,7 +362,7 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
 &quot;And not one declared need without a safe plate.&quot;">
     <div class="glow warm"></div>
     <div class="wrap">
-      <div class="label">Thursday's event, planned by Pantry</div>
+      <div class="label">The demo event, planned by Pantry</div>
       <div class="cols">
         <div data-b="0"><div class="rule"></div><div class="n y">93</div><div class="k"><span class="w">Plates, not 140.</span> Planned for who turns up.</div></div>
         <div data-b="1"><div class="rule"></div><div class="n">47</div><div class="k"><span class="w">Never bought</span> for empty chairs.</div></div>
@@ -381,7 +407,7 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
         <div><div class="name">Pantry</div><div class="tag">Order for who shows up.</div></div>
       </div>
     </div>
-    <div class="credit label" data-b="1">A Grok Bot · Grok Bot Community Hackathon · London · 22 Oct 2026</div>
+    <div class="credit label" data-b="1">A Grok Bot · Grok Bot Community Hackathon · <span id="today"></span></div>
   </section>
 
 </div>
@@ -414,6 +440,9 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
     tonight.innerHTML = `<span class="label">Tonight, in this room</span>` +
       (Number.isFinite(signed) && signed > 0 ? `${signed} signed up. <span class="y">${came} came.</span>` : `<span class="y">${came} came.</span> Pantry plans for the room, not the list.`);
   } else tonight.remove();
+
+  // ---- Today's date, from the browser clock (en-GB, Europe/London) ----
+  document.getElementById('today').textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' });
 
   // ---- June: 96 plates in a 12 x 8 grid ----
   const plates = document.getElementById('plates');
@@ -478,7 +507,7 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
     });
     s.querySelectorAll('[data-only]').forEach(e => e.classList.toggle('gone', +e.dataset.b < step));
     const h = hooks[s.id]; if (h && h.render) h.render(step);
-    history.replaceState(null, '', `#${cur + 1}.${step}`);
+    if (!play) history.replaceState(null, '', `${location.search}#${cur}.${step}`);
     renderNotes();
   }
   function maxStep(i) { const h = hooks[slides[i].id]; return h && h.max != null ? h.max : steps(slides[i]); }
@@ -495,8 +524,44 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
     const h = hooks[slides[cur].id]; if (h && h.enter) h.enter();
     apply();
   }
-  function next() { if (!t0) t0 = Date.now(); if (step < maxStep(cur)) { step++; apply(); } else go(cur + 1); }
-  function back() { if (step > firstStep(cur)) { step--; apply(); } else go(cur - 1, true); }
+  function manualNext() { if (!t0) t0 = Date.now(); if (step < maxStep(cur)) { step++; apply(); } else go(cur + 1); }
+  function manualBack() { if (step > firstStep(cur)) { step--; apply(); } else go(cur - 1, true); }
+
+  // ---- Stream Deck plays: #scene (20 s), #pantry (10 s), #wrap (~20 s), #idle ----
+  // Each cue is [ms from start, slide id, build]. Right skips to the next cue; Left steps back and pauses.
+  const hasTonight = !!document.getElementById('tonight');
+  const PLAYS = {
+    scene: [[0, 's-email', 0], [7000, 's-feb', 0], [8300, 's-feb', 1], [9600, 's-feb', 2], [12200, 's-june', 0], [14000, 's-june', 1], [15800, 's-june', 2]],
+    pantry: [[0, 's-turn', 0], [1700, 's-turn', 1], [3100, 's-turn', 2], [4900, 's-turn', 3]],
+    wrap: [[0, 's-changed', 0], [2000, 's-changed', 1], [4000, 's-changed', 2]].concat(
+      hasTonight ? [[6000, 's-changed', 3], [9000, 's-vision', 0], [11500, 's-vision', 1], [16500, 's-end', 0], [19000, 's-end', 1]]
+                 : [[7000, 's-vision', 0], [9500, 's-vision', 1], [14500, 's-end', 0], [17000, 's-end', 1]])
+  };
+  let play = null, cue = 0, timer = null;
+  function blank(on) { document.body.classList.toggle('blank', on); }
+  function applyCue() {
+    const [, id, st] = play[cue];
+    const i = slides.findIndex(x => x.id === id);
+    blank(false);
+    if (i !== cur || !slides[cur].classList.contains('on')) go(i);
+    step = Math.min(st, maxStep(cur)); apply();
+  }
+  function schedule() {
+    clearTimeout(timer);
+    if (play && cue + 1 < play.length) timer = setTimeout(() => { cue++; applyCue(); schedule(); }, play[cue + 1][0] - play[cue][0]);
+  }
+  function startPlay(name) {
+    clearTimeout(timer);
+    if (name === 'idle' || !PLAYS[name]) { play = null; blank(true); const ph = hooks[slides[cur].id]; if (ph && ph.leave) ph.leave(); return; }
+    play = PLAYS[name]; cue = 0; t0 = Date.now(); applyCue(); schedule();
+  }
+  function next() {
+    if (document.body.classList.contains('blank')) { blank(false); play = null; go(1); return; }
+    if (play && cue + 1 < play.length) { cue++; applyCue(); schedule(); return; }
+    play = null; manualNext();
+  }
+  function back() { if (play && cue > 0) { clearTimeout(timer); cue--; applyCue(); return; } play = null; manualBack(); }
+  addEventListener('hashchange', () => { const h = location.hash.slice(1); if (PLAYS[h] || h === 'idle') startPlay(h); });
 
   // ---- The email, typed one line at a time ----
   const LINES = ["Hi! I'm coeliac (strict).", 'Will there be anything', 'I can eat, or should I', 'bring my own?'];
@@ -509,14 +574,14 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
       if (!el) { el = document.createElement('span'); el.className = 'ln' + (li === LINES.length - 1 ? ' hl' : ''); box.appendChild(el); }
       const line = LINES[li];
       el.textContent = line.slice(0, ++ci); el.appendChild(caret);
-      if (ci < line.length) { const ch = line[ci - 1]; typer = setTimeout(tick, /[.,?!]/.test(ch) ? 260 : 34 + Math.random() * 40); }
-      else if (++li < LINES.length) { ci = 0; el = null; typer = setTimeout(tick, li === 1 ? 900 : 520); }
+      if (ci < line.length) { const ch = line[ci - 1]; typer = setTimeout(tick, /[.,?!]/.test(ch) ? 170 : 22 + Math.random() * 18); }
+      else if (++li < LINES.length) { ci = 0; el = null; typer = setTimeout(tick, li === 1 ? 520 : 340); }
     };
-    typer = setTimeout(tick, 900);
+    typer = setTimeout(tick, 450);
   }
 
   // ---- Keys ----
-  const SECTION_START = { 1: 0, 2: 4, 3: 5 };
+  const SECTION_START = { 1: 1, 2: 5, 3: 6 };
   addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key;
@@ -524,18 +589,19 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
     else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); back(); }
     else if (k === 'f' || k === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); }
     else if (k === 'n' || k === 'N') { document.body.classList.toggle('notes'); renderNotes(); }
-    else if (k === 'Home') go(0);
-    else if (k === 'End') go(slides.length - 1, true);
+    else if (k === 'Home') { clearTimeout(timer); play = null; blank(false); go(1); }
+    else if (k === 'End') { clearTimeout(timer); play = null; blank(false); go(slides.length - 1, true); }
     else if (/^[0-9]$/.test(k)) {
       const n = +k;
+      clearTimeout(timer); play = null; blank(false);
       if (SECTION_START[n] != null) go(SECTION_START[n]);
-      else if (n >= 4 && n <= slides.length) go(n - 1);
+      else if (n >= 4 && n < slides.length) go(n);
     }
     else if (k === 'r' || k === 'R') { t0 = null; renderNotes(); }
   });
   document.addEventListener('click', e => { if (!e.target.closest('#notes')) next(); });
   let mt; addEventListener('mousemove', () => { document.body.classList.add('cursor'); clearTimeout(mt); mt = setTimeout(() => document.body.classList.remove('cursor'), 1600); });
-  setTimeout(() => { const h = document.getElementById('hint'); if (h) h.style.opacity = 0; }, 6000);
+  { const h = document.getElementById('hint'); if (location.hash) h.style.display = 'none'; setTimeout(() => { h.style.opacity = 0; }, 6000); }
 
   // ---- Notes overlay with timers ----
   const fmt = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
@@ -555,9 +621,11 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
   // ---- Start ----
   if (q.get('notes') === '1') document.body.classList.add('notes');
   const m = /^#(\d+)(?:\.(\d+))?$/.exec(location.hash);
+  const mode = location.hash.slice(1);
   slides[0].classList.add('on');
-  if (m) { cur = 0; go(Math.min(slides.length, +m[1]) - 1); if (m[2]) { step = Math.min(+m[2], maxStep(cur)); apply(); } }
-  else go(0);
+  if (PLAYS[mode]) startPlay(mode);
+  else if (m) { cur = 0; go(Math.min(slides.length - 1, +m[1])); if (m[2]) { step = Math.min(+m[2], maxStep(cur)); apply(); } }
+  else { go(0); startPlay('idle'); }
 })();
 </script>
 </body>
