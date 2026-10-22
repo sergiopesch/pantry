@@ -8,6 +8,8 @@ _Last updated: Thu 22 Oct 2026, 19:30 BST. Hackathon 18:00–23:00 · code freez
 - The bot config is in `bot/`.
 - **It's a custom Grok Bot, not an app.** The demo runs inside Grok Bot (chat, voice, cards, phone approvals). `web/` and `server.js` are the old household app and aren't part of the event demo.
 - **Luma:** Grok Bot has no Luma connector. Pantry's MCP server reads Luma's public API (`x-luma-api-key`, needs Luma Plus; key stored as a Grok Bot secret `LUMA_API_KEY`). Without a key it reads the dummy calendar in `data/events/luma/`, written in the API's exact response shapes by `scripts/seed-luma.js`. Luma webhooks can't carry Grok's webhook auth header, so the routine polls hourly instead.
+- **Cognee: live.** 11 documents (ten events + providers, aggregate only) are in the Cognee Cloud dataset `pantry-events`. Recall checked at 19:52: it finds the £70 Hearth & Co overbilling, the vegan run-outs (26 Mar Bao Down, 18 Jun Slice Theory) and Little Feast as best-rated. The bot connects via the hosted MCP `https://mcp.aws.cognee.ai/mcp` (OAuth, Sergio signs in).
+- Repo: github.com/sergiopesch/pantry (private).
 - 58 tests pass.
 
 ## Pick up here

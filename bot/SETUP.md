@@ -23,8 +23,8 @@ A "Pantry" bot already exists in your Grok Bot app with the old household person
 
 ## 4. Cognee (memory)
 - In Pantry's chat: "Add the MCP server https://mcp.aws.cognee.ai/mcp" (remote, Streamable HTTP, OAuth). When it asks you to authenticate, click **Allow Access** once and sign in with your Cognee account. The hosted server takes no API key.
-- Load the past events once, from your Mac. In Cognee Cloud → API Keys, copy the API Base URL and create a key. Store both in 1Password as an item called `Cognee` (fields `url` and `credential`), then run:
-  `node scripts/cognee-docs.js && COGNEE_SERVICE_URL=$(op read "op://Shared with Grok Bot/Cognee/url") COGNEE_API_KEY=$(op read "op://Shared with Grok Bot/Cognee/credential") uv run --with cognee python scripts/cognee-load.py load`
+- Load the past events once, from your Mac. In Cognee Cloud → API Keys, copy the API Base URL and create a key. Store both in 1Password as an item called `Cognee` (fields `url` and `key`; Sergio's is in Personal), then run:
+  `node scripts/cognee-docs.js && COGNEE_SERVICE_URL=$(op read "op://<vault-id>/Cognee/url") COGNEE_API_KEY=$(op read "op://<vault-id>/Cognee/key") uv run --with cognee python scripts/cognee-load.py load`
   This sends 11 documents to the dataset `pantry-events`: ten events plus the provider list. Graph building runs on your Cognee credits and takes a few minutes. Guest names and emails are not sent, only counts and anonymous feedback.
 - **Check:** "Has Hearth & Co ever billed over quote?" Pantry recalls April's £70 service-staff line, with the date.
 

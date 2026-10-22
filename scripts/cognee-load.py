@@ -36,7 +36,8 @@ async def load():
 
 async def ask(question):
     for r in await cognee.recall(question, datasets=[DATASET]):
-        print(getattr(r, "answer", None) or getattr(r, "text", None) or r)
+        text = r.get("text") if isinstance(r, dict) else getattr(r, "text", None)
+        print(text or r)
 
 
 async def main():
