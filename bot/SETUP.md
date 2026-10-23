@@ -38,10 +38,12 @@ A "Pantry" bot already exists in your Grok Bot app with the old household person
 - For each event, Pantry searches for real caterers and restaurants that deliver to the venue's postcode. It adds them with `pantry_provider_add`, each with a source URL, real dishes and prices, delivery terms, stated allergen handling (unknown counts as may-contain) and public reviews.
 - **Check:** `pantry_options` lists real providers, each with a source link.
 
-## 4d. Payments: Stripe
-- In Pantry's chat: "Add the MCP server https://mcp.stripe.com" (OAuth into your Stripe account; use a sandbox or test mode for the demo).
-- At checkout, Pantry creates a Stripe Payment Link for exactly the approved amount and attaches it with `pantry_payment_link`. **You** pay it; that's the approval. Pantry checks Stripe and records it with `pantry_payment_confirm` only when Stripe reports paid, for that amount.
-- **Check:** pay the test link with Stripe's test card 4242 4242 4242 4242. Pantry says "Paid", with the Stripe reference.
+## 4d. Payments: Agentcard (sandbox)
+- In the Agentcard dashboard (app.agentcard.sh → Organization → Developer → Credentials), create a **sandbox** client. Save its ID and secret as the Grok Bot secrets `AGENTCARD_CLIENT_ID` and `AGENTCARD_CLIENT_SECRET` (Pantry asks for each with a masked secret card; never paste them into chat).
+- Pantry pays with `~/pantry/scripts/agentcard-pay.mjs`, only after your explicit yes for that amount: one single-use card for exactly the approved amount (£ to $ at the ECB rate), charged once with `test_charge`, checked closed. The script refuses a live credential and needs no funding in sandbox.
+- Sandbox limits (checked 23 Oct 2026): a simulated Visa authorises at most $100 per card, so the demo pays the deposit a caterer asks for. The pooled company wallet ("company flow") would avoid the limit, but Agentcard has to switch it on for the organisation.
+- Don't connect the personal (live) Agentcard connector for the demo.
+- **Check:** "Pay the £70 deposit." Pantry raises the approval, pays, and says "paid" only once `pantry_status` reads charged, with the card masked and closed.
 
 ## 5. Pantry's own email
 - Turn on the Bot's dedicated email address. You can't change it once it's on, so choose carefully.
@@ -53,9 +55,8 @@ A "Pantry" bot already exists in your Grok Bot app with the old household person
 - When you're ready: move the supplier logins Pantry needs (Sainsbury's, Waitrose, M&S, any caterer portal) into that vault, add each site's URL so autofill matches, then Refresh vault in Grok Bot.
 - **Check:** Pantry signs in to Sainsbury's with autofill and never echoes the password.
 
-## 7. Payment: Link
-- Add a card in Link (Settings → payments). Grok Bot never sees the number or the security code.
-- **Check:** "Pay for the plan." The approval fires on your phone ("Pantry wants to spend £… with …"), and Pantry says "paid" only once the status reads charged.
+## 7. Payment: Link (not used)
+- Grok Bot can pay with a Link card (Settings → payments), with an approval on your phone. The demo uses Agentcard's sandbox instead (step 4d), so leave Link off for it.
 
 ## 8. Skills
 - Add each file in `bot/skills/` as a skill, in order. The skill name is the file's title, and the description is its "When to use" line.
@@ -66,8 +67,8 @@ A "Pantry" bot already exists in your Grok Bot app with the old household person
 - **Check:** the routine appears under Routines with the right dates.
 
 ## 10. The engine on the Bot's computer
-- In Pantry's chat: "Clone https://github.com/sergiopesch/pantry into ~/pantry." The repo is private, so Grok Bot will ask you to connect GitHub. You need Node 20 or later. There are no dependencies.
-- Ask Pantry in chat to add the MCP server: command `node`, args `~/pantry/src/mcp.js`, with `LUMA_API_KEY` passed from its secrets. If MCP isn't available, the CLI does the same: `node ~/pantry/src/cli.js event <cmd> --json`.
+- In Pantry's chat: "Clone https://github.com/sergiopesch/pantry into ~/pantry." The repo is public; Grok Bot may still ask you to connect GitHub. You need Node 20 or later. There are no dependencies.
+- Ask Pantry in chat to add the MCP server (it's `pantry-video` now): command `node`, args `~/pantry/src/mcp.js`, with `LUMA_API_KEY` passed from its secrets. Grok caches tool schemas, so after a tool change add it again under a new name and remove the old one. If MCP isn't available, the CLI does the same: `node ~/pantry/src/cli.js event <cmd> --json`.
 - None of the tools can approve, pay, send or file.
 - **Check:** "How many are we planning for tonight?" It answers with sign-ups, the show rate and plan-for, without being told the maths.
 

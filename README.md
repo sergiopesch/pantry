@@ -6,6 +6,10 @@
 
 It isn't an app. You talk to Pantry in Grok Bot (desktop, mobile, X DMs). It works through Grok Bot's real features: persona, skills, routines, its own email, a 1Password vault, payments and voice. Its hands are this repo's MCP server, and its long-term memory is Cognee.
 
+## The demo video
+
+A 3:14 film of the whole demo: the deck's story, Pantry's real Grok Bot chat doing the four prompts (Notion, Cognee, the plan, a card per meal, the brief by email, a £70 deposit on a single-use Agentcard in sandbox), and the wrap, narrated in ElevenLabs' "Lily". How it was made, what's sped up and what's hidden, and how to re-cut it: [`story/VIDEO.md`](story/VIDEO.md).
+
 ## The problem
 
 ![June: 41% of the food in the bin. Food for the empty chairs, binned.](docs/images/scene-june.png)
@@ -17,15 +21,16 @@ Organisers order for who signs up. Then half the room doesn't come, the food for
 1. **Who's coming.** Reads the Luma guest export: sign-ups and what guests declared about diet. It forecasts turnout from the organiser's past events (check-ins vs sign-ups). Allergies and coeliac are planned at 100%, whatever the forecast.
 2. **What to serve.** Compares supermarkets (Sainsbury's, Waitrose, M&S), event caterers and restaurants. An option is out if any guest with a declared need would go without a safe plate, if it breaks the budget, if it can't land in time, or if it doesn't deliver to the venue's area. The rest are ranked on rating, punctuality, cost per expected guest, and what ran out before.
 3. **Logistics.** The food lands 45 minutes before serving, or earlier if the venue says so. Pantry reads the venue's email and catches a quote that would miss the cut-off.
-4. **Brief and pay.** It drafts the brief for the provider. Payment waits for the organiser's yes in Grok Bot, then goes on a single-use Agentcard. Pantry can't approve, pay, send or file anything by itself.
+4. **Brief and pay.** It drafts the brief for the provider. Payment, in full or the deposit a caterer asks for, waits for the organiser's yes in Grok Bot, then goes on a single-use Agentcard for exactly that amount. Pantry can't approve, pay, send or file anything by itself.
 5. **After.** A debrief updates the show rate and the provider ledger. Lanes that ran out get a buffer next time, and providers that ran late get an earlier drop.
 
 ```
-npm test                              # 73 tests, zero dependencies (Node 20+)
+npm test                              # 78 tests, zero dependencies (Node 20+)
 node src/cli.js event headcount       # 140 signed up → plan for 93
 node src/cli.js event options         # every provider, and why each is in or out
 node src/cli.js event plan            # plates by lane, cost, logistics
 node src/cli.js event inbox           # Pantry's own inbox, triaged
+node src/cli.js event cards dish      # every meal of the plan as a PNG card
 npm run mcp                           # the bot's MCP tool server (stdio)
 ```
 
@@ -55,7 +60,7 @@ The engine (`src/events/`) does the arithmetic: turnout, lanes, filters, ranking
 | **Luma** | Grok Bot has no Luma connector. Pantry reads Luma's guest CSV export, which works on any plan. With Luma Plus it reads the public API instead (`src/events/luma-api.js`; the key is stored as a Grok Bot secret) |
 | **Cognee** | The memory of past events: guest exports, quotes, invoices and debriefs as a knowledge graph in Cognee Cloud. The bot connects to Cognee's hosted MCP. The engine does the arithmetic; Cognee answers "what happened, and why" |
 | **Notion** | The organiser's events and the upcoming guest list |
-| **Payments** | Agentcard, sandbox for the demo: a single-use card for exactly the approved amount, closed after one charge. Flow in `bot/skills/07-pay.md` |
+| **Payments** | Agentcard, sandbox for the demo: after the organiser's yes, `scripts/agentcard-pay.mjs` makes one single-use card for exactly the approved amount (£ to $ at the ECB rate), charges it once and checks it closed; it refuses live credentials. Sandbox test cards hold up to $100, so the demo pays the £70 deposit that holds the date. Flow in `bot/skills/07-pay.md` |
 | **1Password** | Supplier logins come from the vault "Shared with Grok Bot". Pantry never sees them |
 
 ## How it pays
@@ -66,7 +71,7 @@ The approval is bound to the plan hash, the amount and the provider. If the plan
 
 ## Design
 
-Grok Bot gives this bot no Visualize tool, so Pantry's answers come back as cards: HTML from `pantry_card`, rendered in headless Chrome and posted as a PNG (spec: `scripts/card-png.md`). One idea per card, the number first.
+Grok Bot gives this bot no Visualize tool, so Pantry's answers come back as cards: the engine renders them itself (`event card <kind>`, or `event cards dish` for every meal at once) with a headless Chrome over the DevTools protocol, and Pantry posts the PNG (spec: `scripts/card-png.md`). One idea per card, the number first.
 
 | | |
 |---|---|

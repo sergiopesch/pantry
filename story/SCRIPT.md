@@ -1,5 +1,7 @@
 # Pantry: stage script (about 5:00), driven by the Stream Deck
 
+Start the stage server once, from a terminal that has Accessibility access: `node story/streamdeck/stage.js`. Every Stream Deck key is a silent GET to it (`http://127.0.0.1:4321/key/<name>`), so no key app needs its own permission. One full-screen deck window (kiosk Chrome) changes in place and never reloads. Grok Bot is sized to whichever screen it's on.
+
 Stream Deck profile **Pantry Demo** (MK.2, 5×3):
 
 | Row | Key 1 | Key 2 | Key 3 | Key 4 | Key 5 |
@@ -8,41 +10,43 @@ Stream Deck profile **Pantry Demo** (MK.2, 5×3):
 | 2 | **Connections** | **How it works** | **Agentcard** | **Grok full** | **Wrap** |
 | 3 | **Prompt reset** | | | | **Reset deck** |
 
-- **Scene / Pantry / Wrap / Reset deck:** the full-screen deck (kiosk Chrome). Wrap is pulled in front of Grok Bot.
-- **Grok Bot:** opens Pantry's chat (deep link) and makes Grok Bot full width (0,25, 1710×1087).
-- **Next prompt / Send / Prompt reset:** `prompt.sh next|send|reset`. Next types the next line of `prompts.txt` into Pantry's chat box without sending, Send sends it, and Prompt reset starts again from prompt 1.
-- **Connections / How it works / Agentcard:** the split view. The deck panel opens on the LEFT half (0–855) and Grok Bot moves to the RIGHT half (855–1710).
-- **Grok full:** Grok Bot goes back to full width and to the front; the panel stays behind.
+- **Scene / Pantry / Wrap / Reset deck:** the full-screen deck. Wrap comes in front of Grok Bot.
+- **Grok Bot:** opens Pantry's chat (deep link) and fits Grok Bot to its screen, below the menu bar.
+- **Next prompt / Send / Prompt reset:** `prompt.sh next|send|reset`. Next puts the next line of `prompts.txt` in Pantry's message box without sending, Send sends it, and Prompt reset starts again from prompt 1. They work through the accessibility API (`bin/grok`): no keystrokes and no clicks, so nothing can land in another app, and they refuse unless Pantry's chat is the one open.
+- **Connections / How it works / Agentcard:** the panels, full screen. On a 16:9 screen they use a two-column layout; in a half-width window (`index.html#connect` at about 855×1087) the one-column layout.
+- **Grok full:** back to Grok Bot, in front.
 
 ## Before you go on
 - [ ] Press **Reset deck** (black) and **Prompt reset**.
-- [ ] Grok Bot is on **Pantry**, in a fresh chat, with the MCP and Cognee connected.
-- [ ] **Press every key once off stage.** macOS asks once per key app for Accessibility, which moving or typing into Grok Bot needs: System Settings, Privacy & Security, Accessibility, then allow "Pantry …". Until you do, Connections, How it works, Agentcard, Grok full, Next prompt and Send can't move or type into Grok Bot.
+- [ ] Grok Bot is on **Pantry**, with the `pantry-video` MCP server, Cognee and Notion connected.
+- [ ] Rehearsal reset: in Pantry's chat, "Run node ~/pantry/src/cli.js event reset rehearsal, then reply Ready." It clears approvals, orders, briefs, quotes and choices, and keeps the event, guests and real providers.
 - [ ] Optional: `tonight.env` with numbers you've actually counted.
 
 ---
 
 ## Run of show
 
+Times are from the rehearsal and the filmed run on 23 Oct 2026.
+
 | # | Key | Time | On screen | You say |
 |---|---|---|---|---|
 | 1 | **Scene** | 0:00–0:20 | The coeliac email, February, June, 41% in the bin (plays by itself) | [Silent over the email.] "February. Pizza for eighty. Forty-four came. The coeliac guest couldn't eat." "June. Ninety-six signed up. Fifty-one came. Forty-one percent, in the bin." |
 | 2 | **Pantry** | 0:20–0:30 | "We order for who ~~signs up~~ shows up", then Pantry lands in its hat | "Too much food, and still not the right food, because we order for who signs up. Pantry orders for who shows up. It's a Grok Bot. Let me show you." |
-| 3 | **Grok Bot**, then **Next prompt** | 0:30–0:45 | Pantry's chat, full width. Prompt 1 appears in the box: the hack night, check past events, plan for who shows up, best local caterer | "This is the whole job in one sentence." Then **Send**. |
-| 4 | **Connections** | 0:45–1:30 | LEFT: "Where Pantry is connected" (Pantry at the centre: Notion, Cognee, Luma, web and places, Sainsbury's, 1Password, Agentcard, Grok Bot). RIGHT: Pantry working | "While it works: Pantry reads the organiser's events in Notion and the Luma guest export, with diets. It remembers every past event in Cognee. It searches the web for real local caterers, live. Logins come from 1Password and it never sees them. Payments go through Agentcard." Land it on Pantry's answer: the headcount (planned for who shows up, not the sign-ups) and the caterer it picks. |
-| 5 | **Next prompt**, **Send** | 1:30–2:00 | Prompt 2: one level deeper, one card per meal | "One level deeper." The meal cards arrive as images. Use **Grok full** if you want them bigger. |
-| 6 | **Next prompt**, **Send** | 2:00–2:15 | Prompt 3: contact them. The brief is emailed to your own address, not the provider | "Go ahead and contact them. For tonight it emails me, not the caterer." |
-| 7 | **How it works** | 2:15–3:00 | LEFT: "How Pantry works": tools by job, three card thumbnails, the rules | "Under the hood it's an engine with tools for each job: who's coming, what to serve, making it happen, and remembering. Answers come back as cards, one idea each, number first. And the rules: allergies planned at a hundred percent, nothing invented, every source linked, and no tool can pay." |
-| 8 | **Next prompt**, **Send** | 3:00–3:20 | Prompt 4: the simulated reply (coeliac meals sealed, delivery to W6 by 6 PM at the price). "Yes, pay them with Agentcard and request the invoice." | "The caterer said yes. So do I." |
-| 9 | **Agentcard** | 3:20–4:00 | LEFT: "How Pantry pays": 5 steps, "Pantry never sees a card number. It can't approve." "Sandbox tonight" | "Pantry raises the request, bound to this plan, this amount and this provider. I say yes. Agentcard issues a single-use card for exactly that amount. Tonight the charge is simulated in sandbox, and then the card closes. Pantry never sees the number, and 1Password does the same for logins." Approve when Grok Bot asks. |
-| 10 | **Wrap** | 4:00–4:25 | 93 / 47 / 0, then "Time for the community, not the logistics.", then brief out, quotes back, one card, one yes, then "Nobody should have to bring their own." | "Ninety-three plates, not a hundred and forty. Forty-seven never bought for empty chairs. Not one declared need without a safe plate. For community builders it's the same tools, agentic workflows and agentic payments, so organisers spend their time on the community, not the logistics. So the next time a guest asks if they should bring their own, nobody should have to." |
-| 11 | (Wrap continues) | 4:25 | Pantry happy: "Order for who shows up." then "Thank you." | "Pantry. Order for who shows up. Thank you." |
+| 3 | **Grok Bot**, then **Next prompt** | 0:30–0:40 | Pantry's chat. Prompt 1 appears in the box: the hack night, check past events, plan for who shows up, best local caterer | "This is the whole job in one sentence." Then **Send**. |
+| 4 | **Connections** | 0:40–1:20 | "Where Pantry is connected" while Pantry works (about 35–50 s: Notion, Cognee, the engine, the plan card) | "Pantry has the event from Notion and the Luma guest export, with diets. It remembers every past event in Cognee. It found real local caterers, with sources. Logins come from 1Password and it never sees them. Payments go through Agentcard." **Grok full** when it answers: 93, not 140; Vanda's Kitchen plus sealed allergy plates from Sainsbury's; £512.33, £5.51 a plate; the plan card. |
+| 5 | **Next prompt**, **Send** | 1:20–1:50 | Prompt 2: one card per meal, and who each one feeds (about 25–35 s, seven cards) | "One level deeper." Click the coeliac meal card to show it full screen: "Remember the email? Both coeliac guests get a sealed plate." |
+| 6 | **Next prompt**, **Send** | 1:50–2:10 | Prompt 3: the brief, emailed to your own address, not the provider (about 25 s) | "Go ahead and contact them. For tonight it emails me, not the caterer." |
+| 7 | **How it works** | 2:10–2:50 | Tools by job, four current cards, the rules | "Under the hood it's an engine with tools for each job: who's coming, what to serve, making it happen, and remembering. Answers come back as cards, one idea each, number first. And the rules: allergies planned at a hundred percent, nothing invented, every source linked, and no engine tool can pay." |
+| 8 | **Next prompt**, **Send** | 2:50–3:00 | Prompt 4: the caterer confirmed and needs a £70 deposit. "Yes, pay the £70 deposit with Agentcard and ask them to invoice the balance." | "The caterer said yes, and asked for a deposit. So do I." |
+| 9 | **Agentcard** | 3:00–3:50 | "How Pantry pays" while Pantry records the quote, raises the approval, makes one single-use sandbox card for exactly £70 (about $94 at the ECB rate), charges it once and confirms it (about 50 s) | "Pantry raises the request, bound to this plan, this amount and this payee. I say yes. Agentcard issues a single-use card for exactly that amount. It's charged once in sandbox, and then the card closes. Pantry never sees the number, and 1Password does the same for logins." **Grok full** for the receipt card: £70 deposit, £442.33 balance on their invoice, card closed. |
+| 10 | **Wrap** | 3:50–4:15 | 93 / 47 / 0, then "Time for the community, not the logistics.", then brief out, quotes back, one card, one yes, then "Nobody should have to bring their own." | "Ninety-three plates, not a hundred and forty. Forty-seven never bought for empty chairs. Not one declared need without a safe plate. For community builders it's the same tools, agentic workflows and agentic payments, so organisers spend their time on the community, not the logistics. So the next time a guest asks if they should bring their own, nobody should have to." |
+| 11 | (Wrap continues) | 4:15 | Pantry happy: "Order for who shows up." then "Thank you." | "Pantry. Order for who shows up. Thank you." |
 
-**Payment line:** Pantry raises the payment and it waits for your approval in Grok Bot. Never point the audience to a phone.
+**Payment line:** the yes in chat is the approval, and it names the amount. Agentcard's sandbox issues test cards up to $100.00 each, which is why the demo pays the deposit that holds the date, not the full order. Never point the audience to a phone.
 **If a prompt misfires:** type it yourself from `story/streamdeck/prompts.txt`, or use Prompt reset and step again.
 **If the bot is down:** use Grok full, then Terminal with `node src/cli.js event headcount`, `options`, `plan`, `inbox`. Say "Same engine Pantry calls." Don't fake a chat.
 
-Deck URLs, for testing in a browser: `index.html#scene`, `#pantry`, `#wrap`, `#idle`, plus the panels `#connect`, `#tools`, `#agentcard` (designed for an 855×1087 window).
+Deck URLs, for testing in a browser: `index.html#scene`, `#pantry`, `#wrap`, `#idle`, plus the panels `#connect`, `#tools`, `#agentcard`. A recording can pace the plays to its narration with `?pace=` or `?cues.<play>=<seconds,…>`, and pin the closing credit's date with `?date=YYYY-MM-DD`. The demo video's cuts and narration are in `story/VIDEO.md`.
 
 ---
 
@@ -90,8 +94,8 @@ Deck URLs, for testing in a browser: `index.html#scene`, `#pantry`, `#wrap`, `#i
 
 ## Honesty notes
 - Every number on screen comes from the **demo dataset** (`data/events/`): one fictional organiser's ten past events. The slides label it that way. There are no real-world statistics in the deck.
-- The only date on screen, in the closing credit, comes from the browser clock (en-GB, Europe/London). Nothing else is dated, and no venue is named.
-- Little Feast, Hearth & Co, Mezze Collective, Slice Theory and Bao Down are fictional and appear only in past events. In the live demo the providers are real, found tonight with sourcesd prices.
+- The only date on the deck, in the closing credit, comes from the browser clock (en-GB, Europe/London), or from `?date=` (the video pins the hackathon, 22 October 2026). Nothing else on the deck is dated, and no venue is named.
+- Little Feast, Hearth & Co, Mezze Collective, Slice Theory and Bao Down are fictional and appear only in past events. In the live demo the providers are real (Frank's, Route, Pique, Vanda's Kitchen, Sainsbury's), found with sources and their published prices.
 - No real names appear on screen. "47" is simply 140 minus 93.
 
 ## Where the look comes from (Grok Bot.app 0.75)

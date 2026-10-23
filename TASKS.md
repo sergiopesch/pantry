@@ -1,43 +1,29 @@
 # Pantry — TASKS
 
-_Last updated: Thu 22 Oct 2026, 19:30 BST. Hackathon 18:00–23:00 · code freeze 21:50 · top-5 demos 22:20._
+_Last updated: Fri 23 Oct 2026, 16:10 BST. The hackathon was 22 Oct; this pass polished the demo and filmed it._
 
 ## Status in one line
-**Pivoted (19:00): Pantry is now a Grok Bot that plans catering for community events. Tagline: "Order for who shows up."**
-- The events engine is built and tested: Luma import → turnout forecast → diet matrix → provider options (supermarket / caterer / restaurant) → plan → brief → approval → debrief and provider ledger.
-- The bot config is in `bot/`.
-- **It's a custom Grok Bot, not an app.** The demo runs inside Grok Bot (chat, voice, cards, phone approvals). `web/` and `server.js` are the old household app and aren't part of the event demo.
-- **Luma:** Grok Bot has no Luma connector. Pantry's MCP server reads Luma's public API (`x-luma-api-key`, needs Luma Plus; key stored as a Grok Bot secret `LUMA_API_KEY`). Without a key it reads the dummy calendar in `data/events/luma/`, written in the API's exact response shapes by `scripts/seed-luma.js`. Luma webhooks can't carry Grok's webhook auth header, so the routine polls hourly instead.
-- **Cognee: live.** 11 documents (ten events + providers, aggregate only) are in the Cognee Cloud dataset `pantry-events`. Recall checked at 19:52: it finds the £70 Hearth & Co overbilling, the vegan run-outs (26 Mar Bao Down, 18 Jun Slice Theory) and Little Feast as best-rated. The bot connects via the hosted MCP `https://mcp.aws.cognee.ai/mcp` (OAuth, Sergio signs in).
-- Repo: github.com/sergiopesch/pantry (private).
-- 58 tests pass.
+**Pantry is a Grok Bot that plans catering for community events. "Order for who shows up." The demo flow is polished end to end, rehearsed twice and filmed: `story/VIDEO.md` (3:14, kept out of the repo in `~/Desktop/Pantry demo video/`).**
+- Repo: github.com/sergiopesch/pantry (**public**: keep guest data, secrets and the video out of it).
+- 78 tests pass.
 
-## Live bot status (21:40, code freeze 21:50)
+## What changed on 23 Oct
+- **Payment works end to end.** Last night's Agentcard step failed: the sandbox's simulated Visa authorises at most $100 per card, and the pooled company wallet needs Agentcard to switch it on. Sergio's call: the demo pays the **£70 deposit** that holds the date (`pantry_checkout_request {deposit}`), on one single-use sandbox card via `scripts/agentcard-pay.mjs`; the balance comes on the caterer's invoice.
+- **Cards in one call.** `event card <kind>` and `event cards dish` render PNGs with no dependencies; prompt 2 went from about 45 s to about 25–30 s, and no more blank cards.
+- **Meals say who they feed** (from the plan's own record), and plans say "£5.51 a plate" instead of a per-head figure that didn't divide.
+- **Stage:** panels lay out properly full screen; prompts are filled and sent through accessibility (`story/streamdeck/bin/grok`), never keystrokes; Grok Bot is sized to whichever screen it's on.
+- **Live bot:** pulled, MCP server re-added as `pantry-video` (new tool schemas), persona (3,987 characters) and the pay and show-it skills updated.
 
-**Live bot**
-- MCP servers: `pantry-live` (the engine; Grok caches tool schemas, so after a tool change re-add it under a new name), plus Cognee and Notion.
-- Agentcard runs on the **sandbox** client only. The personal live connector is disconnected.
-- Avatar: chef's-hat v2 photo; colour yellow.
-
-**Demo data**
-- Real: the date and time, the venue (7 Lyric Square W6 0NB), the providers (Frank's, Route, Pique, Vanda's) and Sainsbury's live prices.
-- Demo: the past events, and the upcoming event's guest list, both in Notion.
-
-**Cards**
-- Grok gives this bot no Visualize tool, so cards are PNG screenshots of `pantry_card` HTML. The spec is `scripts/card-png.md`: clip `#pantry-card`, 2×, wait 1.5 s.
-
-**Before the demo**
-- Pantry: git pull and restart `pantry-live`, so the cards v3 changes take effect.
-- Rehearse the order and sandbox payment beat, then run `node ~/pantry/src/cli.js event reset rehearsal`. That clears approvals, orders, briefs and choices, and keeps the event, guests and providers.
-- Stream Deck: select the "Pantry Demo" profile. Keys: Scene · Pantry · Grok Bot · Wrap · Reset.
+## Live bot status (23 Oct)
+- MCP servers: `pantry-video` (the engine), plus Cognee and Notion. Agentcard: the sandbox client only (`AGENTCARD_CLIENT_ID`/`SECRET` as Grok Bot secrets); the personal live connector stays disconnected.
+- Rehearsal reset before any run: `node ~/pantry/src/cli.js event reset rehearsal`.
+- Rehearsed times: setup about 35–50 s, meals about 25–35 s, brief about 25 s, deposit about 50 s.
 
 ## Pick up here
-1. `npm test`, then `node src/cli.js event plan`. Also try `event options`, `event inbox`, `event brief`, `event pay`.
-2. **Venue address and postcode** for Expedite London HQ go into `data/events/event.json`. Coverage stays unchecked until they're set.
-3. Update the live "Pantry" bot in Grok Bot (`bot/SETUP.md`): paste `bot/persona.md` (3,970 chars, under the 4,000 limit), shape `dome`, colour `yellow`, then audition voices Sal / Eve / Atlas (`bot/profile.json`).
-4. Install the engine on the bot's computer and add the MCP server (`bot/SETUP.md` step 9). Then test in Grok Bot: "How many are coming?" → "What are we serving?" → "Send the brief" → "Pay for it".
-5. Decide what happens to `web/` (the old household app): delete it, or keep it out of the demo.
-6. Later (deferred by Sergio): move supplier logins into the 1Password vault "Shared with Grok Bot".
+1. Watch `~/Desktop/Pantry demo video/Pantry demo.mp4`. To re-cut or re-film, follow `story/VIDEO.md`.
+2. Optional: ask Agentcard to enable company flow for the sandbox org (`org_e8842541752e08a7574037b6`); then a full order could be paid on one card. A $1,000 sandbox test pool is already in place.
+3. Optional: decide whether the repo should stay public.
+4. Later (deferred by Sergio): move supplier logins into the 1Password vault "Shared with Grok Bot".
 
 ## Events engine (new)
 - `src/events/luma.js`: Luma CSV → approved guests and declared needs. Free text is normalised (vegan, coeliac, nut allergy, …). Nothing is inferred; X profiling is out by decision.
