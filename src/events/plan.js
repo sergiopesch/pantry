@@ -148,11 +148,14 @@ export function option(world, state, provider, hc, ctx) {
   const guests = world.guests.guests;
   const lines = new Map();
   const addons = new Map();
-  const add = (dish, lane, qty, from = provider) => {
+  // serves: which guests a line feeds (their declared needs, how many signed up, plates and buffer), so a
+  // card or a sentence about a meal can say exactly who it's for.
+  const add = (dish, lane, qty, from = provider, serve = null) => {
     if (qty <= 0) return;
     const key = `${lane}:${dish.id}`;
-    const l = lines.get(key) ?? { key, lane, dish: dish.id, name: dish.name, tags: dish.tags, price: dish.price, qty: 0, provider: from.id, providerName: from.name };
+    const l = lines.get(key) ?? { key, lane, dish: dish.id, name: dish.name, tags: dish.tags, price: dish.price, qty: 0, provider: from.id, providerName: from.name, serves: [] };
     l.qty += qty;
+    l.serves.push(serve ?? { needs: [], signedUp: null, plates: qty, extra: 0 });
     lines.set(key, l);
   };
   const gaps = [];
@@ -165,24 +168,26 @@ export function option(world, state, provider, hc, ctx) {
     const critical = g.needs.some(n => NEEDS[n]?.critical);
     let qty = critical ? g.count : Math.ceil(g.count * hc.showRate);
     const past = g.needs.map(n => ctx.ranOut.get(n)).find(Boolean);
+    let extra = 0;
     if (past && !critical) {
-      const extra = Math.ceil(qty * RAN_OUT_BUFFER);
+      extra = Math.ceil(qty * RAN_OUT_BUFFER);
       qty += extra;
       buffers.push({ need: g.needs.join(' + '), extra, why: `${g.needs.map(n => NEEDS[n].label).join(' and ')} ran out on ${longDate(past.date)}` });
     }
     restricted += qty;
+    const serve = { needs: g.needs, signedUp: g.count, plates: qty, extra, critical, ...(extra ? { ranOut: longDate(past.date) } : {}) };
     if (!dish) {
       // Allergy and coeliac plates can come sealed from a second provider, as real organisers do.
       const addon = critical ? addonFor(provider, g.needs, ctx) : null;
       if (addon) {
-        add(addon.dish, lane, qty, addon.provider);
+        add(addon.dish, lane, qty, addon.provider, serve);
         addons.set(addon.provider.id, addon.provider);
         continue;
       }
       gaps.push({ needs: g.needs, label: g.needs.filter(n => !(n === 'gluten-free' && g.needs.includes('coeliac'))).map(n => NEEDS[n].label).join(' + '), guests: g.count });
       continue;
     }
-    add(dish, lane, qty);
+    add(dish, lane, qty, provider, serve);
   }
   // Everyone else: split across the provider's general dishes.
   const open = menu(provider, ctx).filter(d => !has(d, 'sealed', 'coeliac-safe'));
@@ -244,7 +249,8 @@ export function option(world, state, provider, hc, ctx) {
     allergens: provider.allergens,
     lines: [...lines.values()],
     portions,
-    cost: { food, extras, fee, total, quoted: quoted != null, perExpected: round2(total / hc.expected), perHeadPlanned: round2(total / hc.planFor) },
+    // perPlate is what a sentence says ("93 plates, £5.51 a plate"); perExpected is the cost per guest we expect.
+    cost: { food, extras, fee, total, quoted: quoted != null, perPlate: round2(total / Math.max(1, portions)), perExpected: round2(total / hc.expected), perHeadPlanned: round2(total / hc.planFor) },
     fitsBudget: total <= event.budget.total,
     coverage: { safeForEveryone: gaps.length === 0, gaps },
     orderBy: orderBy.toISOString(),
@@ -328,6 +334,6 @@ export function plan(world, state, opts) {
     logistics,
     budget: { total: event.budget.total, spend: chosen.cost.total, left: round2(event.budget.total - chosen.cost.total) },
     alternatives: eligible.filter(o => o.id !== chosen.id).slice(0, 3).map(o => ({ id: o.id, name: o.name, tier: o.tier, total: o.cost.total, score: o.score })),
-    text: `${chosen.name}: ${chosen.portions} plates, ${gbp(chosen.cost.total)} (${gbp(chosen.cost.perExpected)} a head). ${take}`,
+    text: `${chosen.name}: ${chosen.portions} plates for ${gbp(chosen.cost.total)}, ${gbp(chosen.cost.perPlate)} a plate. ${take}`,
   };
 }

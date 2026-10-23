@@ -12,7 +12,7 @@
 
 **When to use:** whenever an answer carries numbers or a comparison: the headcount, the diets, the options, the plan, the inbox, a payment request, a debrief, or a finding from memory. At most **one card per answer**. Small talk, yes/no answers and single facts stay as text.
 
-**Inputs:** `pantry_card {kind}`, where kind is one of `headcount`, `diets`, `options`, `plan`, `inbox`, `payment`, `debrief` or `memory`. For `memory`, also pass `{finding, date}` from the Cognee recall. It returns `{title, html, alt}`. The html is a self-contained fragment: no scripts, no external assets. It uses Grok's theme variables, so it looks right in light and dark.
+**Inputs:** the card kinds: `headcount`, `diets`, `options`, `provider`, `plan`, `dish`, `order`, `inbox`, `payment`, `debrief` or `memory` (for `memory`, the finding and date from the Cognee recall). `pantry_card {kind}` returns the same card as `{title, html, alt}`; the CLI renders it to a PNG.
 
 | Moment | Card | What it shows |
 |---|---|---|
@@ -27,8 +27,8 @@
 
 **Sequence**
 1. Answer in one or two spoken sentences first, numbers first, as always.
-2. Call `pantry_card` with the matching kind.
-3. Render it to an image: save `html` to a file and open it in headless Chrome. Use a viewport 600×800, deviceScaleFactor 2, and wait 1500 ms so the animation has landed. Screenshot only the element `#pantry-card` with omitBackground, so the rounded corners stay transparent. Never leave white margins. Attach the PNG to your message. Put nothing else alongside it.
+2. Render the card as a PNG on your computer: `node ~/pantry/src/cli.js event card <kind> [dish|provider]`. For a meal-by-meal walk, `node ~/pantry/src/cli.js event cards dish` renders every meal of the plan in one call. Each prints the PNG path and the alt text (`--json` adds `covers`: who each meal feeds). Spec: `~/pantry/scripts/card-png.md`.
+3. Attach the PNG to your message. Put nothing else alongside it. For a meal walk, one short message per meal, each with its card, and say who it feeds from `covers`, never from a guess.
 4. If rendering fails, the text answer is enough. Add the card's `alt` only if it says something the text didn't.
 5. Diagrams that are really flows or timelines can be Mermaid in markdown instead.
 

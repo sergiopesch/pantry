@@ -133,3 +133,43 @@ test('dish card: one meal of the plan, its plates by lane and who it is safe for
   assert.match(c.alt, /safe for vegans, coeliacs, nut allergies/);
   assert.ok(!/<script/i.test(c.html));
 });
+
+test('a meal card says who it feeds, from the plan', async () => {
+  const { card } = await import('../src/events/cards.js');
+  const option = { name: 'Kitchen', lines: [
+    { key: 'allergy-safe:c', lane: 'allergy-safe', dish: 'c', name: 'Curry meal', tags: ['coeliac-safe', 'sealed'], price: 14, qty: 2, serves: [{ needs: ['coeliac', 'gluten-free'], signedUp: 2, plates: 2, extra: 0, critical: true }] },
+    { key: 'vegan:v', lane: 'vegan', dish: 'v', name: 'Vegan platter', tags: ['vegan'], price: 4.67, qty: 10, serves: [{ needs: ['vegan'], signedUp: 13, plates: 10, extra: 2, critical: false, ranOut: 'Thursday 26 March' }] },
+  ] };
+  const curry = card('dish', {}, { option, dish: 'curry' });
+  assert.match(curry.alt, /2 for the 2 coeliac guests, one sealed plate each/);
+  const vegan = card('dish', {}, { option, dish: 'Vegan platter' });
+  assert.match(vegan.alt, /10 for 13 vegan sign-ups/);
+  assert.match(vegan.html, /\+2 spare vegan: it ran out on Thursday 26 March/);
+});
+
+test('a deposit receipt shows the balance, the masked card and the dollar charge', async () => {
+  const { card } = await import('../src/events/cards.js');
+  const approval = { id: 'apr_1', kind: 'deposit', status: 'charged', merchant: 'Vanda\'s Kitchen', amount: 70, total: 480.5, balance: 410.5,
+    payment: { processor: 'agentcard', sandbox: true, status: 'paid', card: 'Visa 4111111111114783', reference: 'txn_1', usd: 93.63, rate: 1.3376 } };
+  const c = card('payment', { event: { name: 'Hack Night' } }, { approval });
+  assert.match(c.html, /deposit/);
+  assert.match(c.html, /£410\.50 on their invoice/);
+  assert.match(c.html, /Visa •••• 4783 · closed/);
+  assert.ok(!c.html.includes('4111111111114783'));
+  assert.match(c.html, /\$93\.63 · £1 = \$1\.3376/);
+});
+
+test('cards render to PNG at 2x, clipped to the card, with no dependencies', async t => {
+  const { findChrome, renderCards } = await import('../src/events/png.js');
+  try { findChrome(); } catch { return t.skip('no Chrome on this computer'); }
+  const { mkdtempSync, readFileSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { card } = await import('../src/events/cards.js');
+  const memory = card('memory', null, { finding: 'Hearth & Co billed £70 over quote.', date: '2026-04-23' });
+  const [file] = await renderCards([{ name: 'memory', html: memory.html }], mkdtempSync(join(tmpdir(), 'pantry-png-')));
+  const png = readFileSync(file);
+  assert.equal(png.subarray(1, 4).toString(), 'PNG');
+  assert.equal(png.readUInt32BE(16), 1200); // 600 CSS px at 2x
+  assert.ok(png.readUInt32BE(20) > 100 && png.readUInt32BE(20) < 1200);
+});

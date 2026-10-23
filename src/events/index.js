@@ -10,6 +10,7 @@ import { liveClient, syncLuma } from './luma-api.js';
 import { readPast } from './archive.js';
 import { LANES, allHistory, diets, headcount, ledger, options, plan } from './plan.js';
 import { approve, charge, decline, requestApproval } from '../vault.js';
+import { card } from './cards.js';
 import { clock, dateKey, gbp, hm, iso, longDate, pct, round2, shortId } from '../util.js';
 
 export const EVENTS_DIR = process.env.PANTRY_EVENTS ?? fileURLToPath(new URL('../../data/events/', import.meta.url));
@@ -286,6 +287,37 @@ export const eventOptions = (world, state, tier) => {
 
 export const providerLedger = (world, state) => ledger(world, state);
 
+// --- Cards -------------------------------------------------------------------------------------------
+
+// One card for an answer: { kind, provider?, dish?, finding?, date?, dataset? }. Shared by MCP and the CLI.
+export function cardFor(world, state, a) {
+  if (a.kind === 'memory') return card('memory', null, { finding: a.finding, date: a.date, dataset: a.dataset ?? 'pantry-events' });
+  const snap = eventSnapshot(world, state);
+  if (a.kind === 'options') return card('options', snap, { options: eventOptions(world, state).options });
+  if (a.kind === 'provider') {
+    const option = eventOptions(world, state).options.find(o => o.id === a.provider || o.name.toLowerCase().startsWith(String(a.provider ?? '').toLowerCase()));
+    if (!option) throw new Error('Pass provider: the id or name of one of the options.');
+    return card('provider', snap, { option, provider: world.providers.find(p => p.id === option.id) });
+  }
+  if (a.kind === 'order') return card('order', snap, { plan: snap.plan, approval: snap.approval });
+  if (a.kind === 'dish') return card('dish', snap, { option: snap.plan.chosen, dish: a.dish });
+  if (a.kind === 'debrief') {
+    const last = state.debriefs.at(-1);
+    if (!last) throw new Error('No debrief recorded yet.');
+    return card('debrief', snap, { record: last, learnings: state.lastLearnings ?? [] });
+  }
+  return card(a.kind, snap);
+}
+
+// Every meal of the chosen plan, in serving order: everyone's dishes first, the sealed allergy plates last.
+export function planDishes(world, state) {
+  const c = eventSnapshot(world, state).plan.chosen;
+  if (!c) throw new Error('No plan yet, so no meals to show.');
+  const seen = new Map();
+  for (const lane of Object.keys(LANES)) for (const l of c.lines.filter(x => x.lane === lane)) if (!seen.has(l.dish)) seen.set(l.dish, l);
+  return [...seen.values()].map(l => ({ dish: l.dish, name: l.name, provider: l.providerName ?? c.name }));
+}
+
 // --- Brief (drafted here, sent by a human) -----------------------------------------------------------
 
 export function draftBrief(world, state) {
@@ -338,14 +370,27 @@ export function draftBrief(world, state) {
 
 const planHash = c => createHash('sha256').update(JSON.stringify([c.id, c.lines.map(l => [l.key, l.qty]), c.cost.total])).digest('hex').slice(0, 16);
 
-export function requestPayment(world, state) {
+// The full plan, or a deposit the provider asked for to hold the date (the balance is invoiced). Either way
+// the approval is bound to this plan, this amount and this payee, and a changed plan voids it.
+export function requestPayment(world, state, { deposit } = {}) {
   const s = eventSnapshot(world, state);
   const c = s.plan.chosen;
   if (!c) throw new Error('No plan to pay for.');
   if (!c.eligible) throw new Error(`${c.name} can't feed everyone safely: ${c.excluded[0]}.`);
-  if (state.orders.some(o => o.planHash === planHash(c))) throw new Error('This plan is already paid for.');
-  const approval = requestApproval(state, { merchant: c.name, amount: c.cost.total, memo: `${world.event.name}: ${c.portions} plates`, cartHash: planHash(c), now: now(world, state) });
-  approval.prompt = `Pantry wants to spend ${gbp(c.cost.total)} with ${c.name} for ${world.event.name}.`;
+  const total = c.cost.total;
+  const kind = deposit == null ? 'full' : 'deposit';
+  const amount = kind === 'deposit' ? round2(Number(deposit)) : total;
+  if (kind === 'deposit' && !(amount > 0 && amount < total)) throw new Error(`A deposit is more than £0 and less than the ${gbp(total)} total.`);
+  const paid = state.orders.filter(o => o.planHash === planHash(c));
+  if (paid.some(o => (o.kind ?? 'full') === 'full')) throw new Error('This plan is already paid for.');
+  if (kind === 'deposit' && paid.some(o => o.kind === 'deposit')) throw new Error('The deposit for this plan is already paid.');
+  // A deposit goes to the provider who asked for it; sealed plates from a second provider are their own order.
+  const merchant = kind === 'deposit' ? (world.providers.find(p => p.id === c.id)?.name ?? c.name) : c.name;
+  const approval = requestApproval(state, { merchant, amount, memo: `${world.event.name}: ${kind === 'deposit' ? 'deposit to hold the date' : `${c.portions} plates`}`, cartHash: planHash(c), now: now(world, state) });
+  Object.assign(approval, { kind, total, balance: round2(total - amount) });
+  approval.prompt = kind === 'deposit'
+    ? `Pantry wants to pay a ${gbp(amount)} deposit to ${merchant} for ${world.event.name}. The ${gbp(total - amount)} balance comes on their invoice.`
+    : `Pantry wants to spend ${gbp(total)} with ${c.name} for ${world.event.name}.`;
   return approval;
 }
 
@@ -361,9 +406,10 @@ export function attachPaymentLink(state, { approvalId, url, reference, processor
   return a;
 }
 
-// Agentcard (sandbox or live): the organiser approves the single-use card in Agentcard, the charge
-// settles, the card closes. Pantry passes the card and transaction as Agentcard reports them.
-export function confirmPayment(world, state, { approvalId, reference, amount, status, processor, card, sandbox }) {
+// Agentcard (sandbox or live): after the organiser's yes, a single-use card for exactly the approved amount
+// is charged once and closes. Pantry passes the card and transaction as Agentcard reports them, plus the
+// dollar amount and rate when the card was in USD.
+export function confirmPayment(world, state, { approvalId, reference, amount, status, processor, card, sandbox, usd, rate }) {
   const a = state.approvals.find(x => x.id === approvalId);
   if (!a) throw new Error('No approval with that id. Call pantry_checkout_request first.');
   if (!a.payment) {
@@ -375,12 +421,17 @@ export function confirmPayment(world, state, { approvalId, reference, amount, st
   const c = eventSnapshot(world, state).plan.chosen;
   if (a.cartHash !== planHash(c)) throw new Error('The plan changed after the payment request. Raise a new one.');
   const at = now(world, state);
+  const charged = Number(usd) > 0 ? { usd: round2(Number(usd)), rate: Number(rate) || null } : {};
   a.status = 'charged';
-  a.payment = { ...a.payment, status: 'paid', reference: reference ?? a.payment.reference, card: card ?? a.payment.card ?? null, sandbox: Boolean(sandbox ?? a.payment.sandbox), paidAt: iso(at) };
+  a.payment = { ...a.payment, status: 'paid', reference: reference ?? a.payment.reference, card: card ?? a.payment.card ?? null, sandbox: Boolean(sandbox ?? a.payment.sandbox), paidAt: iso(at), ...charged };
   a.receipt = { id: reference ?? a.payment.reference, status: 'cleared', merchant: a.merchant, amount: a.amount, at: iso(at), driver: a.payment.processor };
-  const order = { id: shortId('ord'), provider: c.id, name: c.name, amount: a.amount, plates: c.portions, dropAt: c.dropAt, planHash: planHash(c), placedAt: iso(at), status: 'paid', driver: a.payment.processor, reference: a.receipt.id };
+  const kind = a.kind ?? 'full';
+  const order = {
+    id: shortId('ord'), provider: c.id, name: c.name, kind, amount: a.amount, total: a.total ?? c.cost.total, balanceDue: kind === 'deposit' ? round2((a.total ?? c.cost.total) - a.amount) : 0,
+    plates: c.portions, dropAt: c.dropAt, planHash: planHash(c), placedAt: iso(at), status: kind === 'deposit' ? 'deposit-paid' : 'paid', driver: a.payment.processor, reference: a.receipt.id,
+  };
   state.orders.push(order);
-  state.log.push({ at: iso(at), event: 'payment.confirmed', approval: a.id, reference: a.receipt.id, amount: a.amount });
+  state.log.push({ at: iso(at), event: 'payment.confirmed', approval: a.id, kind, reference: a.receipt.id, amount: a.amount });
   return { approval: a, order };
 }
 

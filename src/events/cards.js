@@ -5,6 +5,7 @@
 // no italics, no pills and no arrowheads.
 import { clock, longDate, round2 } from '../util.js';
 import { LANES } from './plan.js';
+import { NEEDS } from './luma.js';
 
 const ACCENT = '#FF9800';
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -178,7 +179,7 @@ function optionsCard(s, extra) {
   const max = Math.max(budget, ...all.map(o => o.cost.total));
   const ins = all.filter(o => o.eligible);
   const outs = all.filter(o => !o.eligible);
-  const opt = (o, i) => `<div class="opt${o.eligible ? '' : ' out'}"><span class="nm">${esc(o.name)} ${o.eligible ? (i === 0 ? '<span class="tag a">Pick</span>' : '') : '<span class="tag bad">Out</span>'}</span><span class="pr">${gbp(o.cost.total)}</span>${bar(share(o.cost.total, max), !o.eligible)}<span class="why">${esc(o.eligible ? `${o.tier} · ${gbp(o.cost.perExpected)} a head${o.record?.ranOut?.length ? ` · ${o.record.ranOut.join(' and ')} ran out before` : ''}` : o.excluded[0])}</span></div>`;
+  const opt = (o, i) => `<div class="opt${o.eligible ? '' : ' out'}"><span class="nm">${esc(o.name)} ${o.eligible ? (i === 0 ? '<span class="tag a">Pick</span>' : '') : '<span class="tag bad">Out</span>'}</span><span class="pr">${gbp(o.cost.total)}</span>${bar(share(o.cost.total, max), !o.eligible)}<span class="why">${esc(o.eligible ? `${o.tier} · ${gbp(o.cost.perPlate ?? o.cost.perExpected)} a plate${o.record?.ranOut?.length ? ` · ${o.record.ranOut.join(' and ')} ran out before` : ''}` : o.excluded[0])}</span></div>`;
   const body = `<p class="hero">${ins.length}<span class="u">of ${all.length} can feed everyone safely</span></p>
 <p class="lede">Budget <b>${gbp0(budget)}</b>. ${outs.length ? `${outs.length} out, each for a reason.` : 'None ruled out.'}</p>
 <div class="sec st">${[...ins, ...outs].slice(0, 8).map(opt).join('')}</div>`;
@@ -199,13 +200,13 @@ function planCard(s) {
   const keys = lanes.map(l => `<div class="key"><span class="sw" style="background:${LANE_COLOURS[l.id]}"></span>${esc(l.label)}<b>${l.portions}</b></div>`).join('');
   const b = p.budget;
   const body = `<p class="hero">${gbp(c.cost.total)}</p>
-<p class="lede"><b>${esc(c.name)}</b>, ${c.portions} plates, ${gbp(c.cost.perExpected)} a head. Lands by <b>${esc(clock(c.dropAt))}</b>.</p>
+<p class="lede"><b>${esc(c.name)}</b>, ${c.portions} plates at ${gbp(c.cost.perPlate ?? c.cost.perExpected)}. Lands by <b>${esc(clock(c.dropAt))}</b>.</p>
 <div class="sec"><p class="lbl">Against the ${gbp0(b.total)} budget · ${b.left >= 0 ? `${gbp(b.left)} left` : `${gbp(-b.left)} over`}</p>${bar(share(b.spend, b.total))}</div>
 <div class="sec"><p class="lbl">Plates by lane</p><div class="stack" role="img" aria-label="${esc(lanes.map(l => `${l.label} ${l.portions}`).join(', '))}">${segs}</div><div class="keys st">${keys}</div></div>`;
   return {
     title: `${c.name}: ${gbp(c.cost.total)}`,
     html: wrap('The plan', body, c.cost.quoted ? 'Quoted price.' : 'Estimate until the provider quotes.'),
-    alt: `${c.name}: ${c.portions} plates for ${gbp(c.cost.total)} (${gbp(c.cost.perExpected)} a head), ${b.left >= 0 ? `${gbp(b.left)} under` : `${gbp(-b.left)} over`} the ${gbp0(b.total)} budget, landing by ${clock(c.dropAt)}. Lanes: ${lanes.map(l => `${l.portions} ${l.label.toLowerCase()}`).join(', ')}.`,
+    alt: `${c.name}: ${c.portions} plates for ${gbp(c.cost.total)} (${gbp(c.cost.perPlate ?? c.cost.perExpected)} a plate), ${b.left >= 0 ? `${gbp(b.left)} under` : `${gbp(-b.left)} over`} the ${gbp0(b.total)} budget, landing by ${clock(c.dropAt)}. Lanes: ${lanes.map(l => `${l.portions} ${l.label.toLowerCase()}`).join(', ')}.`,
   };
 }
 
@@ -232,7 +233,8 @@ const maskCard = c => {
   if (!c) return null;
   if (typeof c === 'object') return c.last4 ? `${c.brand ? `${c.brand} ` : ''}•••• ${String(c.last4).slice(-4)}` : null;
   const digits = String(c).replace(/\D/g, '');
-  return digits.length >= 4 ? `•••• ${digits.slice(-4)}` : String(c).replace(/\d/g, '•');
+  const brand = String(c).match(/^\s*(visa|mastercard|amex|american express|discover)\b/i)?.[1];
+  return digits.length >= 4 ? `${brand ? `${brand[0].toUpperCase()}${brand.slice(1).toLowerCase()} ` : ''}•••• ${digits.slice(-4)}` : String(c).replace(/\d/g, '•');
 };
 const PROCESSOR = { agentcard: 'Agentcard · single-use card', stripe: 'Stripe payment link', link: 'Link' };
 
@@ -251,15 +253,17 @@ function paymentCard(s, extra) {
   const processor = pay ? `${PROCESSOR[pay.processor] ?? pay.processor}${pay.sandbox ? ' · sandbox' : ''}` : 'single-use card, issued on approval';
   const masked = maskCard(pay?.card) ?? (a.card?.last4 ? `•••• ${a.card.last4}` : null);
   const plates = s.plan?.chosen?.portions;
-  const body = `<p class="hero">${gbp(a.amount)}</p>
+  const deposit = a.kind === 'deposit';
+  const usd = pay?.usd ? `$${Number(pay.usd).toFixed(2)}${pay.rate ? ` · £1 = $${Number(pay.rate).toFixed(4)}` : ''}` : null;
+  const body = `<p class="hero">${gbp(a.amount)}${deposit ? '<span class="u">deposit</span>' : ''}</p>
 <p class="lede">to <b>${esc(a.merchant)}</b> <span class="tag ${tone}">${esc(label)}</span></p>
 ${track}
-<div class="rcpt st">${plates ? `<span>Plates</span><b>${plates}</b>` : ''}<span>For</span><b>${esc(s.event?.name ?? a.memo ?? '')}</b><span>Processor</span><b>${esc(processor)}</b>${masked ? `<span>Card</span><b>${esc(masked)}${paid ? ' · closed' : ''}</b>` : ''}${pay?.reference ? `<span>Reference</span><b>${esc(pay.reference)}</b>` : `<span>Request</span><b>${esc(a.id)}</b>`}</div>`;
-  const foot = stopped ? '' : paid ? 'Charged once. The single-use card is closed.' : approved ? 'Approved. Waiting for the processor to settle.' : 'Pantry raised this. It cannot approve it. A human says yes.';
+<div class="rcpt st">${deposit ? `<span>Order total</span><b>${gbp(a.total)}</b><span>Balance</span><b>${gbp(a.balance)} on their invoice</b>` : plates ? `<span>Plates</span><b>${plates}</b>` : ''}<span>For</span><b>${esc(s.event?.name ?? a.memo ?? '')}</b><span>Processor</span><b>${esc(processor)}</b>${masked ? `<span>Card</span><b>${esc(masked)}${paid ? ' · closed' : ''}</b>` : ''}${usd && paid ? `<span>Charged</span><b>${esc(usd)}</b>` : ''}${pay?.reference ? `<span>Reference</span><b>${esc(pay.reference)}</b>` : `<span>Request</span><b>${esc(a.id)}</b>`}</div>`;
+  const foot = stopped ? '' : paid ? `Charged once. The single-use card is closed.${deposit ? ' The balance comes on their invoice.' : ''}` : approved ? 'Approved. Waiting for the processor to settle.' : 'Pantry raised this. It cannot approve it. A human says yes.';
   return {
-    title: `${gbp(a.amount)} to ${a.merchant}: ${label}`,
+    title: `${gbp(a.amount)}${deposit ? ' deposit' : ''} to ${a.merchant}: ${label}`,
     html: wrap('Payment', body, foot),
-    alt: `Payment ${pay?.reference ?? a.id}: ${gbp(a.amount)} to ${a.merchant} via ${processor}, ${label.toLowerCase()}.`,
+    alt: `Payment ${pay?.reference ?? a.id}: ${gbp(a.amount)}${deposit ? ` deposit (of ${gbp(a.total)}; ${gbp(a.balance)} on invoice)` : ''} to ${a.merchant} via ${processor}${masked ? `, card ${masked}${paid ? ' closed' : ''}` : ''}${usd && paid ? `, charged ${usd}` : ''}, ${label.toLowerCase()}.`,
   };
 }
 
@@ -331,11 +335,11 @@ function providerCard(s, extra = {}) {
 ${safeAll && !o.addons?.length ? '' : `<p class="why1">${esc(reason)}</p>`}
 <div class="sec st" style="margin-top:16px">${shown.map(d => `<div class="dish"><span class="nm"><span>${esc(d.name)}</span>${chips(d.tags)}</span><span class="pr">${gbp(d.price)}</span></div>`).join('')}${dishes.length > shown.length ? `<p class="more">+${dishes.length - shown.length} more</p>` : ''}</div>
 <div class="mini st"><div><b>${f.fee ? gbp(f.fee) : 'Free'}</b>${esc(f.type === 'collection' ? 'collection' : 'delivery')}</div><div><b>${esc(hoursLabel(f.leadHours))}</b>notice</div><div><b>${minOrder ? gbp0(minOrder) : 'None'}</b>minimum</div><div><b>${reviews?.rating ? Number(reviews.rating).toFixed(1) : 'n/a'}</b>${reviews?.rating ? `${Number(reviews.count ?? 0).toLocaleString('en-GB')} reviews` : 'no reviews'}</div></div>
-<div class="total"><span>Total for ${o.portions} · ${gbp(o.cost.perExpected)} a head</span><b>${gbp(o.cost.total)}</b></div>`;
+<div class="total"><span>Total for ${o.portions} · ${gbp(o.cost.perPlate ?? o.cost.perExpected)} a plate</span><b>${gbp(o.cost.total)}</b></div>`;
   return {
     title: `${o.name}: ${safeAll ? 'safe for everyone' : 'out'}`,
     html: wrap(TIER[o.tier] ?? 'Provider', body, o.cost.quoted ? 'Quoted price.' : o.live ? 'Prices read from their site; confirm before paying.' : 'Estimate.', 'prov'),
-    alt: `${o.name} (${o.tier}${srcLine ? `, ${srcLine}` : ''}): ${safeAll ? 'safe for everyone' : `out, ${o.excluded[0]}`}. ${o.portions} plates for ${gbp(o.cost.total)}, ${gbp(o.cost.perExpected)} a head.${reviews?.rating ? ` Rated ${reviews.rating} from ${reviews.count} reviews.` : ''}`,
+    alt: `${o.name} (${o.tier}${srcLine ? `, ${srcLine}` : ''}): ${safeAll ? 'safe for everyone' : `out, ${o.excluded[0]}`}. ${o.portions} plates for ${gbp(o.cost.total)}, ${gbp(o.cost.perPlate ?? o.cost.perExpected)} a plate.${reviews?.rating ? ` Rated ${reviews.rating} from ${reviews.count} reviews.` : ''}`,
   };
 }
 
@@ -366,22 +370,62 @@ function dishCard(s, extra = {}) {
   const o = extra.option ?? s?.plan?.chosen;
   if (!o || !extra.dish) return { title: 'Pick a meal', html: wrap('Meal', '<p class="lede">Name a meal from the plan to see it on its own.</p>'), alt: 'Name a meal from the plan.' };
   const q = String(extra.dish).toLowerCase();
-  const lines = o.lines.filter(l => l.name.toLowerCase() === q || l.dish === extra.dish || l.name.toLowerCase().includes(q));
+  // An exact name or id first; a partial match only picks one dish, never several that share a word.
+  const exact = o.lines.filter(l => l.name.toLowerCase() === q || l.dish === extra.dish);
+  const partial = o.lines.find(l => l.name.toLowerCase().includes(q));
+  const lines = exact.length ? exact : partial ? o.lines.filter(l => l.dish === partial.dish) : [];
   if (!lines.length) throw new Error(`No dish matching "${extra.dish}" in ${o.name}. It has: ${[...new Set(o.lines.map(l => l.name))].join('; ')}.`);
   const first = lines[0];
   const plates = lines.reduce((t, l) => t + l.qty, 0);
   const covers = (first.tags ?? []).filter(t => COVERS[t]).map(t => COVERS[t]);
   const from = first.providerName ?? o.name;
-  const body = `<div class="top"><p class="name">${esc(first.name)}</p><p class="verdict ok">${plates} plates</p></div>
+  const who = whoGetsIt(lines);
+  const body = `<div class="top"><p class="name">${esc(first.name)}</p><p class="verdict ok">${plates} ${plates === 1 ? 'plate' : 'plates'}</p></div>
 <p class="src">${esc(from)} · ${gbp(first.price)} a plate · ${gbp(plates * first.price)} in all</p>
 <div class="sec st" style="margin-top:16px"><p class="lbl">Diet</p><p style="margin:6px 0 0">${chips(first.tags ?? [])}</p></div>
-<div class="sec st"><p class="lbl">Who gets it</p>${lines.map(l => row(LANE_LABEL[l.lane] ?? l.lane, String(l.qty), share(l.qty, plates), l.lane !== 'allergy-safe')).join('')}</div>
-${covers.length ? `<p class="lede st">Safe for ${esc(covers.join(', '))}.</p>` : ''}`;
+<div class="sec st"><p class="lbl">Who gets it</p>${who.map(w => row(w.label, String(w.plates), share(w.plates, plates), !w.critical)).join('')}</div>
+${who.some(w => w.why) ? `<p class="lede st">${esc(who.filter(w => w.why).map(w => w.why).join(' '))}</p>` : covers.length ? `<p class="lede st">Safe for ${esc(covers.join(', '))}.</p>` : ''}`;
   return {
-    title: `${first.name}: ${plates} plates`,
+    title: `${first.name}: ${plates} ${plates === 1 ? 'plate' : 'plates'}`,
     html: wrap('Meal', body, (first.tags ?? []).includes('sealed') ? 'Sealed and labelled, served on its own table.' : 'Labelled with its diet on the table.', 'prov'),
-    alt: `${first.name} from ${from}: ${plates} plates at ${gbp(first.price)} each${covers.length ? `, safe for ${covers.join(', ')}` : ''}.`,
+    alt: `${first.name} from ${from}: ${plates} ${plates === 1 ? 'plate' : 'plates'} at ${gbp(first.price)}${covers.length ? `, safe for ${covers.join(', ')}` : ''}. ${who.map(w => `${w.plates} for ${w.for}`).join(', ')}.${who.some(w => w.why) ? ` ${who.filter(w => w.why).map(w => w.why).join(' ')}` : ''}`,
+    covers: who.map(({ label, plates: n, signedUp, extra: x, critical }) => ({ label, plates: n, signedUp, extra: x, critical })),
   };
+}
+
+// Who a meal feeds, from the plan's own record of each guest group it serves: declared needs, sign-ups,
+// plates and any buffer. Guests with no declared need are "everyone else".
+function whoGetsIt(lines) {
+  const groups = new Map();
+  for (const l of lines) {
+    // Plans made before lines recorded who they serve fall back to the lane.
+    for (const sv of l.serves?.length ? l.serves : [{ lane: l.lane, needs: [], plates: l.qty, critical: l.lane === 'allergy-safe' }]) {
+      const key = sv.lane ? `lane:${sv.lane}` : sv.needs.join('+');
+      const g = groups.get(key) ?? { lane: sv.lane, needs: sv.needs, plates: 0, signedUp: 0, extra: 0, critical: Boolean(sv.critical), ranOut: sv.ranOut };
+      g.plates += sv.plates;
+      g.signedUp += sv.signedUp ?? 0;
+      g.extra += sv.extra ?? 0;
+      groups.set(key, g);
+    }
+  }
+  const sorted = [...groups.values()].sort((a, b) => Number(b.critical) - Number(a.critical) || (b.needs.length ? 1 : 0) - (a.needs.length ? 1 : 0) || b.plates - a.plates);
+  // At most five rows: the larger diet groups by name, the rest as "other diets", then everyone else.
+  const diet = sorted.filter(g => g.needs.length && !g.critical);
+  if (diet.length > 3) {
+    const tail = diet.slice(2);
+    const merged = { needs: ['__other'], others: tail.length, plates: tail.reduce((t, g) => t + g.plates, 0), signedUp: tail.reduce((t, g) => t + g.signedUp, 0), extra: tail.reduce((t, g) => t + g.extra, 0), critical: false, ranOut: tail.find(g => g.extra)?.ranOut };
+    sorted.splice(0, sorted.length, ...sorted.filter(g => g.critical), ...diet.slice(0, 2), merged, ...sorted.filter(g => !g.needs.length));
+  }
+  return sorted
+    .map(g => {
+      if (g.others) return { label: `${g.others} other diets`, plates: g.plates, signedUp: g.signedUp, extra: g.extra, critical: false, for: `${g.signedUp} sign-ups with ${g.others} other diets`, why: null };
+      if (g.lane) return { label: LANE_LABEL[g.lane] ?? g.lane, plates: g.plates, signedUp: null, extra: 0, critical: g.critical, for: `the ${(LANE_LABEL[g.lane] ?? g.lane).toLowerCase()} lane`, why: null };
+      const label = g.needs.length ? g.needs.filter(n => !(n === 'gluten-free' && g.needs.includes('coeliac'))).map(n => NEEDS[n]?.label ?? n).join(' + ') : 'Everyone else';
+      const lower = label.toLowerCase();
+      const forWhom = !g.needs.length ? 'everyone else' : g.critical ? (g.signedUp === 1 ? `the ${lower} guest, a sealed plate` : `the ${g.signedUp} ${lower} guests, one sealed plate each`) : `${g.signedUp} ${lower} sign-ups`;
+      const why = g.extra ? `+${g.extra} spare ${lower}: it ran out on ${g.ranOut}.` : null;
+      return { label, plates: g.plates, signedUp: g.signedUp, extra: g.extra, critical: g.critical, for: forWhom, why };
+    });
 }
 
 const KINDS = { dish: dishCard, headcount: headcountCard, diets: dietsCard, options: optionsCard, provider: providerCard, plan: planCard, order: orderCard, inbox: inboxCard, payment: paymentCard, debrief: debriefCard, memory: memoryCard };

@@ -1,10 +1,11 @@
 // pantry event <command> — the bot's hands for event catering. Called from src/cli.js.
 import { readFileSync } from 'node:fs';
 import {
-  addProvider, setEvent, approvePayment, choose, debrief, declinePayment, draftBrief, eventOptions, eventSnapshot, freshEventState, importGuestFile,
+  addProvider, cardFor, planDishes, setEvent, approvePayment, choose, debrief, declinePayment, draftBrief, eventOptions, eventSnapshot, freshEventState, importGuestFile,
   loadEventState, loadEventWorld, providerLedger, recordQuote, requestPayment, saveEventState, setHeadcount,
 } from './index.js';
 import { driverFromEnv } from '../vault.js';
+import { renderCards } from './png.js';
 import { clock, gbp, longDate, pct } from '../util.js';
 
 export const EVENT_HELP = `pantry event <command> — catering for the people who actually turn up
@@ -21,9 +22,12 @@ export const EVENT_HELP = `pantry event <command> — catering for the people wh
   choose <provider|recommended>
   quote <provider> <£> [note]  Record a provider's quote; it replaces the estimate
   brief                     Draft the catering brief (sending it is your call)
-  pay                       Ask the organiser to approve payment (never pays by itself)
+  pay [deposit £]           Ask the organiser to approve payment, in full or a deposit (never pays by itself)
   approve <id>              Stub only: stands in for the organiser's approval on their phone
   decline <id>
+  card <kind> [dish|provider]  A card as a PNG (kinds: plan, headcount, diets, options, provider, dish, order, payment, inbox, debrief)
+  card memory "<finding>" <date>
+  cards dish|provider       Every meal of the plan (or every option) as PNGs, one call
   status                    Latest approval and order
   inbox                     Pantry's own inbox, triaged
   providers                 The provider ledger: ratings, punctuality, what ran out
@@ -77,7 +81,7 @@ export async function runEvent(rest, out) {
     }
     case 'options': {
       const r = eventOptions(world, state, args[0]);
-      return out(r.options.map(o => `${o.eligible ? '✓' : '✗'} ${o.name.padEnd(22)} ${o.tier.padEnd(11)} ${gbp(o.cost.total).padStart(9)}  ${gbp(o.cost.perExpected)}/head${o.eligible ? `  score ${o.score}` : `  ${o.excluded[0]}`}`).join('\n'), r);
+      return out(r.options.map(o => `${o.eligible ? '✓' : '✗'} ${o.name.padEnd(22)} ${o.tier.padEnd(11)} ${gbp(o.cost.total).padStart(9)}  ${gbp(o.cost.perPlate)}/plate${o.eligible ? `  score ${o.score}` : `  ${o.excluded[0]}`}`).join('\n'), r);
     }
     case 'plan': {
       const p = snap().plan;
@@ -101,7 +105,7 @@ export async function runEvent(rest, out) {
       return out(`${b.text}\n\n[${b.note}]`, b);
     }
     case 'pay': {
-      const a = requestPayment(world, state);
+      const a = requestPayment(world, state, args[0] ? { deposit: Number(String(args[0]).replace(/^£/, '')) } : {});
       save();
       return out(`${a.prompt}\nApproval ${a.id} is ${a.status}. The organiser approves it; Pantry cannot.`, a);
     }
@@ -117,6 +121,19 @@ export async function runEvent(rest, out) {
       const a = declinePayment(state, args[0]);
       save();
       return out(`Declined ${a.id}.`, a);
+    }
+    case 'card':
+    case 'cards': {
+      const kind = args[0];
+      if (!kind) throw new Error('usage: pantry event card <kind> [dish|provider]  ·  pantry event cards dish|provider');
+      const slug = t => String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+      let list;
+      if (sub === 'cards' && kind === 'dish') list = planDishes(world, state).map((d, i) => ({ name: `dish-${i + 1}-${slug(d.name)}`, ...cardFor(world, state, { kind: 'dish', dish: d.dish }) }));
+      else if (sub === 'cards' && kind === 'provider') list = eventOptions(world, state).options.map((o, i) => ({ name: `provider-${i + 1}-${slug(o.id)}`, ...cardFor(world, state, { kind: 'provider', provider: o.id }) }));
+      else if (kind === 'memory') list = [{ name: 'memory', ...cardFor(world, state, { kind, finding: args[1], date: args[2] }) }];
+      else list = [{ name: args[1] ? `${kind}-${slug(args[1])}` : kind, ...cardFor(world, state, { kind, dish: args[1], provider: args[1] }) }];
+      const files = await renderCards(list);
+      return out(list.map((c, i) => `${files[i]}\n  ${c.alt}`).join('\n'), list.map((c, i) => ({ kind: c.kind, title: c.title, alt: c.alt, png: files[i], ...(c.covers ? { covers: c.covers } : {}) })));
     }
     case 'status': {
       const s = snap();

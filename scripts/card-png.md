@@ -1,20 +1,22 @@
 # Posting a Pantry card as an image
 
-Pantry has no Visualize tool here. It renders the card in headless Chrome and posts the screenshot as an image.
+Pantry has no Visualize tool here, so cards go into the chat as PNGs. The engine renders them itself, with a
+headless Chrome on the bot's computer and no dependencies:
 
-1. Get the card: `pantry_card {kind, ...}` returns `{ title, html, alt }`.
-2. Save `html` as a file on its own (no wrapper). The fragment resets `html` and `body` to margin 0 with a transparent background, and its only element is `#pantry-card`, 600 px wide.
-3. In headless Chrome (Playwright or Puppeteer):
-   - viewport **600 × 800**, `deviceScaleFactor: 2`
-   - open the file, then **wait 1500 ms**, so the entrance animation reaches its final frame (it ends by about 1.2 s)
-   - screenshot the **element** `#pantry-card` with **`omitBackground: true`**, so the 16 px rounded corners stay transparent
-4. Post **only the PNG**, with your one-sentence answer as the text. Use `alt` as the image description. If rendering fails, send the text answer alone.
-
-Playwright, for reference:
-```js
-const page = await browser.newPage({ viewport: { width: 600, height: 800 }, deviceScaleFactor: 2 });
-await page.setContent(html);
-await page.waitForTimeout(1500);
-await (await page.$('#pantry-card')).screenshot({ path: 'card.png', omitBackground: true });
 ```
-To capture the final state without waiting, add `reducedMotion: 'reduce'` to the page options. It renders the same final frame immediately.
+node ~/pantry/src/cli.js event card plan              # one card: plan, headcount, diets, options, order, payment, inbox, debrief
+node ~/pantry/src/cli.js event card dish "Chicken curry meal"
+node ~/pantry/src/cli.js event card provider vandas-kitchen
+node ~/pantry/src/cli.js event card memory "Hearth & Co billed £70 over quote." 2026-04-23
+node ~/pantry/src/cli.js event cards dish             # every meal of the plan, one PNG each, in one call
+```
+
+Each prints the PNG path and the card's alt text (`--json` for `{ kind, title, alt, png, covers }`). Attach the
+PNG and say the one-sentence answer; use `alt` as the image description, and for meals read `covers` (who it
+feeds) rather than guessing.
+
+How it renders: 600 CSS px wide at 2x, with reduced motion (the card's final frame at once), clipped to
+`#pantry-card` on a transparent background, so the rounded corners stay round and there are no margins. Chrome
+is found automatically (Chrome, Chromium or Playwright's headless shell); set `PANTRY_CHROME` to point at one.
+Cards land in `$TMPDIR/pantry-cards` unless `PANTRY_CARD_DIR` says otherwise. If rendering fails, send the text
+answer alone.

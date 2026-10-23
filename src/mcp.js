@@ -4,10 +4,10 @@
 import { createInterface } from 'node:readline';
 import { readFileSync } from 'node:fs';
 import {
-  addProvider, attachPaymentLink, choose, setDish, confirmPayment, debrief, draftBrief, eventOptions, eventSnapshot, importGuestFile,
+  addProvider, attachPaymentLink, cardFor, choose, setDish, confirmPayment, debrief, draftBrief, eventOptions, eventSnapshot, importGuestFile,
   loadEventState, loadEventWorld, providerLedger, recordQuote, requestPayment, saveEventState, setEvent, setHeadcount,
 } from './events/index.js';
-import { card, CARD_KINDS } from './events/cards.js';
+import { CARD_KINDS } from './events/cards.js';
 
 const obj = (properties = {}, required = []) => ({ type: 'object', properties, required, additionalProperties: false });
 
@@ -121,10 +121,10 @@ const TOOLS = [
   },
   {
     name: 'pantry_checkout_request',
-    description: 'Ask the organiser to approve payment for the chosen plan. Returns a pending approval bound to provider, amount and plan. Pantry cannot approve it.',
-    inputSchema: obj(),
+    description: "Raise the payment approval for the chosen plan: the full total, or pass deposit (in £) when the provider asked for a deposit to hold the date (the balance comes on their invoice). Bound to this plan, this amount and this payee; a changed plan voids it. Pantry cannot approve it: the organiser's explicit yes in chat is the approval.",
+    inputSchema: obj({ deposit: { type: 'number', description: 'Deposit in £, less than the plan total. Omit to pay the full total.' } }),
     mutates: true,
-    run: (_, w, state) => requestPayment(w, state),
+    run: (a, w, state) => requestPayment(w, state, a),
   },
   {
     name: 'pantry_payment_link',
@@ -135,33 +135,16 @@ const TOOLS = [
   },
   {
     name: 'pantry_payment_confirm',
-    description: "Record a payment only after the processor reports it settled. With Agentcard: processor 'agentcard', card = the single-use card id, reference = the transaction id, status as list_transactions reports it (SETTLED), sandbox true in the demo environment, amount = the approved amount in £. Anything not settled, or a different amount, records nothing.",
-    inputSchema: obj({ approvalId: { type: 'string' }, reference: { type: 'string' }, amount: { type: 'number' }, status: { type: 'string' }, processor: { type: 'string' }, card: { type: 'string' }, sandbox: { type: 'boolean' } }, ['approvalId', 'amount', 'status']),
+    description: "Record a payment only after the processor reports it settled. With Agentcard (scripts/agentcard-pay.mjs prints these): processor 'agentcard', card = the masked card ('Visa •••• 1234'), reference = the transaction id, status = 'cleared', sandbox true, amount = the approved amount in £, usd and rate = what the card was charged in dollars and the £→$ rate used. Anything not settled, or a different amount, records nothing.",
+    inputSchema: obj({ approvalId: { type: 'string' }, reference: { type: 'string' }, amount: { type: 'number' }, status: { type: 'string' }, processor: { type: 'string' }, card: { type: 'string' }, sandbox: { type: 'boolean' }, usd: { type: 'number' }, rate: { type: 'number' } }, ['approvalId', 'amount', 'status']),
     mutates: true,
     run: (a, w, state) => confirmPayment(w, state, a),
   },
   {
     name: 'pantry_card',
-    description: "A visual card for the answer, as an HTML fragment for Grok Bot's Visualize tool (pass html and title; use alt as the text fallback). kinds: dish (pass dish: one card per meal of the chosen plan), headcount, diets, options, provider (pass provider id or name: one card per provider while you walk through them), plan, order (the basket before paying), inbox, payment (Agentcard track), debrief, memory (needs finding and date). One card per answer at most, only when numbers or a comparison beat text.",
+    description: "A visual card for the answer: { title, html, alt }. This Grok Bot has no Visualize tool, so post cards as PNGs: on your computer run node ~/pantry/src/cli.js event card <kind> [dish|provider] (one PNG) or event cards dish (every meal of the plan, one PNG each), which print the PNG paths and alt text; attach the PNGs. kinds: dish (pass dish), headcount, diets, options, provider (pass provider id or name), plan, order (the basket before paying), inbox, payment (the Agentcard track), debrief, memory (needs finding and date). One card per answer, except a meal-by-meal walk.",
     inputSchema: obj({ kind: { type: 'string', enum: CARD_KINDS }, provider: { type: 'string' }, dish: { type: 'string' }, finding: { type: 'string' }, date: { type: 'string' }, dataset: { type: 'string' } }, ['kind']),
-    run: (a, w, s) => {
-      if (a.kind === 'memory') return card('memory', null, { finding: a.finding, date: a.date, dataset: a.dataset ?? 'pantry-events' });
-      const snap = eventSnapshot(w, s);
-      if (a.kind === 'options') return card('options', snap, { options: eventOptions(w, s).options });
-      if (a.kind === 'provider') {
-        const option = eventOptions(w, s).options.find(o => o.id === a.provider || o.name.toLowerCase().startsWith(String(a.provider ?? '').toLowerCase()));
-        if (!option) throw new Error('Pass provider: the id or name of one of the options.');
-        return card('provider', snap, { option, provider: w.providers.find(p => p.id === option.id) });
-      }
-      if (a.kind === 'order') return card('order', snap, { plan: snap.plan, approval: snap.approval });
-      if (a.kind === 'dish') return card('dish', snap, { option: snap.plan.chosen, dish: a.dish });
-      if (a.kind === 'debrief') {
-        const last = s.debriefs.at(-1);
-        if (!last) throw new Error('No debrief recorded yet.');
-        return card('debrief', snap, { record: last, learnings: s.lastLearnings ?? [] });
-      }
-      return card(a.kind, snap);
-    },
+    run: (a, w, s) => cardFor(w, s, a),
   },
   {
     name: 'pantry_status',

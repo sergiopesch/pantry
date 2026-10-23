@@ -195,3 +195,30 @@ test('select items: removing a dish re-spreads the plates and keeps everyone saf
   assert.ok(after.coverage.safeForEveryone);
   assert.throws(() => setDish(world, state, { provider: 'test-kitchen', dish: 'lobster', action: 'remove' }), /no dish matching/);
 });
+
+test('a deposit holds the date: bound to the plan and the payee, the balance on the invoice', async () => {
+  const { world, state } = await ready();
+  const total = eventSnapshot(world, state).plan.chosen.cost.total;
+  assert.throws(() => requestPayment(world, state, { deposit: total + 1 }), /less than the/);
+  const a = requestPayment(world, state, { deposit: 70 });
+  assert.equal(a.kind, 'deposit');
+  assert.equal(a.amount, 70);
+  assert.equal(a.balance, Math.round((total - 70) * 100) / 100);
+  assert.match(a.prompt, /£70\.00 deposit to Test Kitchen/);
+  assert.throws(() => confirmPayment(world, state, { approvalId: a.id, amount: total, status: 'cleared', processor: 'agentcard' }), /approved £70\.00/);
+  const r = confirmPayment(world, state, { approvalId: a.id, amount: 70, status: 'cleared', processor: 'agentcard', card: 'Visa •••• 4783', reference: 'txn_1', sandbox: true, usd: 93.63, rate: 1.3376 });
+  assert.equal(r.order.status, 'deposit-paid');
+  assert.equal(r.order.balanceDue, a.balance);
+  assert.equal(r.approval.payment.usd, 93.63);
+  assert.throws(() => requestPayment(world, state, { deposit: 70 }), /deposit for this plan is already paid/);
+});
+
+test('a plan says what a plate costs, and records who each meal feeds', async () => {
+  const { world, state } = await ready();
+  const p = eventSnapshot(world, state).plan;
+  assert.match(p.text, /93 plates for £[\d.]+, £[\d.]+ a plate/);
+  assert.equal(p.chosen.cost.perPlate, Math.round((p.chosen.cost.total / p.chosen.portions) * 100) / 100);
+  const sealed = p.chosen.lines.filter(l => l.lane === 'allergy-safe');
+  assert.ok(sealed.every(l => l.serves.every(s => s.critical && s.plates === s.signedUp)));
+  for (const l of p.chosen.lines) assert.equal(l.serves.reduce((t, s) => t + s.plates, 0), l.qty);
+});
