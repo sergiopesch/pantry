@@ -3,12 +3,13 @@
 //   grok prompt "<text>"    put the text in Pantry's message box (doesn't send)
 //   grok send               press Send message
 //   grok pantry             open Pantry's chat
-//   grok image [n]          open the nth-from-last card in the chat full screen (1 = the latest)
+//   grok image [n] [recent] open the nth-from-last card full screen (1 = the latest); recent: only if it's new
 //   grok close              close the full-screen image (or any open dialog)
 //   grok compact on|off     the compact sidebar (on hides the other Bots' names)
 //   grok fill [left|right]  fit the window to the screen it's on, below the menu bar (or its left/right half)
 //   grok at x y w h         move and size the window (points, top-left origin)
-//   grok state              JSON: frontmost app, chat, composer text, send button, window frame
+//   grok wait [seconds]     wait until Pantry has finished working (default up to 300 s); prints how long it took
+//   grok state              JSON: frontmost app, chat, busy, composer text, send button, images, window frame
 // Needs Accessibility for the terminal (or app) that runs it.
 import AppKit
 import ApplicationServices
@@ -52,6 +53,8 @@ func chatName() -> String {
   walk(header)
   return name
 }
+// While a Bot is replying, Grok Bot keeps an accessibility status line: "<Bot> is working".
+func busy() -> Bool { elements().contains { str($0, kAXRoleAttribute) == "AXStaticText" && str($0, kAXValueAttribute).hasSuffix(" is working") } }
 func setFrame(_ r: CGRect) {
   guard let w = mainWindow() else { die("No Grok Bot window.") }
   var p = r.origin, s = r.size
@@ -92,9 +95,11 @@ case "image":
   let n = a.count > 2 ? max(1, Int(a[2]) ?? 1) : 1
   let images = find("AXButton", "Open image full screen")
   guard images.count >= n else { die("Only \(images.count) images in view.") }
+  // "recent": only an image in the newest messages, near the bottom of the window, never an old one.
+  if a.contains("recent"), let w = mainWindow().map(frame), frame(images[images.count - 1]).maxY < w.maxY - 260 { die("No new image at the bottom of the chat.") }
   print(press(images[images.count - n]) ? "opened image \(n) from the end" : "couldn't open it")
 case "close":
-  let close = elements().filter { str($0, kAXRoleAttribute) == "AXButton" && ["Close", "Close image", "Close viewer", "Close full screen"].contains(label($0)) }
+  let close = elements().filter { str($0, kAXRoleAttribute) == "AXButton" && ["Close media preview", "Close", "Close image", "Close viewer"].contains(label($0)) }
   guard let c = close.last else { die("Nothing open to close.") }
   print(press(c) ? "closed" : "couldn't close")
 case "compact":
@@ -113,10 +118,20 @@ case "at":
   guard a.count > 5, let x = Double(a[2]), let y = Double(a[3]), let w = Double(a[4]), let h = Double(a[5]) else { die("usage: grok at x y w h") }
   setFrame(CGRect(x: x, y: y, width: w, height: h))
   print("window", mainWindow().map(frame).map { "\(Int($0.minX)),\(Int($0.minY)) \(Int($0.width))x\(Int($0.height))" } ?? "?")
+case "wait":
+  let limit = a.count > 2 ? Double(a[2]) ?? 300 : 300
+  let start = Date()
+  _ = waitFor({ busy() }, 6)
+  var quiet: Date? = nil
+  while Date().timeIntervalSince(start) < limit {
+    if busy() { quiet = nil } else if quiet == nil { quiet = Date() } else if Date().timeIntervalSince(quiet!) > 3 { break }
+    usleep(500_000)
+  }
+  print(String(format: "done in %.0f s", Date().timeIntervalSince(start) - 3))
 case "state":
   let f = mainWindow().map(frame) ?? .zero
   let text = composer().map { str($0, kAXValueAttribute).trimmingCharacters(in: .whitespacesAndNewlines) } ?? ""
-  let obj: [String: Any] = ["front": NSWorkspace.shared.frontmostApplication?.localizedName ?? "", "chat": chatName(), "composer": text,
+  let obj: [String: Any] = ["front": NSWorkspace.shared.frontmostApplication?.localizedName ?? "", "chat": chatName(), "busy": busy(), "composer": text,
     "canSend": !find("AXButton", "Send message").isEmpty, "images": find("AXButton", "Open image full screen").count,
     "window": [Int(f.minX), Int(f.minY), Int(f.width), Int(f.height)]]
   print(String(data: try! JSONSerialization.data(withJSONObject: obj, options: [.sortedKeys]), encoding: .utf8)!)
