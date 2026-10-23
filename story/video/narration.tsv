@@ -1,19 +1,26 @@
-v01	If you've ever run a meetup, you've had this email.
-v02	February. Pizza for eighty. Forty-four came. And the coeliac guest couldn't eat a thing.
-v03	June. Ninety-six signed up. Fifty-one came. Forty-one percent of the food went in the bin.
-v04	Too much food, and still not the right food. Because we order for who signs up.
-v05	Pantry orders for who shows up. It's a Grok Bot that plans the food for your event.
-v06	Here's Pantry, live in Grok Bot. The organiser gives it the whole job, in one sentence.
-v07	Pantry has the event from Notion, and the guest list from the Luma export, with every declared diet. It remembers every past event in Cog-nee. And it found real local caterers, with their menus and their sources.
-v08	A hundred and forty signed up. Past events say sixty percent turn up, so it plans for ninety-three, with every allergy and coeliac guest covered at a hundred percent. The pick: Vanda's Kitchen, with sealed allergy plates from Sainsbury's. Ninety-three plates, at five pounds fifty-one each.
-v09	One level deeper: a card for every meal, and exactly who it feeds.
-v10	And remember that email? Both coeliac guests get a sealed plate of their own.
-v11	Then Pantry contacts the caterer. For this demo, the brief goes to the organiser's own inbox.
-v12	Under the hood, Pantry calls its own engine, with tools for each job: who's coming, what to serve, making it happen, and remembering. Allergies are planned at a hundred percent, nothing is invented, every source is linked, and no engine tool can pay.
-v13	The caterer confirms, and asks for a seventy-pound deposit to hold the date. The organiser says yes.
-v14	Agentcard issues a single-use card for exactly that amount. It's charged once, in sandbox, and then the card closes. Pantry never sees the card number, and it can't approve a thing on its own.
-v15	Ninety-three plates, not a hundred and forty. Forty-seven never bought for empty chairs. And not one declared need without a safe plate.
-v16	For community builders, that's time back for the community, not the logistics.
-v17	So the next time a guest asks if they should bring their own... nobody should have to.
-v18	Pantry. Order for who shows up.
-v19	Seventy pounds, paid once. The card is closed, and the request for the balance is in the organiser's inbox.
+n01	If you've ever run a meetup, you've had this email.
+n02	February. Pizza for eighty. Forty-four came.
+n03	And the coeliac guest couldn't eat.
+n04	June. Ninety-six signed up, fifty-one came. Forty-one percent, in the bin.
+n05	Because we order for who signs up.
+n06	Pantry orders for who shows up.
+n07	A Grok Bot that plans the food for your event.
+n08	Live in Grok Bot. The whole job, in one sentence.
+n09	Pantry pulls the event from Notion, the guests and their diets from Luma, and every past event from Cog-nee.
+n10	A hundred and forty signed up. It plans for ninety-three, every allergy covered.
+n11	The pick: Vanda's Kitchen. Five pounds fifty-one a plate.
+n12	One level deeper: a card for every meal, and exactly who it feeds.
+n13	Remember that email? Both coeliac guests get a sealed plate.
+n14	It emails the brief. And the rules hold: allergies first, nothing invented, and no engine tool can pay.
+n15	The caterer confirms, and asks for a seventy-pound deposit. One yes.
+n16	Agentcard issues a single-use card for exactly that amount.
+n17	Charged once. Then the card closes.
+n18	Pantry never sees the number, and it can't approve a thing.
+n19	Seventy pounds. Paid once.
+n20	Ninety-three plates, not a hundred and forty.
+n21	Forty-seven never bought for empty chairs.
+n22	Not one guest without a safe plate.
+n23	Time back for the community, not the logistics.
+n24	So the next time a guest asks if they should bring their own...
+n25	Nobody should have to.
+n26	Pantry. Order for who shows up.

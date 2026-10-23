@@ -1,13 +1,14 @@
 # Pantry — TASKS
 
-_Last updated: Fri 23 Oct 2026, 16:10 BST. The hackathon was 22 Oct; this pass polished the demo and filmed it._
+_Last updated: Fri 23 Oct 2026, 18:05 BST. The hackathon was 22 Oct; this pass polished the demo, filmed it, and cut the film again to a score._
 
 ## Status in one line
-**Pantry is a Grok Bot that plans catering for community events. "Order for who shows up." The demo flow is polished end to end, rehearsed twice and filmed: `story/VIDEO.md` (3:14, kept out of the repo in `~/Desktop/Pantry demo video/`).**
+**Pantry is a Grok Bot that plans catering for community events. "Order for who shows up." The demo flow is polished end to end, rehearsed twice and filmed: `story/VIDEO.md` (2:00, scored and narrated, kept out of the repo in `~/Desktop/Pantry demo video/`; the 3:14 first cut is in its `v1` folder).**
 - Repo: github.com/sergiopesch/pantry (**public**: keep guest data, secrets and the video out of it).
 - 78 tests pass.
 
 ## What changed on 23 Oct
+- **The film, second cut (2:00).** It's cut to an original 120 BPM electronic score, composed in code (`story/video/music.py`), with ElevenLabs effects. Every cut, logo, card and hit is on the beat (`story/video/score.py`). There are animated explainers with the real logos: where Pantry is connected, the brief and the rules, and Agentcard's single-use card, charged and stamped closed. No subtitles. The guest's email comes back at the end, typed again as Lily asks the question. The renders are frame-exact (`story/video/render.mjs`).
 - **Payment works end to end.** Last night's Agentcard step failed: the sandbox's simulated Visa authorises at most $100 per card, and the pooled company wallet needs Agentcard to switch it on. Sergio's call: the demo pays the **£70 deposit** that holds the date (`pantry_checkout_request {deposit}`), on one single-use sandbox card via `scripts/agentcard-pay.mjs`; the balance comes on the caterer's invoice.
 - **Cards in one call.** `event card <kind>` and `event cards dish` render PNGs with no dependencies; prompt 2 went from about 45 s to about 25–30 s, and no more blank cards.
 - **Meals say who they feed** (from the plan's own record), and plans say "£5.51 a plate" instead of a per-head figure that didn't divide.

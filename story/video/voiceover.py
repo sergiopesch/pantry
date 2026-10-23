@@ -2,14 +2,15 @@
 # ELEVENLABS_API_KEY in the environment (Sergio's is in 1Password, item ElevenLabs, field "API Key").
 import json, sys, base64, urllib.request, subprocess, os
 key = os.environ['ELEVENLABS_API_KEY']
+SPEED = float(os.environ.get('VO_SPEED', '1.0'))
 VOICE = 'pFZP5JQG7iQjIQuC4Bku'
 out = os.environ.get('PANTRY_VIDEO_WORK', '/tmp/pantry-video') + '/vo'
 os.makedirs(out, exist_ok=True)
 only = set(sys.argv[1:])
-for line in open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'narration.tsv'), encoding='utf8'):
+for line in open(os.environ.get('NARRATION', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'narration.tsv')), encoding='utf8'):
     vid, text = line.rstrip('\n').split('\t', 1)
     if only and vid not in only: continue
-    body = json.dumps({"text": text, "model_id": "eleven_multilingual_v2", "voice_settings": {"stability": 0.55, "similarity_boost": 0.8, "style": 0.1, "use_speaker_boost": True}}).encode()
+    body = json.dumps({"text": text, "model_id": "eleven_multilingual_v2", "voice_settings": {"stability": 0.5, "similarity_boost": 0.8, "style": 0.2, "use_speaker_boost": True, "speed": SPEED}}).encode()
     req = urllib.request.Request(f'https://api.elevenlabs.io/v1/text-to-speech/{VOICE}/with-timestamps?output_format=mp3_44100_128', data=body, headers={'xi-api-key': key, 'content-type': 'application/json'})
     d = json.load(urllib.request.urlopen(req, timeout=180))
     open(f'{out}/{vid}.mp3', 'wb').write(base64.b64decode(d['audio_base64']))

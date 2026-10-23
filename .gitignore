@@ -6,3 +6,5 @@ data/state.json
 .DS_Store
 data/events/state.json
 data/events/cognee/
+story/video/logos/
+__pycache__/

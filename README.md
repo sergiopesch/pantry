@@ -8,7 +8,7 @@ It isn't an app. You talk to Pantry in Grok Bot (desktop, mobile, X DMs). It wor
 
 ## The demo video
 
-A 3:14 film of the whole demo: the deck's story, Pantry's real Grok Bot chat doing the four prompts (Notion, Cognee, the plan, a card per meal, the brief by email, a £70 deposit on a single-use Agentcard in sandbox), and the wrap, narrated in ElevenLabs' "Lily". How it was made, what's sped up and what's hidden, and how to re-cut it: [`story/VIDEO.md`](story/VIDEO.md).
+A two-minute film of the whole demo, cut to an original 120 BPM score: the deck's story, then Pantry's real Grok Bot chat doing the four prompts (Notion, Luma and Cognee, the plan, a card per meal, the brief by email, a £70 deposit on a single-use Agentcard in sandbox), with animated explainers beside the chat, and the wrap. It's narrated in ElevenLabs' "Lily", with no subtitles. How it was made, what's sped up and what's hidden, and how to re-cut it: [`story/VIDEO.md`](story/VIDEO.md).
 
 ## The problem
 

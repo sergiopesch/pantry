@@ -7,5 +7,5 @@ const work = process.env.PANTRY_VIDEO_WORK ?? '/tmp/pantry-video';
 await page.goto(new URL('labels.html', import.meta.url).href);
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(300);
-for (const id of ['live', 'x4', 'x3', 'x2', 'sandbox']) await (await page.$(`#${id}`)).screenshot({ path: `${work}/labels/${id}.png`, omitBackground: true });
+for (const id of ['live', 'fast']) await (await page.$(`#${id}`)).screenshot({ path: `${work}/labels/${id}.png`, omitBackground: true });
 await browser.close();
