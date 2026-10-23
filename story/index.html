@@ -254,6 +254,7 @@ body.panel-on { cursor: default; }
 #p-tools .cards { position: absolute; left: 7%; right: 7%; top: 53%; }
 #p-tools .cards .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3%; align-items: start; margin-top: .7em; }
 #p-tools .cards img { width: 100%; border-radius: 10px; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 18px 40px -10px rgba(0,0,0,.8); }
+#p-tools .cards .row img:nth-child(n+4) { display: none; }
 #p-tools .cards .cap { font-size: 1.15em; color: var(--ink-2); }
 #p-tools .cards .cap b { color: var(--ink); font-weight: 560; }
 #p-tools .rules { position: absolute; left: 7%; right: 7%; bottom: 8%; display: grid; grid-template-columns: 1fr 1fr; gap: .7em 1.4em; }
@@ -273,6 +274,32 @@ body.panel-on { cursor: default; }
 #p-agentcard .never .big { font-size: 2em; line-height: 1.15; font-weight: 600; letter-spacing: -.025em; }
 #p-agentcard .never .sm { margin-top: .6em; font-size: 1.2em; color: var(--ink-2); line-height: 1.35; }
 #p-agentcard .tag { position: absolute; right: 7%; top: 6%; font-family: var(--mono); font-size: 1em; color: #000; background: var(--yellow); padding: .35em .7em; border-radius: 6px; }
+
+/* The same panels full screen (a 16:9 projector): two columns, the words left, the picture right. */
+@media (min-aspect-ratio: 5/4) {
+  .panel { font-size: min(1.75vh, 1.1vw); }
+  .panel .pglow { background: radial-gradient(60% 50% at 70% 110%, rgba(255,152,0,.20), rgba(0,0,0,0) 70%); }
+  .panel .phead { left: 6%; right: auto; width: 34%; top: 50%; transform: translateY(-50%); }
+  .panel .phead.rise { animation-name: riseMid; }
+  @keyframes riseMid { from { opacity: 0; transform: translateY(calc(-50% + 16px)); filter: blur(6px); } to { opacity: 1; transform: translateY(-50%); filter: none; } }
+  .panel .phead h1 { font-size: 4.4em; }
+  #p-connect .sky { left: 38%; right: 3%; top: 4%; bottom: 4%; }
+  #p-connect .hub { width: 17%; }
+  #p-connect .node { width: 24%; }
+  #p-tools .phead { top: 9%; transform: none; }
+  #p-tools .phead.rise { animation-name: rise; }
+  #p-tools .groups { left: 6%; right: auto; width: 38%; top: 34%; }
+  #p-tools .rules { left: 6%; right: auto; width: 38%; bottom: 9%; }
+  #p-tools .cards { left: 48%; right: 5%; top: 9%; }
+  #p-tools .cards .cap { font-size: 1.3em; }
+  #p-tools .cards .row { grid-template-columns: 1fr 1fr; gap: 1.2em 1.2em; margin-top: 1em; }
+  #p-tools .cards .row img:nth-child(n+4) { display: block; }
+  #p-agentcard .phead { top: 36%; }
+  #p-agentcard .never { left: 6%; right: auto; width: 36%; bottom: auto; top: 52%; }
+  #p-agentcard .steps { left: 50%; right: 6%; top: 50%; transform: translateY(-50%); }
+  #p-agentcard .step { padding-bottom: 2.1em; }
+  #p-agentcard .step::before { top: 3.4em; }
+}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
 </style>
 </head>
@@ -482,17 +509,17 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
     <div class="grp rise" style="animation-delay:.56s"><div class="label">04</div><div class="t">Remember</div><div class="chips"><i>cognee recall</i><i>cognee remember</i><i>debrief</i></div></div>
   </div>
   <div class="cards rise" style="animation-delay:.75s"><div class="cap"><b>Cards, not walls of text.</b> One idea per card, the number first, sent as an image.</div>
-    <div class="row"><img src="assets/cards/plan.png" alt="Plan card"><img src="assets/cards/provider-1.png" alt="Provider card"><img src="assets/cards/payment-paid.png" alt="Payment card"></div></div>
+    <div class="row"><img src="assets/cards/plan.png" alt="Plan card: the total, the budget and plates by lane"><img src="assets/cards/meal.png" alt="Meal card: who a meal feeds"><img src="assets/cards/payment.png" alt="Payment card: a deposit paid on a single-use card"><img src="assets/cards/headcount.png" alt="Headcount card: plan for 93, not 140"></div></div>
   <div class="rules rise" style="animation-delay:1s"><div>Allergies planned at 100%</div><div>Nothing invented</div><div>Every source linked</div><div>No tool can pay</div></div>
 </section>
 <section class="panel" id="p-agentcard"><div class="pglow"></div>
-  <div class="tag rise">Sandbox tonight</div>
+  <div class="tag rise">Agentcard sandbox</div>
   <div class="phead rise"><div class="label">Agentcard</div><h1>How Pantry pays.</h1></div>
   <div class="steps">
-    <div class="step rise" style="animation-delay:.2s"><div class="num">1</div><div><b>Pantry raises the request</b><span>Bound to the plan, the amount and the provider.</span></div></div>
+    <div class="step rise" style="animation-delay:.2s"><div class="num">1</div><div><b>Pantry raises the request</b><span>Bound to the plan, the amount and the payee.</span></div></div>
     <div class="step you rise" style="animation-delay:.4s"><div class="num">2</div><div><b>You say yes</b><span>Nothing moves without a human.</span></div></div>
     <div class="step rise" style="animation-delay:.6s"><div class="num">3</div><div><b>A single-use card is issued</b><span>For exactly that amount, by Agentcard.</span></div></div>
-    <div class="step rise" style="animation-delay:.8s"><div class="num">4</div><div><b>The charge goes through</b><span>Simulated in sandbox tonight.</span></div></div>
+    <div class="step rise" style="animation-delay:.8s"><div class="num">4</div><div><b>The charge goes through</b><span>Simulated in Agentcard's sandbox.</span></div></div>
     <div class="step rise" style="animation-delay:1s"><div class="num">5</div><div><b>The card closes</b><span>It can't be used again.</span></div></div>
   </div>
   <div class="never rise" style="animation-delay:1.25s"><div class="big">Pantry never sees a card number.<br><span class="y">It can't approve.</span></div><div class="sm">1Password does the same for logins: Pantry signs in to suppliers without ever seeing the password.</div></div>
@@ -528,7 +555,8 @@ Demo budget: 1:45. Come back with &quot;3&quot; for the close.">
   } else tonight.remove();
 
   // ---- Today's date, from the browser clock (en-GB, Europe/London) ----
-  document.getElementById('today').textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' });
+  const pinned = /^\d{4}-\d{2}-\d{2}$/.test(q.get('date') ?? '') ? new Date(`${q.get('date')}T12:00:00Z`) : new Date();
+  document.getElementById('today').textContent = pinned.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' });
 
   // ---- June: 96 plates in a 12 x 8 grid ----
   const plates = document.getElementById('plates');

@@ -2,8 +2,8 @@
 // Pantry stage server: one deck window, one Grok Bot window, every Stream Deck key a silent GET.
 //   node story/streamdeck/stage.js        then the Stream Deck keys hit http://127.0.0.1:4321/key/<name>
 // The deck page is served from here and listens on /events, so a key press changes it in place: no reload,
-// no new window, no app launch. Windows move with System Events, which needs this process to be started from
-// a terminal that already has Accessibility access.
+// no new window, no app launch. Grok Bot is sized to whichever screen it's on through the accessibility API
+// (bin/grok), which needs this process to be started from a terminal that already has Accessibility access.
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { execFile, spawn } from 'node:child_process';
@@ -15,8 +15,6 @@ const DIR = fileURLToPath(new URL('.', import.meta.url));
 const STORY = join(DIR, '..');
 const PANTRY_CHAT = 'grokbot://app/v1/agent?id=5ab715a0-38f1-42bb-b342-f792ecd90270';
 const PROFILE = `${process.env.HOME}/Library/Application Support/PantryStageChrome`;
-const SCREEN = { w: 1710, h: 1112, top: 25 };
-const HALF = Math.round(SCREEN.w / 2);
 
 const clients = new Set();
 let deckPid = null;
@@ -51,13 +49,11 @@ async function deckFront() {
   await osa(`tell application "System Events" to set frontmost of (first process whose unix id is ${deckPid}) to true`);
 }
 
+const GROK = join(DIR, 'bin', 'grok');
 async function grokFull() {
-  await osa(`tell application "Grok Bot" to activate
-  tell application "System Events" to tell process "Grok Bot"
-    set frontmost to true
-    set position of window 1 to {0, ${SCREEN.top}}
-    set size of window 1 to {${SCREEN.w}, ${SCREEN.h - SCREEN.top}}
-  end tell`);
+  await osa('tell application "Grok Bot" to activate');
+  await run(GROK, ['fill']);
+  await run(GROK, ['pantry']);
 }
 
 const KEYS = {
