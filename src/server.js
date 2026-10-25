@@ -99,13 +99,28 @@ export function createPantryServer({ world = loadWorld(), persist = true, initia
   };
 
   return createServer(async (req, res) => {
-    const url = new URL(req.url, 'http://localhost');
     const send = (status, body, type = 'application/json; charset=utf-8') => {
       res.writeHead(status, { 'content-type': type, 'cache-control': 'no-store' });
       res.end(typeof body === 'string' || Buffer.isBuffer(body) ? body : JSON.stringify(body));
     };
+    let url;
+    try {
+      url = new URL(req.url, 'http://localhost');
+    } catch {
+      return send(400, { error: 'Invalid request URL' });
+    }
+
+    // A loopback listener is still reachable from hostile browser pages and DNS rebinding.
+    const host = req.headers.host;
+    const port = req.socket.localPort;
+    const loopbackHosts = ['127.0.0.1', 'localhost', '[::1]'].map(h => port === 80 ? h : `${h}:${port}`);
+    if (!key && !loopbackHosts.includes(host)) return send(403, { error: 'Loopback Host required' });
 
     const route = routes[`${req.method} ${url.pathname}`];
+    if (route && (req.headers['sec-fetch-site'] === 'cross-site'
+      || (req.headers.origin && req.headers.origin !== `http://${host}`))) {
+      return send(403, { error: 'Same-origin API requests required' });
+    }
     if (route && key && req.headers['x-pantry-key'] !== key) return send(401, { error: 'Pair this device: open the link the server printed.', code: 'UNPAIRED' });
     if (route) {
       try {
@@ -118,7 +133,12 @@ export function createPantryServer({ world = loadWorld(), persist = true, initia
     }
 
     if (req.method !== 'GET') return send(404, { error: 'Not found' });
-    const rel = url.pathname === '/' ? 'index.html' : decodeURIComponent(url.pathname).replace(/^\/+/, '');
+    let rel;
+    try {
+      rel = url.pathname === '/' ? 'index.html' : decodeURIComponent(url.pathname).replace(/^\/+/, '');
+    } catch {
+      return send(400, { error: 'Invalid request URL' });
+    }
     const file = normalize(join(WEB, rel));
     if (!file.startsWith(WEB.endsWith(sep) ? WEB : WEB + sep)) return send(403, { error: 'Forbidden' });
     try {
